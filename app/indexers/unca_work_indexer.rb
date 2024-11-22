@@ -3,6 +3,7 @@
 # Generated via
 #  `rails generate hyrax:work_resource UncaWork`
 class UncaWorkIndexer < Hyrax::Indexers::PcdmObjectIndexer(UncaWork)
+  include Hyrax::Indexer(:basic_metadata)
   include Hyrax::Indexer(:unca_work)
 
   include HykuIndexing
