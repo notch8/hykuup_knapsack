@@ -5,9 +5,12 @@
 #
 # @see https://github.com/samvera/hyrax/wiki/Hyrax-Valkyrie-Usage-Guide#forms
 # @see https://github.com/samvera/valkyrie/wiki/ChangeSets-and-Dirty-Tracking
-class UncaWorkForm < Hyrax::Forms::PcdmObjectForm(UncaWork)
+class UncaWorkForm < Hyrax::Forms::ResourceForm(UncaWork)
   include Hyrax::FormFields(:basic_metadata)
   include Hyrax::FormFields(:unca_work)
+  include Hyrax::FormFields(:with_pdf_viewer)
+  include Hyrax::FormFields(:with_video_embed)
+  include VideoEmbedBehavior::Validation
   # Define custom form fields using the Valkyrie::ChangeSet interface
   #
   # property :my_custom_form_field
