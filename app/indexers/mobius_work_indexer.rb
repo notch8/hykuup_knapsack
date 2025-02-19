@@ -2,7 +2,7 @@
 
 # Generated via
 #  `rails generate hyrax:work_resource MobiusWork`
-class MobiusWorkIndexer < Hyrax::Indexers::PcdmObjectIndexer(MobiusWork)
+class MobiusWorkIndexer < Hyrax::ValkyrieWorkIndexer
   include Hyrax::Indexer(:basic_metadata)
   include Hyrax::Indexer(:mobius_work)
   include Hyrax::Indexer(:with_pdf_viewer)

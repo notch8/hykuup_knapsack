@@ -10,5 +10,10 @@ class MobiusWork < Hyrax::Work
   include Hyrax::ArResource
   include Hyrax::NestedWorks
 
+  include IiifPrint.model_configuration(
+    pdf_split_child_model: GenericWorkResource,
+    pdf_splitter_service: IiifPrint::TenantConfig::PdfSplitter
+  )
+
   prepend OrderAlready.for(:creator)
 end
