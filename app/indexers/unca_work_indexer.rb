@@ -3,7 +3,8 @@
 # Generated via
 #  `rails generate hyrax:work_resource UncaWork`
 class UncaWorkIndexer < Hyrax::ValkyrieWorkIndexer
-  include Hyrax::Indexer(:basic_metadata)
+  # Basic metadata has been included via :unca_work so we can customize it
+  # include Hyrax::Indexer(:basic_metadata)
   include Hyrax::Indexer(:unca_work)
   include Hyrax::Indexer(:with_pdf_viewer)
   include Hyrax::Indexer(:with_video_embed)
