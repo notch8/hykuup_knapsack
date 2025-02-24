@@ -22,11 +22,12 @@ module SolrDocumentDecorator
     model = first('has_model_ssim')&.safe_constantize
     # HACK: without this, #hydra_model will falsely return ActiveFedora::Base,
     # which causes numerous undefined method `active_fedora_basis_path' errors
-    # related to polymorphic pathing
+    # related to polymorphic pathing. This is because, when
+    # `Hyrax.config.valkyrie_transition?` is true, Valkyrie works are expected
+    # to end in "Resource".
     return model if HYKUUP_VALKYRIE_ONLY_MODELS.include?(model)
 
-    model = (first('has_model_ssim')&.+ 'Resource')&.safe_constantize if Hyrax.config.valkyrie_transition?
-    model || model_classifier(classifier).classifier(self).best_model
+    super
   end
 end
 
