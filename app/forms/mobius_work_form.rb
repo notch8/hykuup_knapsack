@@ -5,7 +5,7 @@
 #
 # @see https://github.com/samvera/hyrax/wiki/Hyrax-Valkyrie-Usage-Guide#forms
 # @see https://github.com/samvera/valkyrie/wiki/ChangeSets-and-Dirty-Tracking
-class MobiusWorkForm < Hyrax::Forms::PcdmObjectForm(MobiusWork)
+class MobiusWorkForm < Hyrax::Forms::ResourceForm(MobiusWork)
   include Hyrax::FormFields(:basic_metadata)
   include Hyrax::FormFields(:mobius_work)
   include Hyrax::FormFields(:with_pdf_viewer)

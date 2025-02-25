@@ -111,7 +111,7 @@ extraEnvVars: &envVars
   # - name: GOOGLE_OAUTH_CLIENT_EMAIL
   #   value: hyku-demo@hyku-demo.iam.gserviceaccount.com
   - name: HYRAX_ACTIVE_JOB_QUEUE
-    value: sidekiq
+    value: good_job
   - name: HYRAX_FITS_PATH
     value: /app/fits/fits.sh
   - name: HYRAX_VALKYRIE
@@ -216,6 +216,8 @@ extraEnvVars: &envVars
     value: testing123
   - name: VALKYRIE_ID_TYPE
     value: string
+  - name: VALKYRIE_TRANSITION
+    value: "true"
 
 podSecurityContext: &podSecValues
   runAsUser: 1001
