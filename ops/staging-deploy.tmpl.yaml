@@ -201,6 +201,8 @@ extraEnvVars: &envVars
     value: testing123
   - name: VALKYRIE_ID_TYPE
     value: string
+  - name: VALKYRIE_TRANSITION
+    value: "true"
 
 worker:
   replicaCount: 1
