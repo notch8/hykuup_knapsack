@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# rubocop:disable Metrics/BlockLength
 namespace :hykuup do
   namespace :mobius do
     desc 'Update Bulkrax field mappings across all Mobius tenants'
@@ -31,7 +32,7 @@ namespace :hykuup do
         field_mappings = JSON.parse(account.bulkrax_field_mappings)
 
         field_mappings['Bulkrax::CsvParser'].merge!(mobius_csv_mappings)
-        field_mappings['Bulkrax::CsvParser'].each do |field, settings|
+        field_mappings['Bulkrax::CsvParser'].each do |field, _settings|
           field_mappings['Bulkrax::CsvParser'][field]['split'] = mobius_split_pattern
         end
 
@@ -41,3 +42,4 @@ namespace :hykuup do
     end
   end
 end
+# rubocop:enable Metrics/BlockLength
