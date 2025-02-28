@@ -40,22 +40,28 @@ class MigrateResourcesJob < ApplicationJob
         MigrateResourcesJob.perform_later(ids: [item.id.to_s])
       end
     rescue => e
-      Rails.logger.error "🚫 Error processing model #{model}: #{e.message}"
+      logger.error "🚫 Error processing model #{model}: #{e.message}"
     end
   end
 
   def migrate(id)
     resource = Hyrax.query_service.find_by(id:)
     return unless resource.wings? # this resource has already been converted
-    Rails.logger.info "🍀 Migrating resource #{id} in tenant #{Site.account.name}"
+    logger.info "🍀 Migrating resource #{id} in tenant #{Site.account.name}"
     result = MigrateResourceService.new(resource:).call
     if result.success?
-      Rails.logger.info "✅ Migrated resource #{id} successfully"
+      logger.info "✅ Migrated resource #{id} successfully"
     else
-      Rails.logger.error "🚫 Resource #{id} failed to migrate - #{result}"
+      logger.error "🚫 Resource #{id} failed to migrate - #{result}"
       raise result
     end
   rescue Ldp::Gone, Ldp::NotFound, Valkyrie::Persistence::ObjectNotFoundError
-    Rails.logger.error "🚫 Resource #{id} not found"
+    logger.error "🚫 Resource #{id} not found"
+  end
+
+  private
+
+  def logger
+    @logger ||= ActiveSupport::Logger.new(Rails.root.join('log', 'migrate_resources.log'))
   end
 end
