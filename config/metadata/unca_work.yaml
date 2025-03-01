@@ -27,7 +27,7 @@ attributes:
     type: string
     multiple: true
     form:
-      required: false
+      required: true
       primary: true
     index_keys:
       - "creator_sim"
@@ -99,7 +99,7 @@ attributes:
     form:
       primary: true
       multiple: true
-      required: false
+      required: true
     index_keys:
       - "resource_type_sim"
       - "resource_type_tesim"
@@ -158,7 +158,7 @@ attributes:
       - "advisor_tesim"
     form:
       required: false
-      primary: false
+      primary: true
       multiple: true
     predicate: https://hykuup.com/terms/advisor
   alternative_title:
@@ -183,12 +183,18 @@ attributes:
     type: string
     multiple: true
     form:
-      primary: false
+      primary: true
+    index_keys:
+      - "spatial_coverage_sim"
+      - "spatial_coverage_tesim"
   temporal_coverage:
     type: string
     multiple: true
     form:
-      primary: false
+      primary: true
+    index_keys:
+      - "temporal_coverage_sim"
+      - "temporal_coverage_tesim"
   bibliographic_citation:
     type: string
     multiple: true
@@ -231,7 +237,7 @@ attributes:
     type: string
     multiple: true
     form:
-      required: false
+      required: true
       primary: true
     index_keys:
       - "description_sim"
@@ -244,7 +250,7 @@ attributes:
       - "format_tesim"
     form:
       required: false
-      primary: false
+      primary: true
       multiple: true
     predicate: http://purl.org/dc/terms/format
   identifier:
@@ -260,7 +266,7 @@ attributes:
     type: string
     multiple: true
     form:
-      required: false
+      required: true
       primary: true
     index_keys:
       - "language_sim"
@@ -309,7 +315,7 @@ attributes:
       - "subject_sim"
       - "subject_tesim"
     form:
-      primary: false
+      primary: true
     predicate: http://purl.org/dc/elements/1.1/subject
   arkivo_checksum:
     type: string
@@ -321,7 +327,7 @@ attributes:
     type: date_time
     multiple: true
     form:
-      required: false
+      required: true
       primary: true
     index_keys:
       - "date_created_sim"
@@ -334,7 +340,7 @@ attributes:
       - "date_published_tesim"
       - "date_published_sim"
     form:
-      required: false
+      required: true
       primary: true
       multiple: false
     predicate: http://purl.org/dc/terms/dateAccepted
