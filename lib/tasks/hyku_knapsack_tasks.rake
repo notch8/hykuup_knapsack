@@ -41,5 +41,36 @@ namespace :hykuup do
       end
     end
   end
+
+  namespace :wcu do
+    desc 'Update Bulkrax field mappings across WCU/UNCA tenants'
+    task update_field_mappings: :environment do
+      # wcu_tenants = Account.where(cname: ['wcu.hykuup.com', 'unca.hykuup.com'])
+      wcu_tenants = Account.where(cname: 'demo.hyku.test')
+      wcu_split_pattern = /\s*[|]\s*/
+      wcu_csv_mappings = {
+        'file' => { 'from' => %w[file_name file], 'split' => wcu_split_pattern },
+        'date_published' => { 'from' => %w[date_issued date_published], 'split' => wcu_split_pattern },
+        'degree_discipline' => { 'from' => %w[discipline degree_discipline], 'split' => wcu_split_pattern },
+        'degree_level' => { 'from' => %w[level_of_degree degree_level], 'split' => wcu_split_pattern },
+        'degree_name' => { 'from' => %w[name_of_degree degree_name], 'split' => wcu_split_pattern },
+        'keyword' => { 'from' => %w[keywords keyword], 'split' => wcu_split_pattern },
+        'resource_type' => { 'from' => %w[type resource_type], 'split' => wcu_split_pattern }
+      }
+
+      wcu_tenants.each do |account|
+        switch!(account)
+        field_mappings = JSON.parse(account.bulkrax_field_mappings)
+
+        field_mappings['Bulkrax::CsvParser'].merge!(wcu_csv_mappings)
+        field_mappings['Bulkrax::CsvParser'].each do |field, _settings|
+          field_mappings['Bulkrax::CsvParser'][field]['split'] = wcu_split_pattern
+        end
+
+        account.bulkrax_field_mappings = field_mappings.to_json
+        account.save!
+      end
+    end
+  end
 end
 # rubocop:enable Metrics/BlockLength
