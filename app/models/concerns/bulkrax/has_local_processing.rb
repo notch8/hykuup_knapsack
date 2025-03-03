@@ -22,7 +22,7 @@ module Bulkrax
     end
 
     def remove_duplicates_from_identifier!
-      return unless parsed_metadata['identifier'].present?
+      return if parsed_metadata['identifier'].blank?
 
       # ss_pid and sm_identifier both get parsed into identifier and they are both
       # the same, we only need one
