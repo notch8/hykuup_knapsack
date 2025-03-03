@@ -46,7 +46,10 @@ class MigrateResourcesJob < ApplicationJob
 
   def migrate(id)
     resource = Hyrax.query_service.find_by(id:)
-    return unless resource.wings? # this resource has already been converted
+    unless resource.wings? # this resource has already been converted
+      logger.debug "󰒬 Resource #{id} is already a Valkyrie object"
+      return
+    end
     logger.info "🍀 Migrating resource #{id} in tenant #{Site.account.name}"
     result = MigrateResourceService.new(resource:).call
     if result.success?
