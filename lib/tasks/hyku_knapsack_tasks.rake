@@ -45,8 +45,7 @@ namespace :hykuup do
   namespace :wcu do
     desc 'Update Bulkrax field mappings across WCU/UNCA tenants'
     task update_field_mappings: :environment do
-      # wcu_tenants = Account.where(cname: ['wcu.hykuup.com', 'unca.hykuup.com'])
-      wcu_tenants = Account.where(cname: 'demo.hyku.test')
+      wcu_tenants = Account.where(cname: ['wcu.hykuup.com', 'unca.hykuup.com'])
       wcu_split_pattern = /\s*[|]\s*/
       wcu_csv_mappings = {
         'file' => { 'from' => %w[file_name file], 'split' => wcu_split_pattern },
