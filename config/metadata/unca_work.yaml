@@ -340,7 +340,7 @@ attributes:
       - "date_published_tesim"
       - "date_published_sim"
     form:
-      required: true
+      required: false
       primary: true
       multiple: false
     predicate: http://purl.org/dc/terms/dateAccepted
