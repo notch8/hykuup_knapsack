@@ -17,7 +17,7 @@ on:
 
 jobs:
   build:
-    uses: notch8/actions/.github/workflows/build.yaml@fix-latest-tagging-for-builds
+    uses: notch8/actions/.github/workflows/build.yaml@v0.0.22
     secrets: inherit
     with:
       platforms: 'linux/amd64'
