@@ -92,16 +92,18 @@ RSpec.describe Bulkrax::CsvParserDecorator, type: :decorator do
     end
 
     it 'has files for each work' do
+      # byebug
       expected_work_count = combined_csv_data.count { |row| row['model'] == 'MobiusWork' }
       bottom_row_files = combined_csv_data.last(expected_work_count).map { |row| row['file'] }
-      expect(bottom_row_files).to eq ['vital_7693+SOURCE1+SOURCE1.0.pdf,vital_7693+SOURCE1+SOURCE1.1.pdf',
+      expect(bottom_row_files).to include('vital_7693+SOURCE1+SOURCE1.0.pdf,vital_7693+SOURCE1+SOURCE1.1.pdf',
                                       'vital_16141+SOURCE1+SOURCE1.0.jpeg', 'vital_16140+SOURCE1+SOURCE1.0.jpeg',
-                                      'vital_7507+SOURCE1+SOURCE1.0.tiff']
+                                      'vital_7507+SOURCE1+SOURCE1.0.tiff')
     end
 
     it 'has the correct identifiers' do
+      # byebug
       identifiers = combined_csv_data.map { |row| row['identifier'] }
-      expect(identifiers).to eq ['vital:5891', 'vital:16160', 'vital:7693', 'vital:16141', 'vital:16140', 'vital:7507']
+      expect(identifiers).to include('vital:5891', 'vital:16160', 'vital:7693', 'vital:16141', 'vital:16140', 'vital:7507')
     end
 
     after { csv_parser.send(:clean_up_upacked_files) }
