@@ -231,9 +231,10 @@ fcrepo:
 postgresql:
   enabled: false
 redis:
-  cluster:
-    enabled: false
-  password: $REDIS_PASSWORD
+  enabled: true
+  architecture: standalone
+  auth:
+    password: $REDIS_PASSWORD
 solr:
   enabled: false
 
@@ -248,6 +249,11 @@ externalSolrHost: solr.solr.svc.cluster.local
 externalSolrUser: admin
 externalSolrCollection: "hykuup-knapsack-friends"
 externalSolrPassword: $SOLR_ADMIN_PASSWORD
+
+fits:
+  enabled: true
+  servicePort: 8080
+  subPath: /fits
 
 global:
   hyraxName: hykuup-knapsack-friends-hyrax
