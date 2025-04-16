@@ -1,0 +1,8 @@
+---
+en:
+  hyrax:
+    models:
+      unca_work: Scholarly Work
+    select_type:
+      unca_work:
+        name: Scholarly Work

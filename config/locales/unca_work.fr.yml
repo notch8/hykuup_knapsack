@@ -1,0 +1,8 @@
+---
+fr:
+  hyrax:
+    models:
+      unca_work: Travaux universitaires
+    select_type:
+      unca_work:
+        name: Travaux universitaires
