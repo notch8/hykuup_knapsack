@@ -1,4 +1,3 @@
-version: '3.8'
 x-app: &app
   build:
     context: .
@@ -35,9 +34,14 @@ volumes:
   zoo:
 
 networks:
-  internal:
+  default:
+    name: stackcar
 
 services:
+  adminer:
+    extends:
+      file: hyrax-webapp/docker-compose.yml
+      service: adminer
   zoo:
     extends:
       file: hyrax-webapp/docker-compose.yml
@@ -67,25 +71,31 @@ services:
     extends:
       file: hyrax-webapp/docker-compose.yml
       service: base
-    image: ghcr.io/samvera/hyku/base:${TAG:-latest}
-    command: bash -l -c "echo 'base is only used for building base images, which in turn reduces image build times. It does not need to be run'"
 
   web:
     <<: *app
     extends:
       file: hyrax-webapp/docker-compose.yml
       service: web
-    # Uncomment command to access container with out starting bin/web. Useful for debugging or updating Gemfile.lock
-    # command: sleep infinity
-    environment:
-      # This line is what makes the knapsack include use the local code instead of the remote gem
-      - BUNDLE_LOCAL__HYKU_KNAPSACK=/app/samvera
-      - BUNDLE_DISABLE_LOCAL_BRANCH_CHECK=true
-      - VIRTUAL_PORT=3000
-      - VIRTUAL_HOST=.hyku.test
-      - HYKU_ADMIN_HOST=hyku.test
-      - HYKU_DEFAULT_HOST=%{tenant}.hyku.test
-      - HYKU_ROOT_HOST=hyku.test
+    depends_on:
+      db:
+        condition: service_started
+      solr:
+        condition: service_started
+      fcrepo:
+        condition: service_started
+      redis:
+        condition: service_started
+      zoo:
+        condition: service_started
+      check_volumes:
+        condition: service_started
+      chrome:
+        condition: service_started
+      worker:
+        condition: service_started
+      initialize_app:
+        condition: service_completed_successfully
 
   worker:
     <<: *app
@@ -122,12 +132,6 @@ services:
     extends:
       file: hyrax-webapp/docker-compose.yml
       service: initialize_app
-    command:
-      - >
-        solrcloud-upload-configset.sh /app/samvera/hyrax-webapp/solr/conf &&
-        solrcloud-assign-configset.sh &&
-        SOLR_COLLECTION_NAME=hydra-test solrcloud-assign-configset.sh &&
-        db-migrate-seed.sh
 
   redis:
     extends:
