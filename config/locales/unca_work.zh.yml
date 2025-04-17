@@ -1,0 +1,8 @@
+---
+zh:
+  hyrax:
+    models:
+      unca_work: 学术著作
+    select_type:
+      unca_work:
+        name: 学术著作

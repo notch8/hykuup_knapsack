@@ -1,0 +1,8 @@
+---
+it:
+  hyrax:
+    models:
+      unca_work: Lavoro accademico
+    select_type:
+      unca_work:
+        name: Lavoro accademico

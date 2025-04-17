@@ -1,0 +1,8 @@
+---
+de:
+  hyrax:
+    models:
+      unca_work: Wissenschaftliche Arbeit
+    select_type:
+      unca_work:
+        name: Wissenschaftliche Arbeit
