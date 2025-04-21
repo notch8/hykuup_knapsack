@@ -6,3 +6,20 @@ fr:
     select_type:
       unca_work:
         name: Travaux universitaires
+    unca_work:
+      labels:
+        admin_note: Notes administratives
+        committee_member: membre du comité
+        creator: Créateur
+        date_created: Date de création
+        date_published: Date de publication
+        degree_discipline: Discipline
+        degree_grantor: concédant
+        degree_level: Niveau de diplôme
+        degree_name: Nom du diplôme
+        description: Description
+        related_url: URL associée
+        resource_type: Taper
+        rights_statement: Droits
+        spatial_coverage: Couverture - Nom géographique
+        temporal_coverage: Couverture - Époque historique

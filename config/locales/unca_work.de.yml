@@ -6,3 +6,20 @@ de:
     select_type:
       unca_work:
         name: Wissenschaftliche Arbeit
+    unca_work:
+      labels:
+        admin_note: Administrative Hinweise
+        committee_member: Ausschussmitglied
+        creator: Schöpfer
+        date_created: Erstellungsdatum
+        date_published: Veröffentlichungsdatum
+        degree_discipline: Disziplin
+        degree_grantor: Konzessionsgeber
+        degree_level: Abschluss
+        degree_name: Bezeichnung des Abschlusses
+        description: Beschreibung
+        related_url: Verwandte URL
+        resource_type: Typ
+        rights_statement: Rechte
+        spatial_coverage: Abdeckung – Geografischer Name
+        temporal_coverage: Berichterstattung - Historische Ära
