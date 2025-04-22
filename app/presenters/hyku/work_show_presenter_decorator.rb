@@ -9,4 +9,5 @@ Hyku::WorkShowPresenter.delegate :rights,
                                  :date_published,
                                  :spatial_coverage,
                                  :temporal_coverage,
+                                 :format,
                                  to: :solr_document
