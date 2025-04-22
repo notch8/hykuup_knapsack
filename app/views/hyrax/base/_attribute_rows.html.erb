@@ -1,5 +1,4 @@
 <%# OVERRIDE Hyrax v5.0.0 to add :rights, :relation, :coverage, and :file_format %>
-<%# OVERRIDE Hyrax v5.0.4 to add :date_published, :spatial_coverage, and :temporal_coverage %>
 
 <%= presenter.attribute_to_html(:alternative_title, html_dl: true) %>
 <%= presenter.attribute_to_html(:abstract, html_dl: true) %>
@@ -13,10 +12,7 @@
 <%= presenter.attribute_to_html(:identifier, render_as: :linked, search_field: 'identifier_tesim', html_dl: true) %>
 <%= presenter.attribute_to_html(:keyword, render_as: :faceted, html_dl: true) %>
 <%= presenter.attribute_to_html(:date_created, render_as: :linked, search_field: 'date_created_tesim', html_dl: true) %>
-<%= presenter.attribute_to_html(:date_published, render_as: :linked, search_field: 'date_published_tesim', html_dl: true) %>
 <%= presenter.attribute_to_html(:based_near_label, html_dl: true) %>
-<%= presenter.attribute_to_html(:spatial_coverage, html_dl: true) %>
-<%= presenter.attribute_to_html(:temporal_coverage, html_dl: true) %>
 <%= presenter.attribute_to_html(:related_url, render_as: :external_link, html_dl: true) %>
 <%= presenter.attribute_to_html(:resource_type, render_as: :faceted, html_dl: true) %>
 <%= presenter.attribute_to_html(:source, html_dl: true) %>
