@@ -256,12 +256,13 @@ postgresql:
   enabled: false
 
 redis:
-  persistence:
-    enabled: true
-    storageClass: ebs
-  cluster:
-    enabled: false
-  password: $REDIS_PASSWORD
+  architecture: standalone
+  master:
+    persistence:
+      enabled: true
+      storageClass: ebs
+  auth:
+    password: $REDIS_PASSWORD
 
 solr:
   enabled: false
