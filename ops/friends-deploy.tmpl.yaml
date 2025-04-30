@@ -142,6 +142,8 @@ extraEnvVars: &envVars
     value: /app/fits/fits.sh
   - name: HYRAX_VALKYRIE
     value: "true"
+  - name: HYKU_ATTACK_RATE_THROTTLE_OFF
+    value: "true"
   - name: HYKU_BULKRAX_ENABLED
     value: "true"
   - name: HYKU_BLOCK_VALKYRIE_REDIRECT
