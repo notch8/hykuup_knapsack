@@ -42,6 +42,9 @@ extraVolumeMounts: &volMounts
   - name: uploads
     mountPath: /app/samvera/hyrax-webapp/storage/files
     subPath: storage-files
+  - name: uploads
+    mountPath: /app/samvera/hyrax-webapp/log/rack_attack
+    subPath: rack-attack
 
 ingress:
   enabled: true
@@ -122,8 +125,6 @@ extraEnvVars: &envVars
     value: 'false'
   - name: HYKU_ALLOW_SIGNUP
     value: 'false'
-  - name: HYKU_ATTACK_RATE_THROTTLE_OFF
-    value: "true"
   - name: HYKU_BULKRAX_ENABLED
     value: 'true'
   - name: HYKU_BLOCK_VALKYRIE_REDIRECT
