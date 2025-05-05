@@ -141,6 +141,8 @@ extraEnvVars: &envVars
     value: "true"
   - name: HYKU_FILE_ACL
     value: "true"
+  # - name: HYKU_FLEXIBLE
+  #   value: "true"
   - name: HYKU_MULTITENANT
     value: "true"
   - name: HYKU_ROOT_HOST
