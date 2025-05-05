@@ -17,7 +17,6 @@ FactoryBot.find_definitions
 
 require 'capybara/rails'
 require 'dry-validation'
-require 'based_near_form_fields_behavior'
 # Requires supporting ruby files with custom matchers and macros, etc, in
 # spec/support/ and its subdirectories. Files matching `spec/**/*_spec.rb` are
 # run as spec files by default. This means that files in spec/support that end
@@ -45,9 +44,7 @@ RSpec.configure do |config|
   config.include Capybara::DSL
   config.include Fixtures::FixtureFileUpload
 
-  # To run specs locally without the spec/hyku_specs/ directory do: `bundle exec rspec --tag ~hyku`
-  config.define_derived_metadata(file_path: %r{spec/hyku_specs/}) do |metadata|
-    metadata[:hyku] = true
-  end
+  # Exclude specs tagged with :hyku by default
+  config.filter_run_excluding :hyku
   ## End override
 end
