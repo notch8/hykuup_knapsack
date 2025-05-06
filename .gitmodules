@@ -1,4 +1,4 @@
 [submodule "hyrax-webapp"]
 	path = hyrax-webapp
 	url = https://github.com/samvera/hyku.git
-	branch = update-hyrax-copy-w-bulkrax-bug
+	branch = update-hyrax-to-flexible_double_combo
