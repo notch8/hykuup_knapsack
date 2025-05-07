@@ -137,7 +137,9 @@ extraEnvVars: &envVars
   - name: HYRAX_ACTIVE_JOB_QUEUE
     value: good_job
   - name: HYRAX_ANALYTICS
-    value: "false"
+    value: "true"
+  - name: HYRAX_ANALYTICS_PROVIDER
+    value: "ga4"
   - name: HYRAX_FITS_PATH
     value: /app/fits/fits.sh
   - name: HYRAX_VALKYRIE

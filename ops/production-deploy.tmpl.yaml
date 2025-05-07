@@ -98,11 +98,11 @@ extraEnvVars: &envVars
   - name: FCREPO_URL
     value: http://fcrepo.fcrepo.svc.cluster.local:8080/rest
   - name: HYRAX_ANALYTICS
-    value: 'false'
-  - name: GOOGLE_SITE_VERIFICATION_ID
-    value: vLTXyX8EOD-zkakikW8AZhxbdwgexc8WpDIEI8NFjhQ
-  # - name: GOOGLE_ANALYTICS_ID
-  #   value: $GOOGLE_ANALYTICS_ID
+    value: 'true'
+  - name: GOOGLE_ANALYTICS_PROVIDER
+    value: 'ga4'
+  - name: GOOGLE_ANALYTICS_ID
+    value: $GOOGLE_ANALYTICS_ID
   # - name: GOOGLE_OAUTH_APP_NAME
   #   value: atla-hyku-production
   # - name: GOOGLE_OAUTH_APP_VERSION
