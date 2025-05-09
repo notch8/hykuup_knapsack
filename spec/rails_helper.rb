@@ -44,9 +44,7 @@ RSpec.configure do |config|
   config.include Capybara::DSL
   config.include Fixtures::FixtureFileUpload
 
-  # To run specs locally without the spec/hyku_specs/ directory do: `bundle exec rspec --tag ~hyku`
-  config.define_derived_metadata(file_path: %r{spec/hyku_specs/}) do |metadata|
-    metadata[:hyku] = true
-  end
+  # Exclude specs tagged with :hyku by default
+  config.filter_run_excluding :hyku
   ## End override
 end

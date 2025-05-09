@@ -14,7 +14,7 @@ class UncaWorkForm < Hyrax::Forms::ResourceForm(UncaWork)
   # Hyrax expects :based_near to be included via the :basic_metadata. Since we've included
   # it via the :unca_work schema (in order to customize it's default metadata), we need to
   # include the based_near behavior manually.
-  include BasedNearFormFieldsBehavior
+  # include BasedNearFormFieldsBehavior
   # Define custom form fields using the Valkyrie::ChangeSet interface
   #
   # property :my_custom_form_field

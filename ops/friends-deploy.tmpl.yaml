@@ -142,6 +142,8 @@ extraEnvVars: &envVars
     value: "ga4"
   - name: HYRAX_FITS_PATH
     value: /app/fits/fits.sh
+  - name: HYRAX_FLEXIBLE
+    value: "true"
   - name: HYRAX_VALKYRIE
     value: "true"
   - name: HYKU_ATTACK_RATE_THROTTLE_OFF
@@ -168,6 +170,8 @@ extraEnvVars: &envVars
     value: "true"
   - name: HYKU_ROOT_HOST
     value: hykuup-knapsack-friends.notch8.cloud
+  - name: HYKU_SHOW_BACKTRACE
+    value: "true"
   - name: NEGATIVE_CAPTCHA_SECRET
     value: $NEGATIVE_CAPTCHA_SECRET
   - name: SMTP_ADDRESS
