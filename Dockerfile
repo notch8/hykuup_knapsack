@@ -14,7 +14,7 @@ USER root
 
 # Install "best" training data for Tesseract
 RUN echo "📚 Installing Tesseract Best (training data)!" && \
-    wget https://github.com/tesseract-ocr/tessdata_best/raw/main/eng.traineddata -O /usr/share/tessdata/eng_best.traineddata && \
+    wget https://github.com/tesseract-ocr/tessdata_best/raw/main/eng.traineddata -O /usr/share/tesseract-ocr/5/tessdata/eng_best.traineddata && \
     git config --global --add safe.directory /app/samvera
 
 # Switch back to the non-root user for running the application
