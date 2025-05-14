@@ -32,7 +32,7 @@ include making contributing back to the Hyku project easier and making upgrades 
 
 ### Precedence
 
-In a traditional setup, a Rails' application's views, translations, and code supsedes all other gems and engines.  However, we have setup Hyku Knapsack to have a higher load precedence than the underlying Hyku application.
+In a traditional setup, a Rails' application's views, translations, and code supersedes all other gems and engines.  However, we have setup Hyku Knapsack to have a higher load precedence than the underlying Hyku application.
 
 The goal being that a Hyku Knapsack should make it easier to maintain, upgrade, and contribute fixes back to Hyku.
 
