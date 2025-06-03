@@ -1,4 +1,4 @@
-# Get the commit sha from the hyrax-webapp submodule
+# This is the SHA of the submodule
 ARG BASE_TAG=315925a4
 FROM ghcr.io/samvera/hyku/base:${BASE_TAG} AS hyku-knap-base
 
