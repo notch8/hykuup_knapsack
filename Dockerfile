@@ -1,4 +1,6 @@
-FROM ghcr.io/samvera/hyku/base:latest AS hyku-knap-base
+# Get the commit hash from the hyrax-webapp submodule
+ARG BASE_TAG=315925a4
+FROM ghcr.io/samvera/hyku/base:${BASE_TAG} AS hyku-knap-base
 
 # This is specifically NOT $APP_PATH but the parent directory
 COPY --chown=1001:101 . /app/samvera
