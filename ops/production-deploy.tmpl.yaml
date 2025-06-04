@@ -122,7 +122,7 @@ extraEnvVars: &envVars
   - name: HYRAX_VALKYRIE
     value: "true"
   - name: HYKU_ADMIN_HOST
-    value: admin.hykuup.com
+    value: main.hykuup.com
   - name: HYKU_ADMIN_ONLY_TENANT_CREATION
     value: 'false'
   - name: HYKU_ALLOW_SIGNUP
@@ -148,9 +148,9 @@ extraEnvVars: &envVars
   - name: HYKU_ROOT_HOST
     value: hykuup.com
   - name: INITIAL_ADMIN_EMAIL
-    value: rob@scientist.com
+    value: $INITIAL_ADMIN_EMAIL
   - name: INITIAL_ADMIN_PASSWORD
-    value: testing123
+    value: $INITIAL_ADMIN_PASSWORD
   - name: HYRAX_USE_SOLR_GRAPH_NESTING
     value: "true"
   - name: IN_DOCKER
