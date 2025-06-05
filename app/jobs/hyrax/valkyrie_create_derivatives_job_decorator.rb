@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 # OVERRIDE to log and report derivative errors to Sentry
 ValkyrieCreateDerivativesJob.class_eval do
+  # rubocop:disable Metrics/MethodLength
   def perform(file_set_id, file_id, _filepath = nil)
     file_metadata = Hyrax.custom_queries.find_file_metadata_by(id: file_id)
     return if file_metadata.video? && !Hyrax.config.enable_ffmpeg
@@ -15,13 +16,16 @@ ValkyrieCreateDerivativesJob.class_eval do
       Rails.logger.error("[DerivativesJob] FileSet: #{file_set_id} — #{e.class}: #{e.message}")
       Rails.logger.debug { e.backtrace.join("\n") }
 
-      Sentry.capture_exception(e, extra: {
-        job: "ValkyrieCreateDerivativesJob",
-        file_set_id: file_set_id,
-        file_id: file_id
-      }) if defined?(Sentry)
+      if defined?(Sentry)
+        Sentry.capture_exception(e, extra: {
+                                   job: "ValkyrieCreateDerivativesJob",
+                                   file_set_id:,
+                                   file_id:
+                                 })
+      end
 
       raise
     end
   end
+  # rubocop:enable Metrics/MethodLength
 end
