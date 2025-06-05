@@ -1,40 +1,27 @@
 # frozen_string_literal: true
-# spec/hyku_knapsack/valkyrie_create_derivatives_job_spec.rb
-require 'rails_helper'
+# OVERRIDE to log and report derivative errors to Sentry
+ValkyrieCreateDerivativesJob.class_eval do
+  def perform(file_set_id, file_id, _filepath = nil)
+    file_metadata = Hyrax.custom_queries.find_file_metadata_by(id: file_id)
+    return if file_metadata.video? && !Hyrax.config.enable_ffmpeg
 
-RSpec.describe ValkyrieCreateDerivativesJob, type: :job do
-  let(:malformed_pdf_path) { Rails.root.join("spec", "fixtures", "files", "malformed.pdf") }
+    file = Hyrax.storage_adapter.find_by(id: file_metadata.file_identifier)
 
-  let(:file_id) { SecureRandom.uuid }
-  let(:file_set_id) { SecureRandom.uuid }
+    begin
+      derivative_service = Hyrax::DerivativeService.for(file_metadata)
+      derivative_service.create_derivatives(file.disk_path)
+      reindex_parent(file_set_id)
+    rescue => e
+      Rails.logger.error("[DerivativesJob] FileSet: #{file_set_id} — #{e.class}: #{e.message}")
+      Rails.logger.debug { e.backtrace.join("\n") }
 
-  let(:file_metadata) do
-    instance_double(
-      "Hyrax::FileMetadata",
-      file_identifier: file_id,
-      video?: false
-    )
-  end
+      Sentry.capture_exception(e, extra: {
+        job: "ValkyrieCreateDerivativesJob",
+        file_set_id: file_set_id,
+        file_id: file_id
+      }) if defined?(Sentry)
 
-  before do
-    allow(Hyrax.custom_queries).to receive(:find_file_metadata_by).with(id: file_id).and_return(file_metadata)
-    allow(Hyrax.storage_adapter).to receive(:find_by).with(id: file_id).and_return(double(disk_path: malformed_pdf_path))
-  end
-
-  it "logs and reports derivative error to Sentry for malformed PDF" do
-    if defined?(Sentry)
-      expect(Sentry).to receive(:capture_exception).with(
-        an_instance_of(StandardError),
-        extra: hash_including(
-          job: "ValkyrieCreateDerivativesJob",
-          file_set_id: file_set_id,
-          file_id: file_id
-        )
-      )
+      raise
     end
-
-    expect {
-      described_class.new.perform(file_set_id, file_id)
-    }.to raise_error(StandardError)
   end
 end
