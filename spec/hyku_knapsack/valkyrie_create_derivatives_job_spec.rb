@@ -31,14 +31,14 @@ RSpec.describe ValkyrieCreateDerivativesJob, type: :job do
         error,
         extra: hash_including(
           job: "ValkyrieCreateDerivativesJob",
-          file_set_id:,
-          file_id:
+          file_set_id: file_set_id,
+          file_id: file_id
         )
       )
     end
 
-    expect do
+    expect {
       described_class.new.perform(file_set_id, file_id)
-    end.to raise_error(StandardError, "derivative failed")
+    }.to raise_error(StandardError, "derivative failed")
   end
 end

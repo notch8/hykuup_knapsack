@@ -1,4 +1,3 @@
-# frozen_string_literal: true
 # spec/hyku_knapsack/valkyrie_create_derivatives_job_spec.rb
 require 'rails_helper'
 
@@ -27,14 +26,14 @@ RSpec.describe ValkyrieCreateDerivativesJob, type: :job do
         an_instance_of(StandardError),
         extra: hash_including(
           job: "ValkyrieCreateDerivativesJob",
-          file_set_id:,
-          file_id:
+          file_set_id: file_set_id,
+          file_id: file_id
         )
       )
     end
 
-    expect do
+    expect {
       described_class.new.perform(file_set_id, file_id)
-    end.to raise_error(StandardError)
+    }.to raise_error(StandardError)
   end
 end
