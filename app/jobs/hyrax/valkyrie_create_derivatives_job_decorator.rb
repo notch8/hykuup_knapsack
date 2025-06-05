@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 # spec/hyku_knapsack/valkyrie_create_derivatives_job_spec.rb
 require 'rails_helper'
 
