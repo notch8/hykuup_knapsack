@@ -21,7 +21,6 @@ RSpec.describe ValkyrieCreateDerivativesJob, type: :job do
 
   it 'logs and reports an error to Sentry if derivative generation fails' do
     error = StandardError.new("derivative failed")
-    # allow(Hyrax::DerivativeService).to receive(:for).and_return(double(create_derivatives: raise(error)))
     fake_derivative_service = double
     allow(Hyrax::DerivativeService).to receive(:for).and_return(fake_derivative_service)
     allow(fake_derivative_service).to receive(:create_derivatives).and_raise(error)
