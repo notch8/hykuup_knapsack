@@ -198,7 +198,7 @@ extraEnvVars: &envVars
   - name: SMTP_TYPE
     value: login
   - name: SMTP_USER_NAME
-    value: AKIAJUV5DOPWWUKISN3Q
+    value: AKIAJCBUYVAVUEJIDQEA
   - name: SOLR_ADMIN_PASSWORD
     value: $SOLR_ADMIN_PASSWORD
   - name: SOLR_ADMIN_USER
