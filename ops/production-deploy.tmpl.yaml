@@ -184,7 +184,7 @@ extraEnvVars: &envVars
   - name: SENTRY_ENVIRONMENT
     value: "hykuup-knapsack-production"
   - name: SMTP_ADDRESS
-    value: email-smtp.us-west-2.amazonaws.com
+    value: smtp.sendgrid.net
   - name: SMTP_DOMAIN
     value: hykuup.com
   - name: SMTP_ENABLED
@@ -196,9 +196,9 @@ extraEnvVars: &envVars
   - name: SMTP_STARTTLS
     value: 'true'
   - name: SMTP_TYPE
-    value: login
+    value: plain
   - name: SMTP_USER_NAME
-    value: AKIAJCBUYVAVUEJIDQEA
+    value: apikey
   - name: SOLR_ADMIN_PASSWORD
     value: $SOLR_ADMIN_PASSWORD
   - name: SOLR_ADMIN_USER
