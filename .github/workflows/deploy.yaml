@@ -11,6 +11,7 @@ on:
         options:
           - friends
           - staging
+          - argo
           - production
       debug_enabled:
         type: boolean
