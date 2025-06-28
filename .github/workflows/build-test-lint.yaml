@@ -47,7 +47,7 @@ jobs:
     # TODO: extract to Actions repo
     runs-on: ubuntu-latest
     needs: build
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    # if: github.event_name == 'push' && github.ref == 'refs/heads/main'
 
     steps:
       - id: setup
