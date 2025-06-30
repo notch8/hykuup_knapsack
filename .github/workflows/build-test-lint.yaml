@@ -108,6 +108,8 @@ jobs:
           Triggered by: ${{ github.event_name }}
           Actor: ${{ github.actor }}"
 
+          git remote set-url origin \
+            https://x-access-token:${{ steps.app-token.outputs.token }}@github.com/notch8/hykuup_knapsack_ops.git # TODO: make dynamic
           git push origin main
 
       - name: Summary
