@@ -80,7 +80,7 @@ jobs:
           for values_file in $(find . -type f -name "values.yaml"); do
             cp $values_file ${values_file}.backup
 
-            sed -i "s|tag: .*|tag: ${HEAD_TAG}|g" $values_file
+            sed -i "s|tag: .*|tag: ${TAG}|g" $values_file
 
             echo "=== Changes made to $values_file ==="
             diff -u ${values_file}.backup $values_file || true
@@ -102,9 +102,9 @@ jobs:
           fi
 
           find . -type f -name "values.yaml" -exec git add {} +
-          git commit -m "Update image tag to ${HEAD_TAG}
+          git commit -m "Update image tag to ${TAG}
 
-          Source: ${{ github.repository }}@${HEAD_TAG}
+          Source: ${{ github.repository }}@${TAG}
           Triggered by: ${{ github.event_name }}
           Actor: ${{ github.actor }}"
 
@@ -114,6 +114,6 @@ jobs:
         run: |
           echo "✅ Successfully updated Helm values file(s)"
           echo "Repository: notch8/hykuup_knapsack_ops" # TODO: make dynamic
-          echo "Commit hash: ${HEAD_TAG}"
+          echo "Commit hash: ${TAG}"
           echo "Deploy with ArgoCD here:"
           echo "🚀 https://argo.notch8.cloud"
