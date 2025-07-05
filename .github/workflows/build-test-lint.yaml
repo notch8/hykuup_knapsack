@@ -48,6 +48,3 @@ jobs:
     uses: notch8/actions/.github/workflows/update-deploy-values.yaml@add-new-deploy-action
     with:
       ops_repository: ${{ vars.OPS_REPOSITORY }}
-      APP_ID: ${{ vars.APP_ID }}
-    secrets:
-      APP_PRIVATE_KEY: ${{ secrets.APP_PRIVATE_KEY }}
