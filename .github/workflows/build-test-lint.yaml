@@ -1,4 +1,4 @@
-name: "Build Test Lint"
+name: "Build Test Lint Deploy"
 run-name: Build Test Lint of ${{ github.ref_name }} by @${{ github.actor }}
 on:
   push:
@@ -44,78 +44,11 @@ jobs:
       rubocop_cmd: "cd .. && bundle && bundle exec rubocop --parallel --format progress"
 
   update-deploy-values:
-    # TODO: extract to Actions repo
-    runs-on: ubuntu-latest
     needs: build
-    # if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-
-    steps:
-      - id: setup
-        name: Setup
-        uses: notch8/actions/setup-env@v0.0.26
-        with:
-          tag: ${{ inputs.tag }}
-          token: ${{ secrets.CHECKOUT_TOKEN || secrets.GITHUB_TOKEN }}
-
-      - uses: actions/create-github-app-token@v2
-        id: app-token
-        with:
-          app-id: ${{ vars.APP_ID }}
-          private-key: ${{ secrets.APP_PRIVATE_KEY }}
-          owner: ${{ github.repository_owner }}
-
-      - name: Checkout ops repository
-        uses: actions/checkout@v4
-        with:
-          repository: notch8/hykuup_knapsack_ops # TODO: make dynamic
-          token: ${{ steps.app-token.outputs.token }}
-          path: ops-repo
-          fetch-depth: 1
-          persist-credentials: false
-
-      - name: Update Helm values file
-        run: |
-          cd ops-repo
-
-          for values_file in $(find . -type f -name "values.yaml"); do
-            cp $values_file ${values_file}.backup
-
-            sed -i "s|tag: .*|tag: ${TAG}|g" $values_file
-
-            echo "=== Changes made to $values_file ==="
-            diff -u ${values_file}.backup $values_file || true
-
-            rm ${values_file}.backup
-          done
-
-      - name: Commit and push changes
-        run: |
-          cd ops-repo
-
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-
-          # Check if there are changes to commit
-          if git diff --quiet; then
-            echo "No changes to commit"
-            exit 0
-          fi
-
-          find . -type f -name "values.yaml" -exec git add {} +
-          git commit -m "Update image tag to ${TAG}
-
-          Source: ${{ github.repository }}@${TAG}
-          Triggered by: ${{ github.event_name }}
-          Actor: ${{ github.actor }}"
-
-          git remote set-url origin \
-            https://x-access-token:${{ steps.app-token.outputs.token }}@github.com/notch8/hykuup_knapsack_ops.git # TODO: make dynamic
-          git push origin main
-
-      - name: Summary
-        run: |
-          echo "✅ Successfully updated Helm values file(s)"
-          echo "Repository: notch8/hykuup_knapsack_ops" # TODO: make dynamic
-          echo "Commit hash: ${TAG}"
-          echo "Deploy with ArgoCD here:"
-          echo "🚀 https://argo.notch8.cloud"
+    uses: notch8/actions/.github/workflows/update-deploy-values.yaml@add-new-deploy-action
+    with:
+      ops_repository: ${{ vars.OPS_REPOSITORY }}
+      tag: ${{ inputs.tag }}
+      APP_ID: ${{ vars.APP_ID }}
+    secrets:
+      APP_PRIVATE_KEY: ${{ secrets.APP_PRIVATE_KEY }}
