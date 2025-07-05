@@ -43,6 +43,7 @@ jobs:
       workerTarget: hyku-worker
       rubocop_cmd: "cd .. && bundle && bundle exec rubocop --parallel --format progress"
 
+  # TODO: remove this comment
   update-deploy-values:
     needs: build
     uses: notch8/actions/.github/workflows/update-deploy-values.yaml@add-new-deploy-action
