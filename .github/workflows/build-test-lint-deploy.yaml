@@ -46,6 +46,6 @@ jobs:
   update-deploy-values:
     needs: build
     uses: notch8/actions/.github/workflows/update-deploy-values.yaml@add-new-deploy-action
-    secrets: inherit
+    secrets: inherit # required to read org-level secrets used by action
     with:
       ops_repository: ${{ vars.OPS_REPOSITORY }}
