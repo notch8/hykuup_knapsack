@@ -23,7 +23,14 @@ derivativesVolume:
 uploadsVolume:
   storageClass: efs-sc
 
+extraVolumes:
+  - name: scratch-tmp
+    emptyDir:
+      medium: Memory
+
 extraVolumeMounts: &volMounts
+  - name: branding
+    mountPath: /app/samvera/hyrax-webapp/public/branding
   - name: uploads
     mountPath: /app/samvera/hyrax-webapp/tmp/imports
     subPath: imports
@@ -45,6 +52,8 @@ extraVolumeMounts: &volMounts
   - name: uploads
     mountPath: /app/samvera/hyrax-webapp/log/rack_attack
     subPath: rack-attack
+  - name: scratch-tmp
+    mountPath: /tmp
 
 ingress:
   enabled: true
@@ -54,7 +63,8 @@ ingress:
         - path: /
   annotations: {
     kubernetes.io/ingress.class: "nginx",
-    nginx.ingress.kubernetes.io/proxy-body-size: "0",
+    nginx.ingress.kubernetes.io/proxy-body-size: "1000m",
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "300",
     cert-manager.io/cluster-issuer: letsencrypt-production-dns
   }
   tls:
