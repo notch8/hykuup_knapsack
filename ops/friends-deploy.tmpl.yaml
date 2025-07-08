@@ -1,3 +1,4 @@
+# TODO: delete this file after migrating it to hykuup_knapsack_ops repo
 replicaCount: 2
 
 resources:

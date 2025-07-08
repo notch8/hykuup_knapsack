@@ -45,6 +45,7 @@ jobs:
 
   update-deploy-values:
     needs: build
+    # TODO: replace add-new-deploy-action with main after that branch has been merged
     uses: notch8/actions/.github/workflows/update-deploy-values.yaml@add-new-deploy-action
     secrets: inherit # required to read org-level secrets used by action
     with:
