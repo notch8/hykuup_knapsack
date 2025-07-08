@@ -30,8 +30,6 @@ extraVolumes:
       medium: Memory
 
 extraVolumeMounts: &volMounts
-  - name: branding
-    mountPath: /app/samvera/hyrax-webapp/public/branding
   - name: uploads
     mountPath: /app/samvera/hyrax-webapp/tmp/imports
     subPath: imports
