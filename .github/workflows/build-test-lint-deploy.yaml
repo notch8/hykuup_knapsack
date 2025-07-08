@@ -1,4 +1,4 @@
-name: "Build Test Lint"
+name: "Build Test Lint Deploy"
 run-name: Build Test Lint of ${{ github.ref_name }} by @${{ github.actor }}
 on:
   push:
@@ -11,11 +11,11 @@ on:
     inputs:
       debug_step:
         required: false
-        description: 'Pause the selected step to debug using tmate'
+        description: "Pause the selected step to debug using tmate"
         type: choice
-        default: ''
+        default: ""
         options:
-          - ''
+          - ""
           - build
           - test
           - lint
@@ -32,7 +32,7 @@ jobs:
     needs: build
     uses: notch8/actions/.github/workflows/test.yaml@v0.0.23
     with:
-      confdir: '/app/samvera/hyrax-webapp/solr/conf'
+      confdir: "/app/samvera/hyrax-webapp/solr/conf"
       rspec_cmd: "cd .. && gem install semaphore_test_boosters && bundle && rspec_booster --job $CI_NODE_INDEX/$CI_NODE_TOTAL"
 
   lint:
@@ -42,3 +42,11 @@ jobs:
       webTarget: hyku-web
       workerTarget: hyku-worker
       rubocop_cmd: "cd .. && bundle && bundle exec rubocop --parallel --format progress"
+
+  update-deploy-values:
+    needs: build
+    # TODO: replace add-new-deploy-action with main after that branch has been merged
+    uses: notch8/actions/.github/workflows/update-deploy-values.yaml@add-new-deploy-action
+    secrets: inherit # required to read org-level secrets used by action
+    with:
+      ops_repository: ${{ vars.OPS_REPOSITORY }}
