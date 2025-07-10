@@ -72,8 +72,6 @@ extraEnvVars: &envVars
     value: /app/samvera
   - name: BUNDLE_DISABLE_LOCAL_BRANCH_CHECK
     value: "true"
-  - name: BUNDLE_BUNDLER_INJECT__GEM_PATH
-    value: /app/samvera/bundler.d
   - name: CONFDIR
     value: "/app/samvera/hyrax-webapp/solr/conf"
   - name: CLIENT_ADMIN_USER_EMAIL
@@ -142,6 +140,8 @@ extraEnvVars: &envVars
     value: "ga4"
   - name: HYRAX_FITS_PATH
     value: /app/fits/fits.sh
+  - name: HYRAX_FLEXIBLE
+    value: "true"
   - name: HYRAX_VALKYRIE
     value: "true"
   - name: HYKU_ATTACK_RATE_THROTTLE_OFF
