@@ -1,0 +1,25 @@
+---
+en:
+  hyrax:
+    models:
+      scholarly_work: Scholarly Work
+    select_type:
+      scholarly_work:
+        name: Scholarly Work
+    scholarly_work:
+      labels:
+        committee_member: Committee member
+        creator: Creator
+        date_created: Date of creation
+        date_published: Date of publication
+        degree_discipline: Discipline
+        degree_grantor: Grantor
+        degree_level: Level of degree
+        degree_name: Name of degree
+        description: Description
+        related_url: Related URL
+        resource_type: Type
+        rights_statement: Rights
+        admin_note: Administrative Notes
+        spatial_coverage: "Coverage - Geographic name"
+        temporal_coverage: "Coverage - Historic era"

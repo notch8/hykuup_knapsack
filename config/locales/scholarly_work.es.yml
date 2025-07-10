@@ -1,0 +1,25 @@
+---
+es:
+  hyrax:
+    models:
+      scholarly_work: Trabajo académico
+    select_type:
+      scholarly_work:
+        name: Trabajo académico
+    scholarly_work:
+      labels:
+        admin_note: Notas administrativas
+        committee_member: Miembro del comité
+        creator: Creador
+        date_created: Fecha de creación
+        date_published: Fecha de publicación
+        degree_discipline: Disciplina
+        degree_grantor: Cedente
+        degree_level: Nivel de titulación
+        degree_name: Nombre del título
+        description: Descripción
+        related_url: URL relacionada
+        resource_type: Tipo
+        rights_statement: Derechos
+        spatial_coverage: Cobertura - Nombre geográfico
+        temporal_coverage: Cobertura - Época histórica
