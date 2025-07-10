@@ -5,9 +5,9 @@
 class UncaWorkIndexer < Hyrax::ValkyrieWorkIndexer
   # Basic metadata has been included via :unca_work so we can customize it
   # include Hyrax::Indexer(:basic_metadata)
-  include Hyrax::Indexer(:unca_work)
-  include Hyrax::Indexer(:with_pdf_viewer)
-  include Hyrax::Indexer(:with_video_embed)
+  include Hyrax::Indexer(:unca_work) unless Hyrax.config.flexible?
+  include Hyrax::Indexer(:with_pdf_viewer) unless Hyrax.config.flexible?
+  include Hyrax::Indexer(:with_video_embed) unless Hyrax.config.flexible?
 
   include HykuIndexing
   # Uncomment this block if you want to add custom indexing behavior:

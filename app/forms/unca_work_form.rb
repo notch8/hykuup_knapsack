@@ -7,9 +7,9 @@
 # @see https://github.com/samvera/valkyrie/wiki/ChangeSets-and-Dirty-Tracking
 class UncaWorkForm < Hyrax::Forms::ResourceForm(UncaWork)
   # include Hyrax::FormFields(:basic_metadata)
-  include Hyrax::FormFields(:unca_work)
-  include Hyrax::FormFields(:with_pdf_viewer)
-  include Hyrax::FormFields(:with_video_embed)
+  include Hyrax::FormFields(:unca_work) unless Hyrax.config.flexible?
+  include Hyrax::FormFields(:with_pdf_viewer) unless Hyrax.config.flexible?
+  include Hyrax::FormFields(:with_video_embed) unless Hyrax.config.flexible?
   include VideoEmbedBehavior::Validation
   # Hyrax expects :based_near to be included via the :basic_metadata. Since we've included
   # it via the :unca_work schema (in order to customize it's default metadata), we need to
