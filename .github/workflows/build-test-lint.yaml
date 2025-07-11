@@ -25,6 +25,7 @@ jobs:
     uses: notch8/actions/.github/workflows/build.yaml@fix/pr-checkout-logic
     secrets: inherit
     with:
+      use_local_actions: true
       platforms: "linux/amd64"
       webTarget: hyku-web
       workerTarget: hyku-worker
