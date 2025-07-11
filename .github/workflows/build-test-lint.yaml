@@ -19,7 +19,6 @@ on:
           - build
           - test
           - lint
-
 jobs:
   build:
     uses: notch8/actions/.github/workflows/build.yaml@failing-build-fix
