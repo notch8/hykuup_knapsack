@@ -22,25 +22,24 @@ on:
 
 jobs:
   build:
-    uses: notch8/actions/.github/workflows/build.yaml@fix/pr-checkout-logic
+    uses: notch8/actions/.github/workflows/build.yaml@failing-build-fix
     secrets: inherit
     with:
       platforms: 'linux/amd64'
       webTarget: hyku-web
       workerTarget: hyku-worker
       use_local_actions: true
-      action_ref: 'fix/pr-checkout-logic' # Pass the branch name here
 
   test:
     needs: build
-    uses: notch8/actions/.github/workflows/test.yaml@fix/pr-checkout-logic
+    uses: notch8/actions/.github/workflows/test.yaml@failing-build-fix
     with:
       confdir: '/app/samvera/hyrax-webapp/solr/conf'
       rspec_cmd: "cd .. && gem install semaphore_test_boosters && bundle && rspec_booster --job $CI_NODE_INDEX/$CI_NODE_TOTAL"
 
   lint:
     needs: build
-    uses: notch8/actions/.github/workflows/lint.yaml@fix/pr-checkout-logic
+    uses: notch8/actions/.github/workflows/lint.yaml@failing-build-fix
     with:
       webTarget: hyku-web
       workerTarget: hyku-worker
