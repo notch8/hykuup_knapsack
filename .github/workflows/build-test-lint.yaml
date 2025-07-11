@@ -13,9 +13,9 @@ on:
         required: false
         description: 'Pause the selected step to debug using tmate'
         type: choice
-        default: ''
+        default: 'none'
         options:
-          - ''
+          - 'none'
           - build
           - test
           - lint
@@ -45,4 +45,3 @@ jobs:
       webTarget: hyku-web
       workerTarget: hyku-worker
       rubocop_cmd: "cd .. && bundle && bundle exec rubocop --parallel --format progress"
-      
