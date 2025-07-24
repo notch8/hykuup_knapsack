@@ -2,9 +2,9 @@
 
 # This file is copied to spec/ when you run 'rails generate rspec:install'
 require "spec_helper"
-require File.expand_path("hyku_specs/rails_helper.rb", __dir__)
 
 ENV["RAILS_ENV"] ||= "test"
+
 # require File.expand_path('../config/environment', __dir__)
 require File.expand_path("../hyrax-webapp/config/environment", __dir__)
 # Prevent database truncation if the environment is production
@@ -34,6 +34,7 @@ require 'dry-validation'
 Dir[HykuKnapsack::Engine.root.join('spec', 'support', '**', '*.rb')].each { |f| require f }
 
 RSpec.configure do |config|
+
   # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
   config.fixture_path = Rails.root.join('spec', 'fixtures')
 
@@ -43,10 +44,4 @@ RSpec.configure do |config|
   config.include HykuKnapsack::Engine.routes.url_helpers
   config.include Capybara::DSL
   config.include Fixtures::FixtureFileUpload
-
-  # To run specs locally without the spec/hyku_specs/ directory do: `bundle exec rspec --tag ~hyku`
-  config.define_derived_metadata(file_path: %r{spec/hyku_specs/}) do |metadata|
-    metadata[:hyku] = true
-  end
-  ## End override
 end
