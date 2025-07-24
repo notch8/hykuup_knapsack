@@ -5,11 +5,8 @@
 #
 # @see https://github.com/samvera/hyrax/wiki/Hyrax-Valkyrie-Usage-Guide#forms
 # @see https://github.com/samvera/valkyrie/wiki/ChangeSets-and-Dirty-Tracking
+#  updated to only work for flexible true since app is now using flexible metadata
 class MobiusWorkForm < Hyrax::Forms::ResourceForm(MobiusWork)
-  include Hyrax::FormFields(:basic_metadata)
-  include Hyrax::FormFields(:mobius_work)
-  include Hyrax::FormFields(:with_pdf_viewer)
-  include Hyrax::FormFields(:with_video_embed)
   include VideoEmbedBehavior::Validation
   # Define custom form fields using the Valkyrie::ChangeSet interface
   #

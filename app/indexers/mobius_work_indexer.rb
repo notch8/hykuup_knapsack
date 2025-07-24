@@ -2,12 +2,9 @@
 
 # Generated via
 #  `rails generate hyrax:work_resource MobiusWork`
+#  updated to only work for flexible true since app is now using flexible metadata
 class MobiusWorkIndexer < Hyrax::ValkyrieWorkIndexer
-  include Hyrax::Indexer(:basic_metadata)
-  include Hyrax::Indexer(:mobius_work)
-  include Hyrax::Indexer(:with_pdf_viewer)
-  include Hyrax::Indexer(:with_video_embed)
-
+  include Hyrax::Indexer('MobiusWork')
   include HykuIndexing
   # Uncomment this block if you want to add custom indexing behavior:
   #  def to_solr

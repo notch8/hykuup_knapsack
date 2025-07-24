@@ -1,5 +1,0 @@
-<%# OVERRIDE: Render as text instead of select to accommodate imported values that aren't included
-    in Hyku by default. This is intended to be a temporary workaround until flexible metadata
-    has been released in Hyku. %>
-<%# TODO: Delete this file when flexible metadata is released in Hyku %>
-<%= f.input :resource_type, as: :multi_value, input_html: { rows: '14' }, required: f.object.required?(key) %>
