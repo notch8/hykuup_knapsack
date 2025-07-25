@@ -21,6 +21,12 @@ classes:
     display_label: Collection Resource
   Hyrax::FileSet:
     display_label: FileSet
+  MobiusWork:
+    display_label: Mobius Work
+  ScholarlyWork:
+    display_label: Scholarly Work
+  UncaWork:
+    display_label: Unca Work (obsolete)
 contexts:
   flexible_context:
     display_label: Flexible Metadata Example
