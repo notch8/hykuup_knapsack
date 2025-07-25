@@ -25,7 +25,6 @@ jobs:
     uses: notch8/actions/.github/workflows/build.yaml@hykuup-after-care
     secrets: inherit
     with:
-      debug_step: ${{ inputs.debug_step }}
       platforms: "linux/amd64"
       webTarget: hyku-web
       workerTarget: hyku-worker
@@ -34,7 +33,6 @@ jobs:
     needs: build
     uses: notch8/actions/.github/workflows/test.yaml@hykuup-after-care
     with:
-      debug_step: ${{ inputs.debug_step }}
       confdir: '/app/samvera/hyrax-webapp/solr/conf'
       rspec_cmd: "cd .. && gem install semaphore_test_boosters && bundle && rspec_booster --job $CI_NODE_INDEX/$CI_NODE_TOTAL"
 
@@ -42,7 +40,6 @@ jobs:
     needs: build
     uses: notch8/actions/.github/workflows/lint.yaml@hykuup-after-care
     with:
-      debug_step: ${{ inputs.debug_step }}
       webTarget: hyku-web
       workerTarget: hyku-worker
       rubocop_cmd: "cd .. && bundle && bundle exec rubocop --parallel --format progress"
