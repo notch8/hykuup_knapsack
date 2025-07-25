@@ -1,5 +1,5 @@
 # This is the SHA of the submodule
-ARG BASE_TAG=315925a4
+ARG BASE_TAG=b5685cb3
 FROM ghcr.io/samvera/hyku/base:${BASE_TAG} AS hyku-knap-base
 
 # This is specifically NOT $APP_PATH but the parent directory
