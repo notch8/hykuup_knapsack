@@ -18,7 +18,7 @@ module SolrDocumentDecorator
     self['file_format_tesim']
   end
 
-  # Custom Unca work type fields
+  # Custom Scholarly work type fields
   def date_published
     self['date_published_tesim']
   end

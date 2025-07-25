@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # OVERRIDE Hyku to delegate Mobius properties
-# OVERRIDE Hyku to delegate Unca property :date_published
+# OVERRIDE Hyku to delegate Scholarly Work property :date_published
 Hyku::WorkShowPresenter.delegate :rights,
                                  :relation,
                                  :coverage,

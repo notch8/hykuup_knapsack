@@ -1,4 +1,3 @@
-<%# OVERRIDE to support dynamic metadata w/ custom date field %>
 <% view_options_for(presenter).each do |field, options| %>
   <% value = presenter.public_send(field) %>
   <% render_attribute = value.present? && (value.is_a?(Enumerable) ? value.any?(&:present?) : true) %>

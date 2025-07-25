@@ -1,13 +1,14 @@
 # frozen_string_literal: true
 
 # Generated via
-#  `rails generate hyrax:work_resource MobiusWork`
+#  `rails generate hyrax:work_resource ScholarlyWork`
 #
 # @see https://github.com/samvera/hyrax/wiki/Hyrax-Valkyrie-Usage-Guide#forms
 # @see https://github.com/samvera/valkyrie/wiki/ChangeSets-and-Dirty-Tracking
 #  updated to only work for flexible true since app is now using flexible metadata
-class MobiusWorkForm < Hyrax::Forms::ResourceForm(MobiusWork)
+class ScholarlyWorkForm < Hyrax::Forms::ResourceForm(ScholarlyWork)
   include VideoEmbedBehavior::Validation
+
   # Define custom form fields using the Valkyrie::ChangeSet interface
   #
   # property :my_custom_form_field

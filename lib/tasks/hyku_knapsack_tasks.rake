@@ -71,5 +71,60 @@ namespace :hykuup do
       end
     end
   end
+
+  desc 'Migrate works from one work type to another (Usage: rake hykuup:migrate_work_class[FromWorkType,ToWorkType, tenant cname (optional)])'
+  task :migrate_work_class, [:from_class, :to_class, :tenant] => :environment do |_t, args|
+    tenant = args[:tenant]
+    from_class = args[:from_class]
+    to_class = args[:to_class]
+
+    if from_class.blank? || to_class.blank?
+      puts "Error: Both from_class and to_class must be specified"
+      puts "Usage: rake hykuup:migrate_work_class[FromWorkType,ToWorkType]"
+      exit 1
+    end
+
+    if from_class == to_class
+      puts "Error: from_class and to_class cannot be the same"
+      exit 1
+    end
+
+    begin
+      # Ensure the new class is valid
+      # rubocop:disable Lint/UselessAssignment
+      to_class_const = to_class.constantize
+      # rubocop:enable Lint/UselessAssignment
+
+      name_list = if tenant.present?
+                    [tenant]
+                  else
+                    Account.where.not(name: 'search').pluck(:cname)
+                  end
+      name_list.each do |cname|
+        AccountElevator.switch!(cname)
+        work_count = Valkyrie::Persistence::Postgres::ORM::Resource.where(internal_resource: from_class).count
+        puts "Found #{work_count} works to migrate in tenant #{cname}"
+        if work_count.zero?
+          puts "No works found of type #{from_class} to migrate in tenant #{cname}"
+          next
+        end
+        puts "Starting migration from #{from_class} to #{to_class}"
+
+        Valkyrie::Persistence::Postgres::ORM::Resource.where(internal_resource: from_class).find_each do |work|
+          puts "Migrating work #{work.id}: #{work.metadata['title']&.first}"
+          work.update(internal_resource: to_class)
+          # reload work
+          new_work = Hyrax.query_service.find_by(id: work.id)
+          Hyrax.index_adapter.save(resource: new_work)
+        end
+      end
+      puts "Migration completed successfully"
+    rescue NameError => e
+      puts "invalid class name: #{e.message}"
+    rescue => e
+      puts "Error during migration: #{e.message}"
+      puts e.backtrace.join("\n")
+    end
+  end
 end
 # rubocop:enable Metrics/BlockLength

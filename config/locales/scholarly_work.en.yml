@@ -2,11 +2,11 @@
 en:
   hyrax:
     models:
-      unca_work: Unca Work
+      scholarly_work: Scholarly Work
     select_type:
-      unca_work:
-        name: Unca Work
-    unca_work:
+      scholarly_work:
+        name: Scholarly Work
+    scholarly_work:
       labels:
         committee_member: Committee member
         creator: Creator
