@@ -22,7 +22,7 @@ on:
 
 jobs:
   build:
-    uses: notch8/actions/.github/workflows/build.yaml@hykuup-after-care
+    uses: notch8/actions/.github/workflows/build.yaml@v1.0.3
     secrets: inherit
     with:
       platforms: "linux/amd64"
@@ -31,14 +31,14 @@ jobs:
 
   test:
     needs: build
-    uses: notch8/actions/.github/workflows/test.yaml@hykuup-after-care
+    uses: notch8/actions/.github/workflows/test.yaml@v1.0.3
     with:
       confdir: '/app/samvera/hyrax-webapp/solr/conf'
       rspec_cmd: "cd .. && gem install semaphore_test_boosters && bundle && rspec_booster --job $CI_NODE_INDEX/$CI_NODE_TOTAL"
 
   lint:
     needs: build
-    uses: notch8/actions/.github/workflows/lint.yaml@hykuup-after-care
+    uses: notch8/actions/.github/workflows/lint.yaml@v1.0.3
     with:
       webTarget: hyku-web
       workerTarget: hyku-worker
