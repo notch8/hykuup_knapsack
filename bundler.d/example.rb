@@ -9,3 +9,7 @@
 gem "sentry-ruby"
 gem "sentry-rails"
 gem "sentry-sidekiq"
+
+override_gem "hyrax",
+             github: "samvera/hyrax",
+             ref: "ab4d108114289822b186579cd73a53d68c145a73"
