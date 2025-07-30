@@ -4,6 +4,7 @@
 require "spec_helper"
 
 ENV["RAILS_ENV"] ||= "test"
+ENV["HYRAX_FLEXIBLE"] = "true"
 
 # require File.expand_path('../config/environment', __dir__)
 require File.expand_path("../hyrax-webapp/config/environment", __dir__)
