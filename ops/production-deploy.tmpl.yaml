@@ -117,6 +117,8 @@ extraEnvVars: &envVars
     value: good_job
   - name: HYRAX_FITS_PATH
     value: /app/fits/fits.sh
+  - name: HYRAX_FLEXIBLE
+    value: "false"
   - name: HYRAX_VALKYRIE
     value: "true"
   - name: HYKU_ADMIN_HOST
