@@ -4,6 +4,11 @@
 #  `rails generate hyrax:work_resource UncaWork`
 #  updated to only work for flexible true since app is now using flexible metadat
 class UncaWork < Hyrax::Work
+  # Basic metadata has been included via :unca_work so we can customize it
+  # include Hyrax::Schema(:basic_metadata) unless Hyrax.config.flexible?
+  include Hyrax::Schema(:unca_work) unless Hyrax.config.flexible?
+  include Hyrax::Schema(:with_pdf_viewer) unless Hyrax.config.flexible?
+  include Hyrax::Schema(:with_video_embed) unless Hyrax.config.flexible?
   include Hyrax::ArResource
   include Hyrax::NestedWorks
   # include specifically so specs will include it, as flexible? was false in hyrax's code
@@ -14,4 +19,6 @@ class UncaWork < Hyrax::Work
     pdf_split_child_model: GenericWorkResource,
     pdf_splitter_service: IiifPrint::TenantConfig::PdfSplitter
   )
+
+  prepend OrderAlready.for(:creator) unless Hyrax.config.flexible?
 end

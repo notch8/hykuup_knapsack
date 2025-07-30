@@ -7,6 +7,12 @@
 # @see https://github.com/samvera/valkyrie/wiki/ChangeSets-and-Dirty-Tracking
 #  updated to only work for flexible true since app is now using flexible metadata
 class ScholarlyWorkForm < Hyrax::Forms::ResourceForm(ScholarlyWork)
+  # include Hyrax::FormFields(:basic_metadata) unless Hyrax.config.flexible?
+  include Hyrax::FormFields(:scholarly_work) unless Hyrax.config.flexible?
+  include Hyrax::FormFields(:with_pdf_viewer) unless Hyrax.config.flexible?
+  include Hyrax::FormFields(:with_video_embed) unless Hyrax.config.flexible?
+  include BasedNearFormFieldsBehavior unless Hyrax.config.flexible?
+
   include VideoEmbedBehavior::Validation
 
   # Define custom form fields using the Valkyrie::ChangeSet interface
