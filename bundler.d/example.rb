@@ -12,4 +12,4 @@ gem "sentry-sidekiq"
 
 override_gem "hyrax",
              github: "samvera/hyrax",
-             ref: "16664b8c660a91032761869b7cda6737c51aaa13"
+             ref: "a3118683116df6d85a6d0657d87301525cbee91a"
