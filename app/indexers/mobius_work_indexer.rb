@@ -2,7 +2,7 @@
 
 # Generated via
 #  `rails generate hyrax:work_resource MobiusWork`
-#  updated to only work for flexible true since app is now using flexible metadata
+
 class MobiusWorkIndexer < Hyrax::ValkyrieWorkIndexer
   include Hyrax::Indexer(:basic_metadata) unless Hyrax.config.flexible?
   include Hyrax::Indexer(:mobius_work) unless Hyrax.config.flexible?
