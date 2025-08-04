@@ -1,20 +1,22 @@
 # frozen_string_literal: true
 
-# Generated via
-#  `rails generate hyrax:work_resource ScholarlyWork`
+# Copied from UncaWork as part of renaming UncaWork to ScholarlyWork
 class ScholarlyWork < Hyrax::Work
   # Basic metadata has been included via :scholarly_work so we can customize it
-  # include Hyrax::Schema(:basic_metadata)
-  include Hyrax::Schema(:scholarly_work)
-  include Hyrax::Schema(:with_pdf_viewer)
-  include Hyrax::Schema(:with_video_embed)
+  # include Hyrax::Schema(:basic_metadata) unless Hyrax.config.flexible?
+  include Hyrax::Schema(:scholarly_work) unless Hyrax.config.flexible?
+  include Hyrax::Schema(:with_pdf_viewer) unless Hyrax.config.flexible?
+  include Hyrax::Schema(:with_video_embed) unless Hyrax.config.flexible?
   include Hyrax::ArResource
   include Hyrax::NestedWorks
+  # include specifically so specs will include it, as flexible? was false in hyrax's code
+  # in the Resource module, resulting in unexpected behavior for the specs.
+  include Hyrax::Flexibility
 
   include IiifPrint.model_configuration(
     pdf_split_child_model: GenericWorkResource,
     pdf_splitter_service: IiifPrint::TenantConfig::PdfSplitter
   )
 
-  prepend OrderAlready.for(:creator)
+  prepend OrderAlready.for(:creator) unless Hyrax.config.flexible?
 end
