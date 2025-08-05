@@ -22,7 +22,7 @@ on:
 
 jobs:
   build:
-    uses: notch8/actions/.github/workflows/build.yaml@v0.0.23
+    uses: notch8/actions/.github/workflows/build.yaml@v1.0.3
     secrets: inherit
     with:
       platforms: "linux/amd64"
@@ -30,14 +30,14 @@ jobs:
       workerTarget: hyku-worker
   test:
     needs: build
-    uses: notch8/actions/.github/workflows/test.yaml@v0.0.23
+    uses: notch8/actions/.github/workflows/test.yaml@v1.0.3
     with:
       confdir: "/app/samvera/hyrax-webapp/solr/conf"
       rspec_cmd: "cd .. && gem install semaphore_test_boosters && bundle && rspec_booster --job $CI_NODE_INDEX/$CI_NODE_TOTAL"
 
   lint:
     needs: build
-    uses: notch8/actions/.github/workflows/lint.yaml@v0.0.23
+    uses: notch8/actions/.github/workflows/lint.yaml@v1.0.3
     with:
       webTarget: hyku-web
       workerTarget: hyku-worker
@@ -46,7 +46,7 @@ jobs:
   update-deploy-values:
     needs: build
     # TODO: replace add-new-deploy-action with main after that branch has been merged
-    uses: notch8/actions/.github/workflows/update-deploy-values.yaml@add-new-deploy-action
+    uses: notch8/actions/.github/workflows/update-deploy-values.yaml@v1.0.3
     secrets: inherit # required to read org-level secrets used by action
     with:
       ops_repository: ${{ vars.OPS_REPOSITORY }}
