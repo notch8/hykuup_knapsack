@@ -1,7 +1,7 @@
 x-app: &app
   build:
     context: .
-    target: hyku-web
+    target: web
     cache_from:
       - ghcr.io/samvera/hyku/base:latest
       - ghcr.io/notch8/hykuup_knapsack:latest
@@ -9,7 +9,7 @@ x-app: &app
       BUILDKIT_INLINE_CACHE: 1
       APP_PATH: ./hyrax-webapp
       BASE_TAG: ${BASE_TAG:-latest}
-  image: ghcr.io/notch8/hykuup_knapsack:${TAG:-latest}
+  image: ghcr.io/notch8/hykuup_knapsack/web:${TAG:-latest}
   env_file:
     - .env
     - .env.development
@@ -57,6 +57,13 @@ services:
     extends:
       file: hyrax-webapp/docker-compose.yml
       service: solr
+    build:
+      context: .
+      target: solr
+      args:
+        BUILDKIT_INLINE_CACHE: 1
+      cache_from:
+        - ghcr.io/notch8/hykuup_knapsack/solr:latest
 
   fcrepo:
     extends:
@@ -78,7 +85,13 @@ services:
     extends:
       file: hyrax-webapp/docker-compose.yml
       service: base
-    image: ghcr.io/samvera/hyku/base:${BASE_TAG:-latest}
+    build:
+      context: .
+      target: base
+      cache_from:
+        - ghcr.io/samvera/hyku/base:latest
+        - ghcr.io/notch8/hykuup_knapsack:latest
+    image: ghcr.io/notch8/hykuup_knapsack/base:${BASE_TAG:-latest}
     command: bash -l -c "echo 'base is only used for building base images, which in turn reduces image build times. It does not need to be run'"
 
   web:
@@ -100,7 +113,7 @@ services:
       service: worker
     build:
       context: .
-      target: hyku-worker
+      target: worker
       cache_from:
         - ghcr.io/samvera/hyku/base:latest
         - ghcr.io/notch8/hykuup_knapsack/worker:latest
