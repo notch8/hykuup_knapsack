@@ -5,13 +5,13 @@ on:
     inputs:
       debug_enabled:
         type: boolean
-        description: 'Run the build with tmate debugging enabled (https://github.com/marketplace/actions/debugging-with-tmate)'
+        description: "Run the build with tmate debugging enabled (https://github.com/marketplace/actions/debugging-with-tmate)"
         required: false
         default: false
 
 jobs:
   build:
-    uses: notch8/actions/.github/workflows/build.yaml@v1.0.4
+    uses: notch8/actions/.github/workflows/build.yaml@enter_the_matrix
     secrets: inherit
     with:
       platforms: "linux/amd64"

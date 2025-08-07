@@ -1,5 +1,5 @@
 ARG BASE_TAG=${BASE_TAG:-latest}
-FROM ghcr.io/samvera/hyku/base:${BASE_TAG} AS hyku-knap-base
+FROM ghcr.io/samvera/hyku/base:${BASE_TAG} AS base
 # This is specifically NOT $APP_PATH but the parent directory
 COPY --chown=1001:101 . /app/samvera
 RUN ln -sf /app/samvera/bundler.d /app/.bundler.d
@@ -19,17 +19,18 @@ RUN echo "📚 Installing Tesseract Best (training data)!" && \
 
 USER app
 
-FROM hyku-knap-base AS hyku-web
+FROM base AS web
 RUN RAILS_ENV=production SECRET_KEY_BASE=`bin/rake secret` DB_ADAPTER=nulldb DB_URL='postgresql://fake' bundle exec rake assets:precompile && yarn install
 
 CMD ./bin/web
 
-FROM hyku-web AS hyku-worker
+FROM web AS worker
 CMD ./bin/worker
 
-FROM solr:8.3 AS hyku-solr
+FROM solr:8.3 AS solr
 ENV SOLR_USER="solr" \
     SOLR_GROUP="solr"
 USER root
-COPY --chown=solr:solr solr/security.json /var/solr/data/security.json
+# Remove the hyrax-webapp from the line below if overriding the solr security
+COPY --chown=solr:solr hyrax-webapp/solr/security.json /var/solr/data/security.json
 USER $SOLR_USER
