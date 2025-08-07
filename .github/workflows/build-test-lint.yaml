@@ -25,9 +25,7 @@ jobs:
     uses: notch8/actions/.github/workflows/build.yaml@enter_the_matrix
     secrets: inherit
     with:
-      platforms: "linux/amd64"
-      webTarget: hyku-web
-      workerTarget: hyku-worker
+      components: '["base", "solr", "web", "worker"]'
 
   test:
     needs: build
