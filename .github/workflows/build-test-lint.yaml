@@ -22,7 +22,7 @@ on:
 
 jobs:
   build:
-    uses: notch8/actions/.github/workflows/build.yaml@v1.0.3
+    uses: notch8/actions/.github/workflows/build.yaml@add-base-tag-build
     secrets: inherit
     with:
       platforms: "linux/amd64"
