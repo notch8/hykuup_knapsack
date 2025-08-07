@@ -78,15 +78,6 @@ services:
     extends:
       file: hyrax-webapp/docker-compose.yml
       service: base
-    build:
-      context: .
-      target: hyku-knap-base
-      cache_from:
-        - ghcr.io/samvera/hyku/base:latest
-      args:
-        BUILDKIT_INLINE_CACHE: 1
-        APP_PATH: ./hyrax-webapp
-        BASE_TAG: ${BASE_TAG:-latest}
     image: ghcr.io/samvera/hyku/base:${BASE_TAG:-latest}
     command: bash -l -c "echo 'base is only used for building base images, which in turn reduces image build times. It does not need to be run'"
 
