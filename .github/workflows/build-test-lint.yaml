@@ -38,6 +38,4 @@ jobs:
     needs: build
     uses: notch8/actions/.github/workflows/lint.yaml@enter_the_matrix
     with:
-      webTarget: hyku-web
-      workerTarget: hyku-worker
       rubocop_cmd: "cd .. && bundle && bundle exec rubocop --parallel --format progress --format junit --out rubocop.xml"
