@@ -5,7 +5,7 @@ on:
     inputs:
       debug_enabled:
         type: boolean
-        description: 'Run the build with tmate debugging enabled (https://github.com/marketplace/actions/debugging-with-tmate)'
+        description: "Run the build with tmate debugging enabled (https://github.com/marketplace/actions/debugging-with-tmate)"
         required: false
         default: false
 
@@ -14,5 +14,4 @@ jobs:
     uses: notch8/actions/.github/workflows/build.yaml@v1.0.3
     secrets: inherit
     with:
-      platforms: "linux/amd64"
       solrTarget: hyku-solr
