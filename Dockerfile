@@ -31,5 +31,6 @@ FROM solr:8.3 AS solr
 ENV SOLR_USER="solr" \
     SOLR_GROUP="solr"
 USER root
-COPY --chown=solr:solr solr/security.json /var/solr/data/security.json
+# Remove the hyrax-webapp from the line below if overriding the solr security
+COPY --chown=solr:solr hyrax-webapp/solr/security.json /var/solr/data/security.json
 USER $SOLR_USER
