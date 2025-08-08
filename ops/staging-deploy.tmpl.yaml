@@ -168,6 +168,8 @@ extraEnvVars: &envVars
     value: "true"
   - name: HYKU_ROOT_HOST
     value: hykuup-knapsack-staging.notch8.cloud
+  - name: HYKU_SHOW_BACKTRACE
+    value: "true"
   - name: NEGATIVE_CAPTCHA_SECRET
     value: $NEGATIVE_CAPTCHA_SECRET
   - name: SMTP_ADDRESS

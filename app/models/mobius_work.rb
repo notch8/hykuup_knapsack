@@ -12,7 +12,7 @@ class MobiusWork < Hyrax::Work
   include Hyrax::NestedWorks
   # include specifically so specs will include it, as flexible? was false in hyrax's code
   # in the Resource module, resulting in unexpected behavior for the specs.
-  include Hyrax::Flexibility
+  include Hyrax::Flexibility if Hyrax.config.flexible?
 
   include IiifPrint.model_configuration(
     pdf_split_child_model: GenericWorkResource,
