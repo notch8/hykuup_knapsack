@@ -237,6 +237,9 @@ fcrepo:
 postgresql:
   enabled: false
 redis:
+  image:
+    repository: bitnamilegacy/redis
+    tag: 7.0.2-debian-11-r7
   enabled: true
   architecture: standalone
   auth:
