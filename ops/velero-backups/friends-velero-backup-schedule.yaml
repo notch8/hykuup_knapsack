@@ -1,0 +1,58 @@
+apiVersion: velero.io/v1
+kind: Schedule
+metadata:
+  name: utk-hyku-production-daily
+  namespace: velero
+spec:
+  schedule: "0 5 * * 1-6"  # Monday - Saturday at 5 AM UTC / 10PM PST
+  template:
+    ttl: 168h  # 7 days
+    includedNamespaces:
+      - utk-hyku-production
+    snapshotVolumes: true
+    includeClusterResources: false
+---
+apiVersion: velero.io/v1
+kind: Schedule
+metadata:
+  name: utk-hyku-production-weekly
+  namespace: velero
+spec:
+  schedule: "0 5 * * Sun"  # Sunday at 5 AM UTC / 10PM PST
+  template:
+    ttl: 720h  # 30 days
+    includedNamespaces:
+      - utk-hyku-production
+    snapshotVolumes: true
+    includeClusterResources: false
+---
+apiVersion: velero.io/v1
+kind: Schedule
+metadata:
+  name: utk-hyku-production-monthly
+  namespace: velero
+spec:
+  schedule: "0 6 1 * *"  # 1st of each month at 6 AM UTC / 11PM PST
+  template:
+    ttl: 2256h  # ~3 months
+    includedNamespaces:
+      - utk-hyku-production
+    snapshotVolumes: true
+    includeClusterResources: false
+
+
+
+
+# ## Test
+# kubectl create -n velero -f - <<EOF
+# apiVersion: velero.io/v1
+# kind: Backup
+# metadata:
+#   name: utk-hyku-friends-manual
+# spec:
+#   includedNamespaces:
+#     - utk-hyku-friends
+#   ttl: 72h
+#   snapshotVolumes: true
+#   includeClusterResources: false
+# EOF
