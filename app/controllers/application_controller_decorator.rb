@@ -11,7 +11,9 @@ module ApplicationControllerDecorator
 
   def set_locale_from_params
     # Set locale from params or fall back to default
-    I18n.locale = params[:locale] || I18n.default_locale
+    # Handle both nil and empty string cases
+    locale = params[:locale].presence || I18n.default_locale
+    I18n.locale = locale
   end
 
   def default_url_options
