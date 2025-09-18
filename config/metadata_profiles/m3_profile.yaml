@@ -232,7 +232,7 @@ properties:
     controlled_values:
       format: http://www.w3.org/2001/XMLSchema#string
       sources:
-        - "null"
+        - "licenses"
     display_label:
       default: License
     index_documentation: displayable, searchable
@@ -842,7 +842,7 @@ properties:
     controlled_values:
       format: http://www.w3.org/2001/XMLSchema#string
       sources:
-        - "null"
+        - "resource_types"
     display_label:
       default: Resource Type
     index_documentation: displayable, searchable
@@ -910,7 +910,7 @@ properties:
     controlled_values:
       format: http://www.w3.org/2001/XMLSchema#string
       sources:
-        - "null"
+        - "rights_statements"
     display_label:
       default: Rights Statement
     index_documentation: displayable, searchable
@@ -1258,7 +1258,7 @@ properties:
     controlled_values:
       format: http://www.w3.org/2001/XMLSchema#string
       sources:
-        - "null"
+        - "audience"
     display_label:
       default: Audience
     index_documentation: displayable, searchable
@@ -1309,7 +1309,7 @@ properties:
     controlled_values:
       format: http://www.w3.org/2001/XMLSchema#string
       sources:
-        - "null"
+        - "discipline"
     display_label:
       default: Discipline
     index_documentation: searchable
@@ -1336,7 +1336,7 @@ properties:
     controlled_values:
       format: http://www.w3.org/2001/XMLSchema#string
       sources:
-        - "null"
+        - "education_levels"
     display_label:
       default: Education Level
     index_documentation: displayable, searchable
@@ -1364,7 +1364,7 @@ properties:
     controlled_values:
       format: http://www.w3.org/2001/XMLSchema#string
       sources:
-        - "null"
+        - "learning_resource_types"
     display_label:
       default: Learning Resource Type
     index_documentation: displayable, searchable
@@ -2045,3 +2045,31 @@ properties:
     view:
       render_as: "faceted"
       html_dl: true
+  hide_from_catalog_search:
+    available_on:
+      class:
+        - CollectionResource
+    cardinality:
+      minimum: 0
+      maximum: 1
+    data_type: string
+    controlled_values:
+      format: http://www.w3.org/2001/XMLSchema#bool
+      sources:
+        - "null"
+    display_label:
+      default: Hide from Catalog Search
+    index_documentation: displayable, searchable
+    indexing:
+      - hide_from_catalog_search_bsi
+      - hide_from_catalog_search_tesim
+    form:
+      display: false
+      primary: false
+      required: false
+      multiple: false
+    property_uri: https://hykucommons.org/terms/hide_from_catalog_search
+    range: http://www.w3.org/2001/XMLSchema#bool
+    sample_values:
+      - true
+      - false
