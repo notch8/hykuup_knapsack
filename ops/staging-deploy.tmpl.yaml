@@ -155,7 +155,7 @@ extraEnvVars: &envVars
   - name: HYKU_CONTACT_EMAIL_TO
     value: example@hykuup-knapsack-staging.notch8.cloud
   - name: HYKU_FILE_ACL
-    value: "false"
+    value: "true"
   - name: HYKU_ADMIN_HOST
     value: hykuup-knapsack-staging.notch8.cloud
   - name: HYKU_ADMIN_ONLY_TENANT_CREATION
