@@ -4,7 +4,7 @@ profile:
   date_modified: "2024-06-01"
   responsibility: https://samvera.org
   responsibility_statement: HykuUp Initial Profile
-  type: Hyku Profile with HykuUp Custom Work Types
+  type: Default HykuUp Profile
   version: 1
 classes:
   GenericWorkResource:

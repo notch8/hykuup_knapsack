@@ -1,0 +1,87 @@
+# frozen_string_literal: true
+
+# OVERRIDE Hyku v6.2.0: Add tenant-specific validation for metadata profile uploads
+module Hyrax
+  module MetadataProfilesControllerDecorator
+    extend ActiveSupport::Concern
+
+    private
+
+    # OVERRIDE: Add tenant-specific validation before creating the profile
+    def import
+      uploaded_io = params[:file]
+      if uploaded_io.blank?
+        redirect_to metadata_profiles_path, alert: 'Please select a file to upload'
+        return
+      end
+
+      begin
+        profile_data = YAML.safe_load_file(uploaded_io.path)
+        
+        # Validate that the profile doesn't contain work types the tenant doesn't "own"
+        validate_tenant_work_types!(profile_data)
+        
+        @flexible_schema = Hyrax::FlexibleSchema.create(profile: profile_data)
+
+        if @flexible_schema.persisted?
+          redirect_to metadata_profiles_path, notice: 'Flexible Metadata Profile was successfully created.'
+        else
+          error_message = @flexible_schema.errors.messages.values.flatten.join(', ')
+          redirect_to metadata_profiles_path, flash: { error: error_message }
+        end
+      rescue => e
+        redirect_to metadata_profiles_path, flash: { error: e.message }
+        nil
+      end
+    end
+
+    # Validates that the profile doesn't contain work types the current tenant doesn't "own"
+    def validate_tenant_work_types!(profile_data)
+      return unless profile_data&.dig('classes')
+      
+      profile_work_types = extract_profile_work_types(profile_data)
+      excluded_work_types = tenant_excluded_work_types
+      
+      # Check if the profile contains any work types this tenant shouldn't see
+      forbidden_work_types = profile_work_types & excluded_work_types
+      
+      if forbidden_work_types.any?
+        tenant_name = current_tenant_cname || 'this tenant'
+        raise StandardError, 
+              "This profile contains work types (#{forbidden_work_types.join(', ')}) that are not allowed for #{tenant_name}. " \
+              "Please use a profile that only contains work types appropriate for your tenant."
+      end
+    end
+
+    def extract_profile_work_types(profile_data)
+      profile_classes = profile_data.dig('classes')&.keys || []
+      profile_classes.map { |klass| klass.gsub(/Resource$/, '') }
+    end
+
+    # Returns work types that should be excluded for the current tenant
+    def tenant_excluded_work_types
+      case current_tenant_cname
+      when 'unca.hykuup.com'
+        # UNCA cannot see: MobiusWork
+        %w[MobiusWork]
+      when /\.digitalmobius\.org$/
+        # Mobius cannot see: UncaWork, ScholarlyWork
+        %w[UncaWork ScholarlyWork]
+      else
+        # Generic tenants cannot see: MobiusWork, UncaWork, ScholarlyWork
+        %w[MobiusWork UncaWork ScholarlyWork]
+      end
+    end
+
+    def current_tenant_cname
+      return nil unless defined?(Account)
+      
+      current_tenant = Apartment::Tenant.current
+      return nil unless current_tenant
+      
+      Account.find_by(tenant: current_tenant)&.cname
+    end
+  end
+end
+
+Hyrax::MetadataProfilesController.prepend(Hyrax::MetadataProfilesControllerDecorator)
