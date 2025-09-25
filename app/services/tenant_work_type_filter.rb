@@ -8,8 +8,8 @@ class TenantWorkTypeFilter
     def excluded_work_types
       case current_tenant_cname
       when 'unca.hykuup.com'
-        # UNCA cannot see: MobiusWork
-        %w[MobiusWork]
+        # UNCA cannot see: MobiusWork, UncaWork (deprecated)
+        %w[MobiusWork UncaWork]
       when /\.digitalmobius\.org$/
         # Mobius cannot see: UncaWork, ScholarlyWork
         %w[UncaWork ScholarlyWork]
