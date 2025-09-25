@@ -1652,7 +1652,7 @@ properties:
     display_label:
       default: Coverage
     index_documentation: searchable
-    index_keys:
+    indexing:
       - "coverage_tesim"
     form:
       primary: false
