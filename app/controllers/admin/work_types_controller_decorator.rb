@@ -41,19 +41,24 @@ module Admin
 
     # Returns only work types that the current tenant is allowed to see
     def tenant_allowed_work_types
+      all_work_types = Hyrax.config.registered_curation_concern_types
+      excluded_work_types = tenant_excluded_work_types
+      
+      all_work_types - excluded_work_types
+    end
+
+    # Returns work types that should be excluded for the current tenant
+    def tenant_excluded_work_types
       case current_tenant_cname
       when 'unca.hykuup.com'
-        # UNCA can see: GenericWork, Image, OER, ETD, ScholarlyWork, UncaWork
         # UNCA cannot see: MobiusWork
-        %w[GenericWork Image Oer Etd ScholarlyWork UncaWork]
+        %w[MobiusWork]
       when /\.digitalmobius\.org$/
-        # Mobius can see: GenericWork, Image, OER, ETD, MobiusWork
         # Mobius cannot see: UncaWork, ScholarlyWork
-        %w[GenericWork Image Oer Etd MobiusWork]
+        %w[UncaWork ScholarlyWork]
       else
-        # Generic tenants can see: GenericWork, Image, OER, ETD
         # Generic tenants cannot see: MobiusWork, UncaWork, ScholarlyWork
-        %w[GenericWork Image Oer Etd]
+        %w[MobiusWork UncaWork ScholarlyWork]
       end
     end
 

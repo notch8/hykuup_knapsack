@@ -58,5 +58,46 @@ RSpec.describe Admin::WorkTypesController, singletenant: true do
         end
       end
     end
+
+    describe "tenant_excluded_work_types" do
+      context "for UNCA tenant" do
+        before do
+          allow(Apartment::Tenant).to receive(:current).and_return('unca')
+          account = double('Account', cname: 'unca.hykuup.com')
+          allow(Account).to receive(:find_by).with(tenant: 'unca').and_return(account)
+        end
+        
+        it "returns only MobiusWork as excluded" do
+          excluded_types = controller_instance.send(:tenant_excluded_work_types)
+          expect(excluded_types).to eq(%w[MobiusWork])
+        end
+      end
+      
+      context "for Mobius tenant" do
+        before do
+          allow(Apartment::Tenant).to receive(:current).and_return('mobius')
+          account = double('Account', cname: 'example.digitalmobius.org')
+          allow(Account).to receive(:find_by).with(tenant: 'mobius').and_return(account)
+        end
+        
+        it "returns UncaWork and ScholarlyWork as excluded" do
+          excluded_types = controller_instance.send(:tenant_excluded_work_types)
+          expect(excluded_types).to eq(%w[UncaWork ScholarlyWork])
+        end
+      end
+      
+      context "for generic tenant" do
+        before do
+          allow(Apartment::Tenant).to receive(:current).and_return('generic')
+          account = double('Account', cname: 'example.com')
+          allow(Account).to receive(:find_by).with(tenant: 'generic').and_return(account)
+        end
+        
+        it "returns all tenant-specific work types as excluded" do
+          excluded_types = controller_instance.send(:tenant_excluded_work_types)
+          expect(excluded_types).to eq(%w[MobiusWork UncaWork ScholarlyWork])
+        end
+      end
+    end
   end
 end
