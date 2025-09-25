@@ -8,7 +8,7 @@ profile:
   version: 1
 classes:
   GenericWorkResource:
-    display_label: Generic Worki461--up
+    display_label: Generic Work
   ImageResource:
     display_label: Image
   OerResource:
