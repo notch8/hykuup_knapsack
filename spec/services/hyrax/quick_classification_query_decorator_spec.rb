@@ -22,12 +22,12 @@ RSpec.describe Hyrax::QuickClassificationQuery, singletenant: true do
           allow(Account).to receive(:find_by).with(tenant: 'unca').and_return(account)
         end
 
-        it "excludes MobiusWork from work creation options" do
+        it "excludes MobiusWork and UncaWork from work creation options" do
           query = described_class.new(user)
           authorized_models = query.authorized_models
 
-          expect(authorized_models.map(&:name)).to include('GenericWork', 'Image', 'Etd', 'Oer', 'ScholarlyWork', 'UncaWork')
-          expect(authorized_models.map(&:name)).not_to include('MobiusWork')
+          expect(authorized_models.map(&:name)).to include('GenericWork', 'Image', 'Etd', 'Oer', 'ScholarlyWork')
+          expect(authorized_models.map(&:name)).not_to include('MobiusWork', 'UncaWork')
         end
       end
 

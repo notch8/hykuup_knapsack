@@ -23,7 +23,6 @@ RSpec.describe Hyrax::MetadataProfilesController, singletenant: true do
           profile_data = {
             'classes' => {
               'GenericWorkResource' => {},
-              'UncaWorkResource' => {},
               'ScholarlyWorkResource' => {}
             }
           }
@@ -43,6 +42,18 @@ RSpec.describe Hyrax::MetadataProfilesController, singletenant: true do
             .to raise_error(StandardError, /This profile contains work types \(MobiusWork\) that are not allowed for unca\.hykuup\.com/)
         end
 
+        it "rejects profiles with UncaWork and provides helpful error message" do
+          profile_data = {
+            'classes' => {
+              'GenericWorkResource' => {},
+              'UncaWorkResource' => {}
+            }
+          }
+
+          expect { controller_instance.send(:validate_tenant_work_types!, profile_data) }
+            .to raise_error(StandardError, /This profile contains work types \(UncaWork\) that are not allowed for unca\.hykuup\.com/)
+        end
+
         it "includes allowed work types in error message" do
           profile_data = {
             'classes' => {
@@ -51,7 +62,7 @@ RSpec.describe Hyrax::MetadataProfilesController, singletenant: true do
           }
 
           expect { controller_instance.send(:validate_tenant_work_types!, profile_data) }
-            .to raise_error(StandardError, /Allowed work types for unca\.hykuup\.com: GenericWork, Image, Etd, Oer, UncaWork, ScholarlyWork/)
+            .to raise_error(StandardError, /Allowed work types for unca\.hykuup\.com: GenericWork, Image, Etd, Oer, ScholarlyWork/)
         end
       end
 
@@ -182,11 +193,11 @@ RSpec.describe Hyrax::MetadataProfilesController, singletenant: true do
           allow(Account).to receive(:find_by).with(tenant: 'unca').and_return(account)
         end
 
-        it "returns all work types except MobiusWork" do
+        it "returns all work types except MobiusWork and UncaWork" do
           allowed_types = TenantWorkTypeFilter.allowed_work_types
 
-          expect(allowed_types).to include('GenericWork', 'Image', 'Etd', 'Oer', 'UncaWork', 'ScholarlyWork')
-          expect(allowed_types).not_to include('MobiusWork')
+          expect(allowed_types).to include('GenericWork', 'Image', 'Etd', 'Oer', 'ScholarlyWork')
+          expect(allowed_types).not_to include('MobiusWork', 'UncaWork')
         end
       end
 

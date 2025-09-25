@@ -20,11 +20,11 @@ RSpec.describe Admin::WorkTypesController, singletenant: true do
           allow(Account).to receive(:find_by).with(tenant: 'unca').and_return(account)
         end
 
-        it "excludes MobiusWork" do
+        it "excludes MobiusWork and UncaWork" do
           allowed_types = TenantWorkTypeFilter.allowed_work_types
 
-          expect(allowed_types).to include('GenericWork', 'Image', 'Etd', 'Oer', 'ScholarlyWork', 'UncaWork')
-          expect(allowed_types).not_to include('MobiusWork')
+          expect(allowed_types).to include('GenericWork', 'Image', 'Etd', 'Oer', 'ScholarlyWork')
+          expect(allowed_types).not_to include('MobiusWork', 'UncaWork')
         end
       end
 
@@ -67,9 +67,9 @@ RSpec.describe Admin::WorkTypesController, singletenant: true do
           allow(Account).to receive(:find_by).with(tenant: 'unca').and_return(account)
         end
 
-        it "returns only MobiusWork as excluded" do
+        it "returns MobiusWork and UncaWork as excluded" do
           excluded_types = TenantWorkTypeFilter.excluded_work_types
-          expect(excluded_types).to eq(%w[MobiusWork])
+          expect(excluded_types).to eq(%w[MobiusWork UncaWork])
         end
       end
 

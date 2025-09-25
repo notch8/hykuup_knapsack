@@ -126,5 +126,136 @@ namespace :hykuup do
       puts e.backtrace.join("\n")
     end
   end
+
+  namespace :profiles do
+    desc 'Reset metadata profiles and update available works for all tenants'
+    task reset_all: :environment do
+      puts "\n" + "=" * 60
+      puts "  RESETTING PROFILES AND AVAILABLE WORKS FOR ALL TENANTS"
+      puts "=" * 60
+      puts "\n⚠️  WARNING: This will overwrite ALL existing metadata profiles!"
+      puts "   Custom profiles will be lost and replaced with tenant-specific defaults."
+      puts "   This action cannot be undone.\n"
+
+      print "Are you sure you want to continue? Type 'yes' to confirm: "
+      confirmation = STDIN.gets.chomp
+
+      unless confirmation.casecmp('yes').zero?
+        puts "\n❌ Operation cancelled by user."
+        exit 0
+      end
+
+      puts "\n✅ Confirmed. Proceeding with profile reset...\n"
+
+      total_tenants = Account.count
+      processed = 0
+      errors = 0
+
+      Account.find_each do |account|
+        processed += 1
+        puts "\n[#{processed}/#{total_tenants}] Processing: #{account.cname}"
+        puts "  Tenant: #{account.tenant}"
+
+        begin
+          # Switch to the tenant
+          Apartment::Tenant.switch!(account.tenant)
+
+          # Reset the metadata profile
+          print "  Resetting profile... "
+          Hyrax::FlexibleSchema.create_default_schema
+          puts "✓"
+
+          # Update available works based on tenant filtering rules
+          print "  Updating available works... "
+          allowed_types = TenantWorkTypeFilter.allowed_work_types
+          Site.instance.update!(available_works: allowed_types)
+          puts "✓"
+
+          # Show what work types this tenant can see
+          puts "  Available work types: #{allowed_types.join(', ')}"
+
+        rescue => e
+          errors += 1
+          puts "  ✗ ERROR: #{e.message}"
+          puts "    #{e.backtrace.first}"
+        end
+      end
+
+      puts "\n" + "=" * 60
+      puts "  SUMMARY"
+      puts "=" * 60
+      puts "  Total tenants: #{total_tenants}"
+      puts "  Processed: #{processed}"
+      puts "  Errors: #{errors}"
+      puts "  Success: #{processed - errors}"
+      puts "=" * 60
+    end
+
+    desc 'Reset metadata profiles and update available works for a specific tenant'
+    task :reset_tenant, [:tenant] => :environment do |_t, args|
+      tenant = args[:tenant]
+
+      if tenant.blank?
+        puts "\nError: Tenant must be specified"
+        puts "Usage: rake hykuup:profiles:reset_tenant[tenant_cname]"
+        exit 1
+      end
+
+      account = Account.find_by(tenant:) || Account.find_by(cname: tenant)
+
+      if account.nil?
+        puts "\nError: Tenant '#{tenant}' not found"
+        exit 1
+      end
+
+      puts "\n" + "=" * 50
+      puts "  RESETTING PROFILE FOR SINGLE TENANT"
+      puts "=" * 50
+      puts "  Tenant: #{account.cname}"
+      puts "  Database: #{account.tenant}"
+      puts "=" * 50
+      puts "\n⚠️  WARNING: This will overwrite the existing metadata profile!"
+      puts "   Any custom profile for this tenant will be lost and replaced."
+      puts "   This action cannot be undone.\n"
+
+      print "Are you sure you want to continue? Type 'yes' to confirm: "
+      confirmation = STDIN.gets.chomp
+
+      unless confirmation.casecmp('yes').zero?
+        puts "\n❌ Operation cancelled by user."
+        exit 0
+      end
+
+      puts "\n✅ Confirmed. Proceeding with profile reset...\n"
+
+      begin
+        # Switch to the tenant
+        Apartment::Tenant.switch!(account.tenant)
+
+        # Reset the metadata profile
+        print "  Resetting profile... "
+        Hyrax::FlexibleSchema.create_default_schema
+        puts "✓"
+
+        # Update available works based on tenant filtering rules
+        print "  Updating available works... "
+        allowed_types = TenantWorkTypeFilter.allowed_work_types
+        Site.instance.update!(available_works: allowed_types)
+        puts "✓"
+
+        # Show what work types this tenant can see
+        puts "\n  Available work types: #{allowed_types.join(', ')}"
+        puts "=" * 50
+        puts "  ✓ COMPLETED SUCCESSFULLY"
+        puts "=" * 50
+
+      rescue => e
+        puts "\n  ✗ ERROR: #{e.message}"
+        puts "  #{e.backtrace.first}"
+        puts "=" * 50
+        exit 1
+      end
+    end
+  end
 end
 # rubocop:enable Metrics/BlockLength
