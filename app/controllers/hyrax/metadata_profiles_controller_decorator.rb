@@ -15,7 +15,7 @@ module Hyrax
       begin
         profile_data = YAML.safe_load_file(params[:file].path)
 
-        # Validate that the profile doesn't contain work types the tenant doesn't "own"
+        # Validate that the profile doesn't contain work types restricted for this tenant
         validate_tenant_work_types!(profile_data)
 
         @flexible_schema = Hyrax::FlexibleSchema.create(profile: profile_data)
@@ -41,7 +41,7 @@ module Hyrax
       redirect_to metadata_profiles_path, alert: 'Please select a file to upload'
     end
 
-    # Validates that the profile doesn't contain work types the current tenant doesn't "own"
+    # Validates that the profile doesn't contain work types restricted for the current tenant
     def validate_tenant_work_types!(profile_data)
       return unless profile_data&.dig('classes')
 

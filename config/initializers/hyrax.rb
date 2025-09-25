@@ -15,7 +15,7 @@ Rails.application.config.after_initialize do
     config.register_curation_concern :scholarly_work
   end
 
-  # Override the create_default_schema method to load tenant-specific profiles
+  # Override Hyrax v5.0.5: the create_default_schema method to load tenant-specific profiles
   Hyrax::FlexibleSchema.class_eval do
     def self.create_default_schema
       m3_profile_path = tenant_specific_profile_path
