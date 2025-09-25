@@ -21,7 +21,7 @@ RSpec.describe Admin::WorkTypesController, singletenant: true do
         end
         
         it "excludes MobiusWork" do
-          allowed_types = controller_instance.send(:tenant_allowed_work_types)
+          allowed_types = TenantWorkTypeFilter.allowed_work_types
           
           expect(allowed_types).to include('GenericWork', 'Image', 'Etd', 'Oer', 'ScholarlyWork', 'UncaWork')
           expect(allowed_types).not_to include('MobiusWork')
@@ -36,7 +36,7 @@ RSpec.describe Admin::WorkTypesController, singletenant: true do
         end
         
         it "excludes UncaWork and ScholarlyWork" do
-          allowed_types = controller_instance.send(:tenant_allowed_work_types)
+          allowed_types = TenantWorkTypeFilter.allowed_work_types
           
           expect(allowed_types).to include('GenericWork', 'Image', 'Etd', 'Oer', 'MobiusWork')
           expect(allowed_types).not_to include('UncaWork', 'ScholarlyWork')
@@ -51,7 +51,7 @@ RSpec.describe Admin::WorkTypesController, singletenant: true do
         end
         
         it "excludes all tenant-specific work types" do
-          allowed_types = controller_instance.send(:tenant_allowed_work_types)
+          allowed_types = TenantWorkTypeFilter.allowed_work_types
           
           expect(allowed_types).to include('GenericWork', 'Image', 'Etd', 'Oer')
           expect(allowed_types).not_to include('MobiusWork', 'UncaWork', 'ScholarlyWork')
@@ -68,7 +68,7 @@ RSpec.describe Admin::WorkTypesController, singletenant: true do
         end
         
         it "returns only MobiusWork as excluded" do
-          excluded_types = controller_instance.send(:tenant_excluded_work_types)
+          excluded_types = TenantWorkTypeFilter.excluded_work_types
           expect(excluded_types).to eq(%w[MobiusWork])
         end
       end
@@ -81,7 +81,7 @@ RSpec.describe Admin::WorkTypesController, singletenant: true do
         end
         
         it "returns UncaWork and ScholarlyWork as excluded" do
-          excluded_types = controller_instance.send(:tenant_excluded_work_types)
+          excluded_types = TenantWorkTypeFilter.excluded_work_types
           expect(excluded_types).to eq(%w[UncaWork ScholarlyWork])
         end
       end
@@ -94,7 +94,7 @@ RSpec.describe Admin::WorkTypesController, singletenant: true do
         end
         
         it "returns all tenant-specific work types as excluded" do
-          excluded_types = controller_instance.send(:tenant_excluded_work_types)
+          excluded_types = TenantWorkTypeFilter.excluded_work_types
           expect(excluded_types).to eq(%w[MobiusWork UncaWork ScholarlyWork])
         end
       end

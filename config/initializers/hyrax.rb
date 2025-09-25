@@ -38,14 +38,7 @@ Rails.application.config.after_initialize do
       account = Account.find_by(tenant: current_tenant)
       return default_profile_path unless account
       
-      case account.cname
-      when 'unca.hykuup.com'
-        HykuKnapsack::Engine.root.join('config', 'metadata_profiles', 'unca', 'm3_profile.yaml')
-      when /\.digitalmobius\.org$/
-        HykuKnapsack::Engine.root.join('config', 'metadata_profiles', 'mobius', 'm3_profile.yaml')
-      else
-        default_profile_path
-      end
+     TenantWorkTypeFilter.tenant_metadata_profile_path(default_profile_path)
     end
 
     def self.default_profile_path

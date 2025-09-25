@@ -4,7 +4,7 @@
 
 <%
   # OVERRIDE Hyku v6.2.0: Use tenant-filtered work types instead of all registered types
-  tenant_work_types = controller.send(:tenant_allowed_work_types)
+  tenant_work_types = TenantWorkTypeFilter.allowed_work_types
   
   # Check if there are any work types that will be disabled (not in profile)
   has_disabled_work_types = false

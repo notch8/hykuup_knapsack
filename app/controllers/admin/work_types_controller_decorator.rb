@@ -18,7 +18,7 @@ module Admin
       profile_work_types = profile_classes.map { |klass| klass.gsub(/Resource$/, '') }
       
       # Apply tenant-specific filtering to hide work types tenants don't "own"
-      tenant_allowed_types = tenant_allowed_work_types
+      tenant_allowed_types = TenantWorkTypeFilter.allowed_work_types
       @profile_work_types = profile_work_types & tenant_allowed_types & Hyrax.config.registered_curation_concern_types
     end
 
@@ -33,42 +33,10 @@ module Admin
       profile_work_types = profile_classes.map { |klass| klass.gsub(/Resource$/, '') }
       
       # Apply tenant-specific filtering
-      tenant_allowed_types = tenant_allowed_work_types
+      tenant_allowed_types = TenantWorkTypeFilter.allowed_work_types
       allowed_work_types = profile_work_types & tenant_allowed_types & Hyrax.config.registered_curation_concern_types
 
       available_works & allowed_work_types
-    end
-
-    # Returns only work types that the current tenant is allowed to see
-    def tenant_allowed_work_types
-      all_work_types = Hyrax.config.registered_curation_concern_types
-      excluded_work_types = tenant_excluded_work_types
-      
-      all_work_types - excluded_work_types
-    end
-
-    # Returns work types that should be excluded for the current tenant
-    def tenant_excluded_work_types
-      case current_tenant_cname
-      when 'unca.hykuup.com'
-        # UNCA cannot see: MobiusWork
-        %w[MobiusWork]
-      when /\.digitalmobius\.org$/
-        # Mobius cannot see: UncaWork, ScholarlyWork
-        %w[UncaWork ScholarlyWork]
-      else
-        # Generic tenants cannot see: MobiusWork, UncaWork, ScholarlyWork
-        %w[MobiusWork UncaWork ScholarlyWork]
-      end
-    end
-
-    def current_tenant_cname
-      return nil unless defined?(Account)
-      
-      current_tenant = Apartment::Tenant.current
-      return nil unless current_tenant
-      
-      Account.find_by(tenant: current_tenant)&.cname
     end
   end
 end

@@ -40,14 +40,14 @@ module Hyrax
       return unless profile_data&.dig('classes')
       
       profile_work_types = extract_profile_work_types(profile_data)
-      excluded_work_types = tenant_excluded_work_types
+      excluded_work_types = TenantWorkTypeFilter.excluded_work_types
       
       # Check if the profile contains any work types this tenant shouldn't see
       forbidden_work_types = profile_work_types & excluded_work_types
       
       if forbidden_work_types.any?
-        tenant_name = current_tenant_cname || 'this tenant'
-        allowed_work_types = tenant_allowed_work_types
+        tenant_name = TenantWorkTypeFilter.current_tenant_cname || 'this tenant'
+        allowed_work_types = TenantWorkTypeFilter.allowed_work_types
         
         raise StandardError, 
               "This profile contains work types (#{forbidden_work_types.join(', ')}) that are not allowed for #{tenant_name}. " \
@@ -59,38 +59,6 @@ module Hyrax
     def extract_profile_work_types(profile_data)
       profile_classes = profile_data.dig('classes')&.keys || []
       profile_classes.map { |klass| klass.gsub(/Resource$/, '') }
-    end
-
-    # Returns work types that should be excluded for the current tenant
-    def tenant_excluded_work_types
-      case current_tenant_cname
-      when 'unca.hykuup.com'
-        # UNCA cannot see: MobiusWork
-        %w[MobiusWork]
-      when /\.digitalmobius\.org$/
-        # Mobius cannot see: UncaWork, ScholarlyWork
-        %w[UncaWork ScholarlyWork]
-      else
-        # Generic tenants cannot see: MobiusWork, UncaWork, ScholarlyWork
-        %w[MobiusWork UncaWork ScholarlyWork]
-      end
-    end
-
-    # Returns work types that the current tenant is allowed to use
-    def tenant_allowed_work_types
-      all_work_types = Hyrax.config.registered_curation_concern_types
-      excluded_work_types = tenant_excluded_work_types
-      
-      all_work_types - excluded_work_types
-    end
-
-    def current_tenant_cname
-      return nil unless defined?(Account)
-      
-      current_tenant = Apartment::Tenant.current
-      return nil unless current_tenant
-      
-      Account.find_by(tenant: current_tenant)&.cname
     end
   end
 end

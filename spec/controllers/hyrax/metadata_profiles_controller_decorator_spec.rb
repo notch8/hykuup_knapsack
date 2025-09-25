@@ -183,7 +183,7 @@ RSpec.describe Hyrax::MetadataProfilesController, singletenant: true do
         end
         
         it "returns all work types except MobiusWork" do
-          allowed_types = controller_instance.send(:tenant_allowed_work_types)
+          allowed_types = TenantWorkTypeFilter.allowed_work_types
           
           expect(allowed_types).to include('GenericWork', 'Image', 'Etd', 'Oer', 'UncaWork', 'ScholarlyWork')
           expect(allowed_types).not_to include('MobiusWork')
@@ -198,7 +198,7 @@ RSpec.describe Hyrax::MetadataProfilesController, singletenant: true do
         end
         
         it "returns all work types except UncaWork and ScholarlyWork" do
-          allowed_types = controller_instance.send(:tenant_allowed_work_types)
+          allowed_types = TenantWorkTypeFilter.allowed_work_types
           
           expect(allowed_types).to include('GenericWork', 'Image', 'Etd', 'Oer', 'MobiusWork')
           expect(allowed_types).not_to include('UncaWork', 'ScholarlyWork')
@@ -213,7 +213,7 @@ RSpec.describe Hyrax::MetadataProfilesController, singletenant: true do
         end
         
         it "returns only generic work types" do
-          allowed_types = controller_instance.send(:tenant_allowed_work_types)
+          allowed_types = TenantWorkTypeFilter.allowed_work_types
           
           expect(allowed_types).to include('GenericWork', 'Image', 'Etd', 'Oer')
           expect(allowed_types).not_to include('MobiusWork', 'UncaWork', 'ScholarlyWork')
