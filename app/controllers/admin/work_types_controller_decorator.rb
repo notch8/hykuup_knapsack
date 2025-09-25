@@ -16,7 +16,7 @@ module Admin
 
       profile_classes = profile['classes']&.keys || []
       profile_work_types = profile_classes.map { |klass| klass.gsub(/Resource$/, '') }
-      
+
       # Apply tenant-specific filtering to hide work types tenants don't "own"
       tenant_allowed_types = TenantWorkTypeFilter.allowed_work_types
       @profile_work_types = profile_work_types & tenant_allowed_types & Hyrax.config.registered_curation_concern_types
@@ -31,7 +31,7 @@ module Admin
 
       profile_classes = profile['classes']&.keys || []
       profile_work_types = profile_classes.map { |klass| klass.gsub(/Resource$/, '') }
-      
+
       # Apply tenant-specific filtering
       tenant_allowed_types = TenantWorkTypeFilter.allowed_work_types
       allowed_work_types = profile_work_types & tenant_allowed_types & Hyrax.config.registered_curation_concern_types

@@ -8,9 +8,9 @@ module Hyrax
     # OVERRIDE: Apply tenant-specific filtering to work types available for creation
     def authorized_models
       original_models = super
-      
+
       filtered_models = tenant_filtered_work_types
-      
+
       original_models.select { |model| filtered_models.include?(model.name) }
     end
 
@@ -23,13 +23,11 @@ module Hyrax
 
     # Returns work types that the current tenant is allowed to create
     def tenant_filtered_work_types
-      begin
-        TenantWorkTypeFilter.allowed_work_types
-      rescue => e
-        Rails.logger.warn "Error in tenant filtering: #{e.message}"
-        # Fallback to all registered work types if filtering fails
-        Hyrax.config.registered_curation_concern_types
-      end
+      TenantWorkTypeFilter.allowed_work_types
+    rescue => e
+      Rails.logger.warn "Error in tenant filtering: #{e.message}"
+      # Fallback to all registered work types if filtering fails
+      Hyrax.config.registered_curation_concern_types
     end
   end
 end

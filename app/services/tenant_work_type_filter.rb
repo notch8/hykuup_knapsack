@@ -24,7 +24,7 @@ class TenantWorkTypeFilter
     def allowed_work_types
       all_work_types = Hyrax.config.registered_curation_concern_types
       excluded_work_types = self.excluded_work_types
-      
+
       all_work_types - excluded_work_types
     end
 
@@ -46,10 +46,10 @@ class TenantWorkTypeFilter
     # @return [String, nil] The tenant's cname or nil if not found
     def current_tenant_cname
       return nil unless defined?(Account)
-      
+
       current_tenant = Apartment::Tenant.current
       return nil unless current_tenant
-      
+
       Account.find_by(tenant: current_tenant)&.cname
     end
   end
