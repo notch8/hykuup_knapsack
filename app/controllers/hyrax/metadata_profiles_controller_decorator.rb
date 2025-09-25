@@ -47,9 +47,12 @@ module Hyrax
       
       if forbidden_work_types.any?
         tenant_name = current_tenant_cname || 'this tenant'
+        allowed_work_types = tenant_allowed_work_types
+        
         raise StandardError, 
               "This profile contains work types (#{forbidden_work_types.join(', ')}) that are not allowed for #{tenant_name}. " \
-              "Please use a profile that only contains work types appropriate for your tenant."
+              "Please use a profile that only contains work types appropriate for your tenant. " \
+              "Allowed work types for #{tenant_name}: #{allowed_work_types.join(', ')}."
       end
     end
 
@@ -71,6 +74,14 @@ module Hyrax
         # Generic tenants cannot see: MobiusWork, UncaWork, ScholarlyWork
         %w[MobiusWork UncaWork ScholarlyWork]
       end
+    end
+
+    # Returns work types that the current tenant is allowed to use
+    def tenant_allowed_work_types
+      all_work_types = Hyrax.config.registered_curation_concern_types
+      excluded_work_types = tenant_excluded_work_types
+      
+      all_work_types - excluded_work_types
     end
 
     def current_tenant_cname
