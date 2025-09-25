@@ -1626,7 +1626,7 @@ properties:
     controlled_values:
       format: http://www.w3.org/2001/XMLSchema#string
       sources:
-      - 'null'
+      - "null"
     display_label:
       default: Relation
     index_documentation: searchable
@@ -1652,7 +1652,7 @@ properties:
     display_label:
       default: Coverage
     index_documentation: searchable
-    index_keys:
+    indexing:
       - "coverage_tesim"
     form:
       primary: false
