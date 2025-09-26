@@ -13,3 +13,4 @@ file_cache/
 .byebug_history
 
 Gemfile.lock
+/.cache
