@@ -6,11 +6,13 @@ class TenantWorkTypeFilter
     # Returns work types that should be excluded for the current tenant
     # @return [Array<String>] Array of work type names to exclude
     def excluded_work_types
-      case current_tenant_cname
-      when 'unca.hykuup.com'
+      cname = current_tenant_cname
+      return %w[MobiusWork UncaWork ScholarlyWork] unless cname
+
+      if cname.include?('unca')
         # UNCA cannot see: MobiusWork, UncaWork (deprecated)
         %w[MobiusWork UncaWork]
-      when /\.digitalmobius\.org$/
+      elsif cname.include?('mobius')
         # Mobius cannot see: UncaWork, ScholarlyWork
         %w[UncaWork ScholarlyWork]
       else
@@ -32,10 +34,12 @@ class TenantWorkTypeFilter
     # @param default_path [String] The default profile path to use as fallback
     # @return [String] Path to the tenant-specific metadata profile
     def tenant_metadata_profile_path(default_path)
-      case current_tenant_cname
-      when 'unca.hykuup.com'
+      cname = current_tenant_cname
+      return default_path unless cname
+
+      if cname.include?('unca')
         HykuKnapsack::Engine.root.join('config', 'metadata_profiles', 'unca', 'm3_profile.yaml')
-      when /\.digitalmobius\.org$/
+      elsif cname.include?('mobius')
         HykuKnapsack::Engine.root.join('config', 'metadata_profiles', 'mobius', 'm3_profile.yaml')
       else
         default_path
