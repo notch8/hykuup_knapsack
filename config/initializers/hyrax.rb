@@ -20,8 +20,8 @@ Rails.application.config.after_initialize do
     def self.create_default_schema
       m3_profile_path = tenant_specific_profile_path
 
-      # Clear existing profiles to ensure we load the correct tenant-specific one
-      Hyrax::FlexibleSchema.destroy_all
+      # Only create if no schema exists
+      return Hyrax::FlexibleSchema.first if Hyrax::FlexibleSchema.exists?
 
       Hyrax::FlexibleSchema.create do |f|
         f.profile = YAML.safe_load_file(m3_profile_path)

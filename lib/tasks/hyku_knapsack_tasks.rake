@@ -166,6 +166,7 @@ namespace :hykuup do
 
           # Reset the metadata profile
           print "  Resetting profile... "
+          Hyrax::FlexibleSchema.destroy_all # Clear existing profiles first
           Hyrax::FlexibleSchema.create_default_schema
           puts "✓"
 
@@ -240,6 +241,7 @@ namespace :hykuup do
 
         # Reset the metadata profile
         print "  Resetting profile... "
+        Hyrax::FlexibleSchema.destroy_all # Clear existing profiles first
         Hyrax::FlexibleSchema.create_default_schema
         puts "✓"
 
