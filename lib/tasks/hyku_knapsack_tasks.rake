@@ -5,7 +5,9 @@ namespace :hykuup do
   namespace :mobius do
     desc 'Update Bulkrax field mappings across all Mobius tenants'
     task update_field_mappings: :environment do
-      mobius_tenants = Account.where('cname LIKE ?', '%mobius%').or(Account.where(cname: 'stephens.hykuup.com'))
+      mobius_tenants = Account.where(part_of_consortia: 'mobius')
+                              .or(Account.where('cname LIKE ?', '%mobius%'))
+                              .or(Account.where(cname: 'stephens.hykuup.com'))
       mobius_split_pattern = /\s*(?<!\\)[,|]\s*/
       mobius_csv_mappings = {
         'contributor' => { 'from' => %w[sm_contributor contributor], 'split' => mobius_split_pattern },
@@ -45,7 +47,9 @@ namespace :hykuup do
   namespace :wcu do
     desc 'Update Bulkrax field mappings across WCU/UNCA tenants'
     task update_field_mappings: :environment do
-      wcu_tenants = Account.where('cname LIKE ?', '%unca%').or(Account.where(cname: 'wcu.hykuup.com'))
+      wcu_tenants = Account.where(part_of_consortia: 'unca')
+                           .or(Account.where('cname LIKE ?', '%unca%'))
+                           .or(Account.where(cname: 'wcu.hykuup.com'))
       wcu_split_pattern = /\s*[|]\s*/
       wcu_csv_mappings = {
         'file' => { 'from' => %w[file_name file], 'split' => wcu_split_pattern },

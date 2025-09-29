@@ -17,9 +17,8 @@ RSpec.describe Hyrax::QuickClassificationQuery, singletenant: true do
     describe "tenant filtering" do
       context "for UNCA tenant" do
         before do
-          allow(Apartment::Tenant).to receive(:current).and_return('unca')
-          account = double('Account', cname: 'unca.hykuup.com', part_of_consortia: 'unca')
-          allow(Account).to receive(:find_by).with(tenant: 'unca').and_return(account)
+          site_instance = double('Site', available_works: ['GenericWork', 'Image', 'Etd', 'Oer', 'ScholarlyWork'])
+          allow(Site).to receive(:instance).and_return(site_instance)
         end
 
         it "excludes MobiusWork and UncaWork from work creation options" do
@@ -33,9 +32,8 @@ RSpec.describe Hyrax::QuickClassificationQuery, singletenant: true do
 
       context "for Mobius tenant" do
         before do
-          allow(Apartment::Tenant).to receive(:current).and_return('mobius')
-          account = double('Account', cname: 'example.digitalmobius.org', part_of_consortia: 'mobius')
-          allow(Account).to receive(:find_by).with(tenant: 'mobius').and_return(account)
+          site_instance = double('Site', available_works: ['GenericWork', 'Image', 'Etd', 'Oer', 'MobiusWork'])
+          allow(Site).to receive(:instance).and_return(site_instance)
         end
 
         it "excludes UncaWork and ScholarlyWork from work creation options" do
@@ -49,9 +47,8 @@ RSpec.describe Hyrax::QuickClassificationQuery, singletenant: true do
 
       context "for generic tenant" do
         before do
-          allow(Apartment::Tenant).to receive(:current).and_return('generic')
-          account = double('Account', cname: 'example.com', part_of_consortia: nil)
-          allow(Account).to receive(:find_by).with(tenant: 'generic').and_return(account)
+          site_instance = double('Site', available_works: ['GenericWork', 'Image', 'Etd', 'Oer'])
+          allow(Site).to receive(:instance).and_return(site_instance)
         end
 
         it "excludes all tenant-specific work types from work creation options" do
