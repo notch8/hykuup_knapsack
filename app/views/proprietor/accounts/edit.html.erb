@@ -30,7 +30,7 @@
           <%= f.input :is_public %>
           
           <%= f.input :part_of_consortia,
-                      collection: AccountDecorator::CONSORTIUM_OPTIONS,
+                      collection: Consortium.options_for_select,
                       label: "Part of Consortia",
                       hint: "Select the consortium this tenant belongs to. This will control available work types and metadata profiles." %>
 

@@ -4,28 +4,32 @@
 module AccountDecorator
   extend ActiveSupport::Concern
 
-  # Available consortium options for dropdown
-  CONSORTIUM_OPTIONS = [
-    ['None', nil],
-    ['UNCA Consortium', 'unca'],
-    ['Mobius Consortium', 'mobius']
-  ].freeze
-
   included do
-    validates :part_of_consortia, inclusion: { in: CONSORTIUM_OPTIONS.map(&:last), allow_nil: true }
+    before_validation :normalize_part_of_consortia
+    validates :part_of_consortia, inclusion: { in: Consortium.identifiers, allow_nil: true }
   end
 
-  # Check if account is part of a specific consortium
-  # @param consortium_name [String] The consortium to check membership for
-  # @return [Boolean] true if account is part of the specified consortium
+  # Checks if the account is part of a specific consortium.
+  # @param consortium_name [String] The identifier of the consortium to check.
+  # @return [Boolean] true if the account is part of the specified consortium.
   def part_of_consortium?(consortium_name)
     part_of_consortia == consortium_name
   end
 
-  # Get consortium-specific configuration
-  # @return [String, nil] The consortium this account belongs to
+  # Returns the identifier of the consortium this account belongs to.
+  # @return [String, nil] The consortium identifier (e.g., "mobius") or nil.
   def consortium
     part_of_consortia
+  end
+
+  private
+
+  # A `before_validation` callback that converts a blank `part_of_consortia`
+  # value to `nil`. This allows the "None" option (which submits an empty string)
+  # to pass the `allow_nil: true` validation.
+  # @return [void]
+  def normalize_part_of_consortia
+    self.part_of_consortia = nil if part_of_consortia.blank?
   end
 end
 

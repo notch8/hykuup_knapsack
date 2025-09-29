@@ -14,3 +14,4 @@ file_cache/
 
 Gemfile.lock
 /.cache
+.bash_history

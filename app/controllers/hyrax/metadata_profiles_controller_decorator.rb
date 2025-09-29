@@ -62,7 +62,9 @@ module Hyrax
       forbidden_work_types = profile_work_types & excluded_work_types
 
       return unless forbidden_work_types.any?
-      tenant_name = TenantWorkTypeFilter.current_tenant_cname || 'this tenant'
+
+      account = current_tenant_account
+      tenant_name = account&.cname || 'this tenant'
       allowed_work_types = TenantWorkTypeFilter.allowed_work_types
 
       raise StandardError,
@@ -77,6 +79,14 @@ module Hyrax
     def extract_profile_work_types(profile_data)
       profile_classes = profile_data.dig('classes')&.keys || []
       profile_classes.map { |klass| klass.gsub(/Resource$/, '') }
+    end
+
+    # Fetches the Account object for the current tenant.
+    # @return [Account, nil]
+    def current_tenant_account
+      return nil unless defined?(Account) && Apartment::Tenant.current
+
+      Account.find_by(tenant: Apartment::Tenant.current)
     end
   end
 end

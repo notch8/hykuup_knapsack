@@ -197,14 +197,16 @@ namespace :hykuup do
 
       if tenant.blank?
         puts "\nError: Tenant must be specified"
-        puts "Usage: rake hykuup:profiles:reset_tenant[tenant_cname]"
+        puts "Usage: rake hykuup:profiles:reset_tenant[tenant_cname_or_name]"
         exit 1
       end
 
-      account = Account.find_by(tenant:) || Account.find_by(cname: tenant)
+      # Find the account by its tenant UUID, cname, or internal name
+      # to make the task more flexible for different environments.
+      account = Account.find_by(tenant:) || Account.find_by(cname: tenant) || Account.find_by(name: tenant)
 
       if account.nil?
-        puts "\nError: Tenant '#{tenant}' not found"
+        puts "\nError: Tenant '#{tenant}' not found by tenant UUID, cname, or name"
         exit 1
       end
 
