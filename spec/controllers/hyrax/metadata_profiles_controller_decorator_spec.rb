@@ -15,7 +15,7 @@ RSpec.describe Hyrax::MetadataProfilesController, singletenant: true do
       context "for UNCA tenant" do
         before do
           allow(Apartment::Tenant).to receive(:current).and_return('unca')
-          account = double('Account', cname: 'unca.hykuup.com')
+          account = double('Account', cname: 'unca.hykuup.com', part_of_consortia: 'unca')
           allow(Account).to receive(:find_by).with(tenant: 'unca').and_return(account)
         end
 
@@ -69,7 +69,7 @@ RSpec.describe Hyrax::MetadataProfilesController, singletenant: true do
       context "for Mobius tenant" do
         before do
           allow(Apartment::Tenant).to receive(:current).and_return('mobius')
-          account = double('Account', cname: 'example.digitalmobius.org')
+          account = double('Account', cname: 'example.digitalmobius.org', part_of_consortia: 'mobius')
           allow(Account).to receive(:find_by).with(tenant: 'mobius').and_return(account)
         end
 
@@ -112,7 +112,7 @@ RSpec.describe Hyrax::MetadataProfilesController, singletenant: true do
       context "for generic tenant" do
         before do
           allow(Apartment::Tenant).to receive(:current).and_return('generic')
-          account = double('Account', cname: 'dev-hykuup-knapsack.localhost.direct')
+          account = double('Account', cname: 'example.com', part_of_consortia: nil)
           allow(Account).to receive(:find_by).with(tenant: 'generic').and_return(account)
         end
 
@@ -132,26 +132,21 @@ RSpec.describe Hyrax::MetadataProfilesController, singletenant: true do
         it "rejects profiles with any tenant-specific work types" do
           profile_data = {
             'classes' => {
-              'GenericWorkResource' => {},
               'MobiusWorkResource' => {},
               'UncaWorkResource' => {},
               'ScholarlyWorkResource' => {}
             }
           }
-
           expect { controller_instance.send(:validate_tenant_work_types!, profile_data) }
-            .to raise_error(StandardError, /This profile contains work types \(MobiusWork, UncaWork, ScholarlyWork\) that are not allowed for dev-hykuup-knapsack\.localhost\.direct/)
+            .to raise_error(StandardError, /This profile contains work types \(MobiusWork, UncaWork, ScholarlyWork\) that are not allowed for example\.com/)
         end
 
         it "includes allowed work types in error message" do
           profile_data = {
-            'classes' => {
-              'MobiusWorkResource' => {}
-            }
+            'classes' => { 'MobiusWorkResource' => {} }
           }
-
           expect { controller_instance.send(:validate_tenant_work_types!, profile_data) }
-            .to raise_error(StandardError, /Allowed work types for dev-hykuup-knapsack\.localhost\.direct: GenericWork, Image, Etd, Oer/)
+            .to raise_error(StandardError, /Allowed work types for example\.com: GenericWork, Image, Etd, Oer/)
         end
       end
 
@@ -189,7 +184,7 @@ RSpec.describe Hyrax::MetadataProfilesController, singletenant: true do
       context "for UNCA tenant" do
         before do
           allow(Apartment::Tenant).to receive(:current).and_return('unca')
-          account = double('Account', cname: 'unca.hykuup.com')
+          account = double('Account', cname: 'unca.hykuup.com', part_of_consortia: 'unca')
           allow(Account).to receive(:find_by).with(tenant: 'unca').and_return(account)
         end
 
@@ -204,7 +199,7 @@ RSpec.describe Hyrax::MetadataProfilesController, singletenant: true do
       context "for Mobius tenant" do
         before do
           allow(Apartment::Tenant).to receive(:current).and_return('mobius')
-          account = double('Account', cname: 'example.digitalmobius.org')
+          account = double('Account', cname: 'example.digitalmobius.org', part_of_consortia: 'mobius')
           allow(Account).to receive(:find_by).with(tenant: 'mobius').and_return(account)
         end
 
@@ -219,7 +214,7 @@ RSpec.describe Hyrax::MetadataProfilesController, singletenant: true do
       context "for generic tenant" do
         before do
           allow(Apartment::Tenant).to receive(:current).and_return('generic')
-          account = double('Account', cname: 'example.com')
+          account = double('Account', cname: 'example.com', part_of_consortia: nil)
           allow(Account).to receive(:find_by).with(tenant: 'generic').and_return(account)
         end
 

@@ -6,17 +6,15 @@ class TenantWorkTypeFilter
     # Returns work types that should be excluded for the current tenant
     # @return [Array<String>] Array of work type names to exclude
     def excluded_work_types
-      cname = current_tenant_cname
-      return %w[MobiusWork UncaWork ScholarlyWork] unless cname
+      consortium = current_tenant_consortium
+      return %w[MobiusWork UncaWork ScholarlyWork] unless consortium
 
-      if cname.include?('unca')
-        # UNCA cannot see: MobiusWork, UncaWork (deprecated)
+      case consortium
+      when 'unca'
         %w[MobiusWork UncaWork]
-      elsif cname.include?('mobius')
-        # Mobius cannot see: UncaWork, ScholarlyWork
+      when 'mobius'
         %w[UncaWork ScholarlyWork]
       else
-        # Generic tenants cannot see: MobiusWork, UncaWork, ScholarlyWork
         %w[MobiusWork UncaWork ScholarlyWork]
       end
     end
@@ -34,27 +32,28 @@ class TenantWorkTypeFilter
     # @param default_path [String] The default profile path to use as fallback
     # @return [String] Path to the tenant-specific metadata profile
     def tenant_metadata_profile_path(default_path)
-      cname = current_tenant_cname
-      return default_path unless cname
+      consortium = current_tenant_consortium
+      return default_path unless consortium
 
-      if cname.include?('unca')
+      case consortium
+      when 'unca'
         HykuKnapsack::Engine.root.join('config', 'metadata_profiles', 'unca', 'm3_profile.yaml')
-      elsif cname.include?('mobius')
+      when 'mobius'
         HykuKnapsack::Engine.root.join('config', 'metadata_profiles', 'mobius', 'm3_profile.yaml')
       else
         default_path
       end
     end
 
-    # Returns the current tenant's cname
-    # @return [String, nil] The tenant's cname or nil if not found
-    def current_tenant_cname
+    # Returns the current tenant's consortium membership
+    # @return [String, nil] The consortium name or nil if not part of any consortium
+    def current_tenant_consortium
       return nil unless defined?(Account)
 
       current_tenant = Apartment::Tenant.current
       return nil unless current_tenant
 
-      Account.find_by(tenant: current_tenant)&.cname
+      Account.find_by(tenant: current_tenant)&.part_of_consortia
     end
   end
 end

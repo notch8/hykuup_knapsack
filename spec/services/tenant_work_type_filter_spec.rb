@@ -14,7 +14,7 @@ RSpec.describe TenantWorkTypeFilter, singletenant: true do
     context 'for UNCA tenant' do
       before do
         allow(Apartment::Tenant).to receive(:current).and_return('unca')
-        account = double('Account', cname: 'unca.hykuup.com')
+        account = double('Account', part_of_consortia: 'unca', cname: 'unca.hykuup.com')
         allow(Account).to receive(:find_by).with(tenant: 'unca').and_return(account)
       end
 
@@ -27,7 +27,7 @@ RSpec.describe TenantWorkTypeFilter, singletenant: true do
     context 'for Mobius tenant' do
       before do
         allow(Apartment::Tenant).to receive(:current).and_return('mobius')
-        account = double('Account', cname: 'example.digitalmobius.org')
+        account = double('Account', part_of_consortia: 'mobius', cname: 'example.digitalmobius.org')
         allow(Account).to receive(:find_by).with(tenant: 'mobius').and_return(account)
       end
 
@@ -40,7 +40,7 @@ RSpec.describe TenantWorkTypeFilter, singletenant: true do
     context 'for generic tenant' do
       before do
         allow(Apartment::Tenant).to receive(:current).and_return('generic')
-        account = double('Account', cname: 'example.com')
+        account = double('Account', part_of_consortia: nil, cname: 'example.com')
         allow(Account).to receive(:find_by).with(tenant: 'generic').and_return(account)
       end
 
@@ -55,7 +55,7 @@ RSpec.describe TenantWorkTypeFilter, singletenant: true do
     context 'for UNCA tenant' do
       before do
         allow(Apartment::Tenant).to receive(:current).and_return('unca')
-        account = double('Account', cname: 'unca.hykuup.com')
+        account = double('Account', part_of_consortia: 'unca', cname: 'unca.hykuup.com')
         allow(Account).to receive(:find_by).with(tenant: 'unca').and_return(account)
       end
 
@@ -70,7 +70,7 @@ RSpec.describe TenantWorkTypeFilter, singletenant: true do
     context 'for Mobius tenant' do
       before do
         allow(Apartment::Tenant).to receive(:current).and_return('mobius')
-        account = double('Account', cname: 'example.digitalmobius.org')
+        account = double('Account', part_of_consortia: 'mobius', cname: 'example.digitalmobius.org')
         allow(Account).to receive(:find_by).with(tenant: 'mobius').and_return(account)
       end
 
@@ -85,7 +85,7 @@ RSpec.describe TenantWorkTypeFilter, singletenant: true do
     context 'for generic tenant' do
       before do
         allow(Apartment::Tenant).to receive(:current).and_return('generic')
-        account = double('Account', cname: 'example.com')
+        account = double('Account', part_of_consortia: nil, cname: 'example.com')
         allow(Account).to receive(:find_by).with(tenant: 'generic').and_return(account)
       end
 
@@ -113,7 +113,7 @@ RSpec.describe TenantWorkTypeFilter, singletenant: true do
     context 'when cname includes "unca"' do
       before do
         allow(Apartment::Tenant).to receive(:current).and_return('unca')
-        account = double('Account', cname: 'unca.hykuup.com')
+        account = double('Account', part_of_consortia: 'unca', cname: 'unca.hykuup.com')
         allow(Account).to receive(:find_by).with(tenant: 'unca').and_return(account)
       end
 
@@ -127,7 +127,7 @@ RSpec.describe TenantWorkTypeFilter, singletenant: true do
     context 'when cname includes "unca" in a different domain' do
       before do
         allow(Apartment::Tenant).to receive(:current).and_return('unca-test')
-        account = double('Account', cname: 'unca-test.example.com')
+        account = double('Account', part_of_consortia: 'unca', cname: 'unca-test.example.com')
         allow(Account).to receive(:find_by).with(tenant: 'unca-test').and_return(account)
       end
 
@@ -141,7 +141,7 @@ RSpec.describe TenantWorkTypeFilter, singletenant: true do
     context 'when cname includes "mobius"' do
       before do
         allow(Apartment::Tenant).to receive(:current).and_return('mobius')
-        account = double('Account', cname: 'example.digitalmobius.org')
+        account = double('Account', part_of_consortia: 'mobius', cname: 'example.digitalmobius.org')
         allow(Account).to receive(:find_by).with(tenant: 'mobius').and_return(account)
       end
 
@@ -155,7 +155,7 @@ RSpec.describe TenantWorkTypeFilter, singletenant: true do
     context 'when cname includes "mobius" in a different domain' do
       before do
         allow(Apartment::Tenant).to receive(:current).and_return('mobius-test')
-        account = double('Account', cname: 'mobius-test.example.com')
+        account = double('Account', part_of_consortia: 'mobius', cname: 'mobius-test.example.com')
         allow(Account).to receive(:find_by).with(tenant: 'mobius-test').and_return(account)
       end
 
@@ -169,7 +169,7 @@ RSpec.describe TenantWorkTypeFilter, singletenant: true do
     context 'when cname does not include "unca" or "mobius"' do
       before do
         allow(Apartment::Tenant).to receive(:current).and_return('generic')
-        account = double('Account', cname: 'example.com')
+        account = double('Account', part_of_consortia: nil, cname: 'example.com')
         allow(Account).to receive(:find_by).with(tenant: 'generic').and_return(account)
       end
 

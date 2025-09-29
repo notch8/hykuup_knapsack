@@ -18,7 +18,7 @@ RSpec.describe Hyrax::QuickClassificationQuery, singletenant: true do
       context "for UNCA tenant" do
         before do
           allow(Apartment::Tenant).to receive(:current).and_return('unca')
-          account = double('Account', cname: 'unca.hykuup.com')
+          account = double('Account', cname: 'unca.hykuup.com', part_of_consortia: 'unca')
           allow(Account).to receive(:find_by).with(tenant: 'unca').and_return(account)
         end
 
@@ -34,7 +34,7 @@ RSpec.describe Hyrax::QuickClassificationQuery, singletenant: true do
       context "for Mobius tenant" do
         before do
           allow(Apartment::Tenant).to receive(:current).and_return('mobius')
-          account = double('Account', cname: 'example.digitalmobius.org')
+          account = double('Account', cname: 'example.digitalmobius.org', part_of_consortia: 'mobius')
           allow(Account).to receive(:find_by).with(tenant: 'mobius').and_return(account)
         end
 
@@ -50,7 +50,7 @@ RSpec.describe Hyrax::QuickClassificationQuery, singletenant: true do
       context "for generic tenant" do
         before do
           allow(Apartment::Tenant).to receive(:current).and_return('generic')
-          account = double('Account', cname: 'example.com')
+          account = double('Account', cname: 'example.com', part_of_consortia: nil)
           allow(Account).to receive(:find_by).with(tenant: 'generic').and_return(account)
         end
 
