@@ -205,44 +205,34 @@ Metadata profiles are automatically selected based on tenant consortium membersh
 
 ## Adding New Consortia
 
+<details>
+<summary>Click to expand: How to add a new consortium to the system</summary>
+
 To add a new consortium to the system, follow these steps:
 
 ### 1. Define the Consortium
 
-Add your consortium to `config/consortia.yml`:
+Add your consortium to `config/consortia.yml` with its excluded work types:
 
 ```yaml
 - name: "UNCA Consortium"
   identifier: "unca"
+  excluded_work_types:
+    - "MobiusWork"
+    - "UncaWork"
 - name: "Mobius Consortium"
   identifier: "mobius"
+  excluded_work_types:
+    - "UncaWork"
+    - "ScholarlyWork"
 - name: "Your New Consortium"
   identifier: "your_consortium"
+  excluded_work_types:
+    - "SomeWorkType"
+    - "AnotherWorkType"
 ```
 
-### 2. Configure Work Type Filtering
-
-Update `app/services/tenant_work_type_filter.rb` to define which work types your consortium should exclude:
-
-```ruby
-def excluded_work_types
-  consortium = current_tenant_consortium
-  return %w[MobiusWork UncaWork ScholarlyWork] unless consortium
-
-  case consortium
-  when 'unca'
-    %w[MobiusWork UncaWork]
-  when 'mobius'
-    %w[UncaWork ScholarlyWork]
-  when 'your_consortium'
-    %w[SomeWorkType AnotherWorkType]
-  else
-    %w[MobiusWork UncaWork ScholarlyWork]
-  end
-end
-```
-
-### 3. Create Consortium-Specific Profile
+### 2. Create Consortium-Specific Profile
 
 Create a metadata profile for your consortium at `config/metadata_profiles/your_consortium/m3_profile.yaml`. You can copy the default profile and modify it as needed:
 
@@ -251,29 +241,7 @@ mkdir -p config/metadata_profiles/your_consortium
 cp config/metadata_profiles/default/m3_profile.yaml config/metadata_profiles/your_consortium/m3_profile.yaml
 ```
 
-### 4. Update Profile Path Resolution
-
-Update `app/services/tenant_work_type_filter.rb` to include your consortium in the profile path logic:
-
-```ruby
-def tenant_metadata_profile_path(default_path)
-  consortium = current_tenant_consortium
-  return default_path unless consortium
-
-  case consortium
-  when 'unca'
-    HykuKnapsack::Engine.root.join('config', 'metadata_profiles', 'unca', 'm3_profile.yaml')
-  when 'mobius'
-    HykuKnapsack::Engine.root.join('config', 'metadata_profiles', 'mobius', 'm3_profile.yaml')
-  when 'your_consortium'
-    HykuKnapsack::Engine.root.join('config', 'metadata_profiles', 'your_consortium', 'm3_profile.yaml')
-  else
-    default_path
-  end
-end
-```
-
-### 5. Update Rake Tasks (Optional)
+### 3. Update Rake Tasks (Optional)
 
 If you want to include your consortium in the bulk operations, update `lib/tasks/hyku_knapsack_tasks.rake`:
 
@@ -288,7 +256,7 @@ namespace :your_consortium do
 end
 ```
 
-### 6. Test Your Changes
+### 4. Test Your Changes
 
 After making these changes:
 
@@ -297,7 +265,9 @@ After making these changes:
 3. Verify work type filtering works correctly
 4. Test profile loading in the admin interface
 
-**Note:** The system will automatically pick up new consortium definitions from the YAML file without requiring a restart, but you'll need to restart the application for code changes to take effect.
+**Note:** The system will automatically pick up new consortium definitions from the YAML file without requiring a restart. No code changes are needed!
+
+</details>
 
 ## Converting a Fork of Hyku Prime to a Knapsack
 
