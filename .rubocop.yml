@@ -1,9 +1,6 @@
 inherit_gem:
   bixby: bixby_default.yml
 
-Layout/IndentationWidth:
-  Width: 2
-
 AllCops:
   NewCops: disable
   TargetRubyVersion: 3.2.2
@@ -12,10 +9,9 @@ AllCops:
   # NOTE: When we run knapsack's rubocop, we don't want to check the submodule
   #       for Hyku.  We'll assume it's okay and has it's own policing policies.
   - "hyrax-webapp/**/*"
-  - "gems/**/*"
 
 Metrics/BlockLength:
-  AllowedMethods: ['included', 'describe', 'it', 'context']
+  IgnoredMethods: ['included', 'describe', 'it', 'context']
   Exclude:
   - "spec/**/*.rb"
 

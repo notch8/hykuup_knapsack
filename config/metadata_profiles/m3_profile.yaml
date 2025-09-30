@@ -3,8 +3,8 @@ m3_version: 1.0.beta2
 profile:
   date_modified: "2024-06-01"
   responsibility: https://samvera.org
-  responsibility_statement: Western Carolina University Initial Profile
-  type: Hyku Profile with Western Carolina University Custom Work Types
+  responsibility_statement: HykuUp Initial Profile
+  type: Hyku Profile with HykuUp Custom Work Types
   version: 1
 classes:
   GenericWorkResource:
@@ -21,6 +21,8 @@ classes:
     display_label: Collection Resource
   Hyrax::FileSet:
     display_label: FileSet
+  MobiusWork:
+    display_label: Mobius Work
   ScholarlyWork:
     display_label: Scholarly Work
   UncaWork:
@@ -52,6 +54,7 @@ properties:
         - ImageResource
         - OerResource
         - EtdResource
+        - MobiusWork
         - ScholarlyWork
         - UncaWork
     cardinality:
@@ -98,6 +101,7 @@ properties:
         - ImageResource
         - OerResource
         - EtdResource
+        - MobiusWork
         - ScholarlyWork
         - UncaWork
     cardinality:
@@ -130,6 +134,7 @@ properties:
         - ImageResource
         - OerResource
         - EtdResource
+        - MobiusWork
         - ScholarlyWork
         - UncaWork
     cardinality:
@@ -152,6 +157,7 @@ properties:
         - ImageResource
         - OerResource
         - EtdResource
+        - MobiusWork
         - ScholarlyWork
         - UncaWork
     cardinality:
@@ -182,6 +188,7 @@ properties:
         - ImageResource
         - OerResource
         - EtdResource
+        - MobiusWork
         - ScholarlyWork
         - UncaWork
     cardinality:
@@ -216,6 +223,7 @@ properties:
         - ImageResource
         - OerResource
         - EtdResource
+        - MobiusWork
         - ScholarlyWork
         - UncaWork
     cardinality:
@@ -249,6 +257,7 @@ properties:
         - ImageResource
         - OerResource
         - EtdResource
+        - MobiusWork
         - ScholarlyWork
         - UncaWork
     cardinality:
@@ -280,6 +289,7 @@ properties:
         - ImageResource
         - OerResource
         - EtdResource
+        - MobiusWork
         - ScholarlyWork
         - UncaWork
     cardinality:
@@ -312,6 +322,7 @@ properties:
         - ImageResource
         - OerResource
         - EtdResource
+        - MobiusWork
         - ScholarlyWork
         - UncaWork
     cardinality:
@@ -346,6 +357,7 @@ properties:
         - ImageResource
         - OerResource
         - EtdResource
+        - MobiusWork
         - ScholarlyWork
         - UncaWork
     cardinality:
@@ -373,6 +385,7 @@ properties:
         - ImageResource
         - OerResource
         - EtdResource
+        - MobiusWork
         - ScholarlyWork
         - UncaWork
     cardinality:
@@ -406,6 +419,7 @@ properties:
         - ImageResource
         - OerResource
         - EtdResource
+        - MobiusWork
         - ScholarlyWork
         - UncaWork
     cardinality:
@@ -438,6 +452,7 @@ properties:
         - ImageResource
         - OerResource
         - EtdResource
+        - MobiusWork
         - ScholarlyWork
         - UncaWork
     cardinality:
@@ -471,6 +486,7 @@ properties:
         - ImageResource
         - OerResource
         - EtdResource
+        - MobiusWork
         - ScholarlyWork
         - UncaWork
     cardinality:
@@ -533,6 +549,7 @@ properties:
         - ImageResource
         - OerResource
         - EtdResource
+        - MobiusWork
         - ScholarlyWork
         - UncaWork
     cardinality:
@@ -563,6 +580,7 @@ properties:
         - ImageResource
         - OerResource
         - EtdResource
+        - MobiusWork
         - ScholarlyWork
         - UncaWork
     cardinality:
@@ -596,6 +614,7 @@ properties:
         - ImageResource
         - OerResource
         - EtdResource
+        - MobiusWork
         - ScholarlyWork
         - UncaWork
     cardinality:
@@ -621,6 +640,7 @@ properties:
         - ImageResource
         - OerResource
         - EtdResource
+        - MobiusWork
         - ScholarlyWork
         - UncaWork
     cardinality:
@@ -655,6 +675,7 @@ properties:
         - ImageResource
         - OerResource
         - EtdResource
+        - MobiusWork
         - ScholarlyWork
         - UncaWork
     cardinality:
@@ -686,6 +707,7 @@ properties:
         - ImageResource
         - OerResource
         - EtdResource
+        - MobiusWork
         - ScholarlyWork
         - UncaWork
     cardinality:
@@ -720,6 +742,7 @@ properties:
         - ImageResource
         - OerResource
         - EtdResource
+        - MobiusWork
         - ScholarlyWork
         - UncaWork
     cardinality:
@@ -753,6 +776,7 @@ properties:
         - ImageResource
         - OerResource
         - EtdResource
+        - MobiusWork
         - ScholarlyWork
         - UncaWork
     cardinality:
@@ -809,6 +833,7 @@ properties:
         - ImageResource
         - OerResource
         - EtdResource
+        - MobiusWork
         - ScholarlyWork
         - UncaWork
     cardinality:
@@ -843,6 +868,7 @@ properties:
         - ImageResource
         - OerResource
         - EtdResource
+        - MobiusWork
         - ScholarlyWork
         - UncaWork
     cardinality:
@@ -875,6 +901,7 @@ properties:
         - ImageResource
         - OerResource
         - EtdResource
+        - MobiusWork
         - ScholarlyWork
         - UncaWork
     cardinality:
@@ -909,6 +936,7 @@ properties:
         - ImageResource
         - OerResource
         - EtdResource
+        - MobiusWork
         - ScholarlyWork
         - UncaWork
     cardinality:
@@ -942,6 +970,7 @@ properties:
         - ImageResource
         - OerResource
         - EtdResource
+        - MobiusWork
         - ScholarlyWork
         - UncaWork
     cardinality:
@@ -1652,6 +1681,100 @@ properties:
       - Example State University
     view:
       html_dl: true
+  # MobiusWork specific metadata - mobius_work.yaml
+  rights:
+    available_on:
+      class:
+        - MobiusWork
+    cardinality:
+      minimum: 0
+    data_type: array
+    controlled_values:
+      format: http://www.w3.org/2001/XMLSchema#string
+      sources:
+        - "null"
+    display_label:
+      default: Rights
+    index_documentation: searchable
+    indexing:
+      - rights_tesim
+    form:
+      primary: false
+    property_uri: http://purl.org/dc/terms/rightsHolder
+    range: http://www.w3.org/2001/XMLSchema#string
+    sample_values:
+      - All rights reserved.
+    view:
+      html_dl: true
+  relation:
+    available_on:
+      class:
+      - MobiusWork
+    cardinality:
+      minimum: 0
+    data_type: array
+    controlled_values:
+      format: http://www.w3.org/2001/XMLSchema#string
+      sources:
+      - 'null'
+    display_label:
+      default: Relation
+    index_documentation: searchable
+    indexing:
+      - relation_tesim
+    form:
+      primary: false
+    property_uri: http://purl.org/dc/terms/relation
+    range: http://www.w3.org/2001/XMLSchema#string
+    view:
+      html_dl: true
+  coverage:
+    available_on:
+      class:
+        - MobiusWork
+    cardinality:
+      minimum: 0
+    data_type: array
+    controlled_values:
+      format: http://www.w3.org/2001/XMLSchema#string
+      sources:
+        - "null"
+    display_label:
+      default: Coverage
+    index_documentation: searchable
+    index_keys:
+      - "coverage_tesim"
+    form:
+      primary: false
+    property_uri: http://purl.org/dc/terms/coverage
+    range: http://www.w3.org/2001/XMLSchema#string
+    view:
+      html_dl: true
+  file_format:
+    available_on:
+      class:
+        - MobiusWork
+    cardinality:
+      minimum: 0
+    data_type: array
+    controlled_values:
+      format: http://www.w3.org/2001/XMLSchema#string
+      sources:
+        - "null"
+    display_label:
+      default: File Format
+    index_documentation: searchable
+    indexing:
+      - file_format_tesim
+    form:
+      required: false
+      primary: false
+      multiple: true
+    property_uri: http://purl.org/dc/terms/format
+    range: http://www.w3.org/2001/XMLSchema#string
+    sample_values:
+      - JPEG
+      - PNG
   # ScholarlyWork specific metadata - scholarly_work.yaml
   spatial_coverage:
     available_on:
