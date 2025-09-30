@@ -14,6 +14,10 @@
     - [Deployment scripts](#deployment-scripts)
     - [Theme files](#theme-files)
     - [Gems](#gems)
+  - [Features](#features)
+    - [Consortium-Based Tenant Configuration](#consortium-based-tenant-configuration)
+    - [Tenant-Specific Work Type Filtering](#tenant-specific-work-type-filtering)
+    - [Dynamic Metadata Profile Loading](#dynamic-metadata-profile-loading)
   - [Converting a Fork of Hyku Prime to a Knapsack](#converting-a-fork-of-hyku-prime-to-a-knapsack)
   - [Installation](#installation)
   - [Contributing](#contributing)
@@ -69,7 +73,7 @@ Naming the `samvera-labs/hyku_knapsack` as `prime` helps clarify what we mean.  
 
 If you choose to fork Knapsack, be aware that this will impact how you manage pull requests via Github.  Namely as you submit PRs on your Fork, the UI might default to applying that to the fork's origin (e.g. Knapsack upstream).
 
-To ease synchronization of your Knapsack and Knapsack “prime”, consider adding knapsack prime as a remote:
+To ease synchronization of your Knapsack and Knapsack "prime", consider adding knapsack prime as a remote:
 
 ```bash
 cd $PROJECT_NAME_knapsack
@@ -159,6 +163,111 @@ Theme files (views, css, etc) can be added in the the Knapsack. We recommend add
 It can be useful to add additional gems to the bundle. This can be done w/o editing Hyku by adding them to the [./bundler.d/example.rb](./bundler.d/example.rb].  [See the bundler-inject documentation for more details](https://github.com/kbrock/bundler-inject/) on overriding and adding gems.
 
 **NOTE:** Do not add gems to the gemspec nor Gemfile.  When you add to the knapsack Gemfile/gemspec, when you bundle, you'll update the Hyku Gemfile; which will mean you might be updating Hyku prime with knapsack installation specific dependencies.  Instead add gems to `./bundler.d/example.rb`.
+
+## Features
+
+This HykuKnapsack includes several custom features for consortium-based multitenancy:
+
+### Consortium-Based Tenant Configuration
+
+This knapsack overrides Hyku's default profile loading behavior. Instead of all tenants using the same default metadata profile, tenants can now have their own consortium-specific default profiles based on their `part_of_consortia` setting.
+
+**Configuration:**
+- Consortium definitions are stored in `config/consortia.yml`
+- Admin interface allows setting `part_of_consortia` field on accounts
+- Supports flexible consortium management without code changes
+
+### Tenant-Specific Work Type Filtering
+
+Each tenant only sees work types appropriate for their consortium membership:
+
+- **UNCA Consortium**: Excludes `MobiusWork` and `UncaWork`
+- **Mobius Consortium**: Excludes `UncaWork` and `ScholarlyWork`  
+- **Generic tenants**: Excludes all tenant-specific work types
+
+**Implementation:**
+- Work type filtering applied to admin dashboard, work creation dropdowns, and all work type selection interfaces
+- Uses `TenantWorkTypeFilter` service for consistent filtering logic
+- Automatically updates `Site.instance.available_works` based on tenant consortium
+
+### Dynamic Metadata Profile Loading
+
+Default metadata profiles are automatically selected based on tenant consortium membership:
+
+- **UNCA Consortium**: Loads `config/metadata_profiles/unca/m3_profile.yaml`
+- **Mobius Consortium**: Loads `config/metadata_profiles/mobius/m3_profile.yaml`
+- **Generic tenants**: Loads `config/metadata_profiles/default/m3_profile.yaml`
+
+**Management:**
+- Use `rake hykuup:profiles:reset_all` to reset all tenant profiles
+- Use `rake hykuup:profiles:reset_tenant[tenant_name]` to reset a specific tenant
+- Profile upload validation prevents incompatible work types
+
+## Adding New Consortia
+
+<details>
+<summary>Click to expand: How to add a new consortium to the system</summary>
+
+To add a new consortium to the system, follow these steps:
+
+### 1. Define the Consortium
+
+Add your consortium to `config/consortia.yml` with its excluded work types:
+
+```yaml
+- name: "UNCA Consortium"
+  identifier: "unca"
+  excluded_work_types:
+    - "MobiusWork"
+    - "UncaWork"
+- name: "Mobius Consortium"
+  identifier: "mobius"
+  excluded_work_types:
+    - "UncaWork"
+    - "ScholarlyWork"
+- name: "Your New Consortium"
+  identifier: "your_consortium"
+  excluded_work_types:
+    - "SomeWorkType"
+    - "AnotherWorkType"
+```
+
+### 2. Create Consortium-Specific Profile
+
+Create a metadata profile for your consortium at `config/metadata_profiles/your_consortium/m3_profile.yaml`. You can copy the default profile and modify it as needed:
+
+```bash
+mkdir -p config/metadata_profiles/your_consortium
+cp config/metadata_profiles/default/m3_profile.yaml config/metadata_profiles/your_consortium/m3_profile.yaml
+```
+
+### 3. Update Rake Tasks (Optional)
+
+If you want to include your consortium in the bulk operations, update `lib/tasks/hyku_knapsack_tasks.rake`:
+
+```ruby
+# Add a new namespace for your consortium
+namespace :your_consortium do
+  desc 'Update Bulkrax field mappings across all Your Consortium tenants'
+  task update_field_mappings: :environment do
+    your_consortium_tenants = Account.where(part_of_consortia: 'your_consortium')
+    # ... your consortium-specific logic
+  end
+end
+```
+
+### 4. Test Your Changes
+
+After making these changes:
+
+1. Run the profile reset rake task to test profile loading
+2. Create a test account with your consortium setting
+3. Verify work type filtering works correctly
+4. Test profile loading in the admin interface
+
+**Note:** The system will automatically pick up new consortium definitions from the YAML file without requiring a restart. No code changes are needed!
+
+</details>
 
 ## Converting a Fork of Hyku Prime to a Knapsack
 
