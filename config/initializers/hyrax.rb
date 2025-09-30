@@ -28,6 +28,21 @@ Rails.application.config.after_initialize do
       end
     end
 
+    def self.force_create_default_schema
+      # Force creates a new flexible schema for the current tenant.
+      # This method is intended for use by rake tasks that need to ensure
+      # a new schema is created, even if one already exists.
+      #
+      # @return [Hyrax::FlexibleSchema] The newly created schema
+      # @see create_default_schema for the safe version used during app startup
+      m3_profile_path = tenant_specific_profile_path
+
+      # Always create a new schema (for rake tasks)
+      Hyrax::FlexibleSchema.create do |f|
+        f.profile = YAML.safe_load_file(m3_profile_path)
+      end
+    end
+
     def self.tenant_specific_profile_path
       return Hyrax.config.default_m3_profile_path unless defined?(Account) && Apartment::Tenant.current
 

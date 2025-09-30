@@ -132,7 +132,194 @@ namespace :hykuup do
   end
 
   namespace :profiles do
-    desc 'Reset metadata profiles and update available works for all tenants'
+    desc 'Add tenant-specific metadata profiles (preserves existing profiles)'
+    task add_tenant_profiles: :environment do
+      puts "\n" + "=" * 60
+      puts "  ADDING TENANT-SPECIFIC METADATA PROFILES"
+      puts "=" * 60
+      puts "\n✅ This will ADD new profiles without destroying existing ones."
+      puts "   Existing profiles will be preserved for historical reference.\n"
+
+      total_tenants = Account.count
+      processed = 0
+      errors = 0
+
+      Account.find_each do |account|
+        processed += 1
+        puts "\n[#{processed}/#{total_tenants}] Processing: #{account.cname}"
+        puts "  Tenant: #{account.tenant}"
+
+        begin
+          # Switch to the tenant
+          Apartment::Tenant.switch!(account.tenant)
+
+          # Add the tenant-specific profile (preserves existing)
+          print "  Adding tenant-specific profile... "
+          Hyrax::FlexibleSchema.force_create_default_schema
+          puts "✓"
+
+          # Update available works based on tenant filtering rules
+          print "  Updating available works... "
+          allowed_types = TenantWorkTypeFilter.allowed_work_types
+          Site.instance.update!(available_works: allowed_types)
+          puts "✓"
+
+          # Show what work types this tenant can see
+          puts "  Available work types: #{allowed_types.join(', ')}"
+
+        rescue StandardError => e
+          # Only rescue StandardError to avoid masking system-level exceptions.
+          errors += 1
+          puts "  ✗ ERROR: #{e.message}"
+          puts "    #{e.backtrace.first}"
+        end
+      end
+
+      puts "\n" + "=" * 60
+      puts "  SUMMARY"
+      puts "=" * 60
+      puts "  Total tenants: #{total_tenants}"
+      puts "  Processed: #{processed}"
+      puts "  Errors: #{errors}"
+      puts "  Success: #{processed - errors}"
+      puts "=" * 60
+    end
+
+    desc 'Add tenant-specific metadata profiles for specific consortium (preserves existing profiles)'
+    task :add_consortium_profiles, [:consortium] => :environment do |_t, args|
+      consortium = args[:consortium]
+
+      if consortium.blank?
+        puts "\nError: Consortium must be specified"
+        puts "Usage: rake hykuup:profiles:add_consortium_profiles[consortium_identifier]"
+        puts "Available consortia: #{Consortium.identifiers.join(', ')}"
+        exit 1
+      end
+
+      unless Consortium.identifiers.include?(consortium)
+        puts "\nError: Invalid consortium '#{consortium}'"
+        puts "Available consortia: #{Consortium.identifiers.join(', ')}"
+        exit 1
+      end
+
+      puts "\n" + "=" * 60
+      puts "  ADDING PROFILES FOR #{consortium.upcase} CONSORTIUM"
+      puts "=" * 60
+      puts "\n✅ This will ADD new profiles without destroying existing ones."
+      puts "   Existing profiles will be preserved for historical reference.\n"
+
+      consortium_tenants = Account.where(part_of_consortia: consortium)
+      total_tenants = consortium_tenants.count
+      processed = 0
+      errors = 0
+
+      if total_tenants.zero?
+        puts "No tenants found for consortium '#{consortium}'"
+        exit 0
+      end
+
+      consortium_tenants.find_each do |account|
+        processed += 1
+        puts "\n[#{processed}/#{total_tenants}] Processing: #{account.cname}"
+        puts "  Tenant: #{account.tenant}"
+        puts "  Consortium: #{account.part_of_consortia}"
+
+        begin
+          # Switch to the tenant
+          Apartment::Tenant.switch!(account.tenant)
+
+          # Add the tenant-specific profile (preserves existing)
+          print "  Adding tenant-specific profile... "
+          Hyrax::FlexibleSchema.force_create_default_schema
+          puts "✓"
+
+          # Update available works based on tenant filtering rules
+          print "  Updating available works... "
+          allowed_types = TenantWorkTypeFilter.allowed_work_types
+          Site.instance.update!(available_works: allowed_types)
+          puts "✓"
+
+          # Show what work types this tenant can see
+          puts "  Available work types: #{allowed_types.join(', ')}"
+
+        rescue StandardError => e
+          # Only rescue StandardError to avoid masking system-level exceptions.
+          errors += 1
+          puts "  ✗ ERROR: #{e.message}"
+          puts "    #{e.backtrace.first}"
+        end
+      end
+
+      puts "\n" + "=" * 60
+      puts "  SUMMARY"
+      puts "=" * 60
+      puts "  Consortium: #{consortium}"
+      puts "  Total tenants: #{total_tenants}"
+      puts "  Processed: #{processed}"
+      puts "  Errors: #{errors}"
+      puts "  Success: #{processed - errors}"
+      puts "=" * 60
+    end
+
+    desc 'Add tenant-specific metadata profile for a specific tenant (preserves existing profiles)'
+    task :add_tenant_profile, [:tenant] => :environment do |_t, args|
+      tenant = args[:tenant]
+
+      if tenant.blank?
+        puts "\nError: Tenant must be specified"
+        puts "Usage: rake hykuup:profiles:add_tenant_profile[tenant_cname_or_name]"
+        exit 1
+      end
+
+      # Find the account by its tenant UUID, cname, or internal name
+      account = Account.find_by(tenant:) || Account.find_by(cname: tenant) || Account.find_by(name: tenant)
+
+      if account.nil?
+        puts "\nError: Tenant '#{tenant}' not found by tenant UUID, cname, or name"
+        exit 1
+      end
+
+      puts "\n" + "=" * 50
+      puts "  ADDING TENANT-SPECIFIC PROFILE FOR SINGLE TENANT"
+      puts "=" * 50
+      puts "  Tenant: #{account.cname}"
+      puts "  Database: #{account.tenant}"
+      puts "  Consortium: #{account.part_of_consortia || 'None'}"
+      puts "=" * 50
+      puts "\n✅ This will ADD a new profile without destroying existing ones."
+      puts "   Existing profiles will be preserved for historical reference.\n"
+
+      begin
+        # Switch to the tenant
+        Apartment::Tenant.switch!(account.tenant)
+
+        # Add the tenant-specific profile (preserves existing)
+        print "  Adding tenant-specific profile... "
+        Hyrax::FlexibleSchema.force_create_default_schema
+        puts "✓"
+
+        # Update available works based on tenant filtering rules
+        print "  Updating available works... "
+        allowed_types = TenantWorkTypeFilter.allowed_work_types
+        Site.instance.update!(available_works: allowed_types)
+        puts "✓"
+
+        # Show what work types this tenant can see
+        puts "\n  Available work types: #{allowed_types.join(', ')}"
+        puts "=" * 50
+        puts "  ✓ COMPLETED SUCCESSFULLY"
+        puts "=" * 50
+
+      rescue StandardError => e
+        # Only rescue StandardError to avoid masking system-level exceptions.
+        puts "\n  ✗ ERROR: #{e.message}"
+        puts "  #{e.backtrace.first}"
+        puts "=" * 50
+        exit 1
+      end
+    end
+
+    desc 'Reset metadata profiles and update available works for all tenants (DESTRUCTIVE)'
     task reset_all: :environment do
       puts "\n" + "=" * 60
       puts "  RESETTING PROFILES AND AVAILABLE WORKS FOR ALL TENANTS"
@@ -140,6 +327,7 @@ namespace :hykuup do
       puts "\n⚠️  WARNING: This will overwrite ALL existing metadata profiles!"
       puts "   Custom profiles will be lost and replaced with tenant-specific defaults."
       puts "   This action cannot be undone.\n"
+      puts "   Consider using 'rake hykuup:profiles:add_tenant_profiles' instead.\n"
 
       print "Are you sure you want to continue? Type 'yes' to confirm: "
       confirmation = STDIN.gets.chomp
@@ -167,7 +355,7 @@ namespace :hykuup do
           # Reset the metadata profile
           print "  Resetting profile... "
           Hyrax::FlexibleSchema.destroy_all # Clear existing profiles first
-          Hyrax::FlexibleSchema.create_default_schema
+          Hyrax::FlexibleSchema.force_create_default_schema
           puts "✓"
 
           # Update available works based on tenant filtering rules
@@ -179,7 +367,8 @@ namespace :hykuup do
           # Show what work types this tenant can see
           puts "  Available work types: #{allowed_types.join(', ')}"
 
-        rescue => e
+        rescue StandardError => e
+          # Only rescue StandardError to avoid masking system-level exceptions.
           errors += 1
           puts "  ✗ ERROR: #{e.message}"
           puts "    #{e.backtrace.first}"
@@ -196,7 +385,7 @@ namespace :hykuup do
       puts "=" * 60
     end
 
-    desc 'Reset metadata profiles and update available works for a specific tenant'
+    desc 'Reset metadata profiles and update available works for a specific tenant (DESTRUCTIVE)'
     task :reset_tenant, [:tenant] => :environment do |_t, args|
       tenant = args[:tenant]
 
@@ -207,7 +396,6 @@ namespace :hykuup do
       end
 
       # Find the account by its tenant UUID, cname, or internal name
-      # to make the task more flexible for different environments.
       account = Account.find_by(tenant:) || Account.find_by(cname: tenant) || Account.find_by(name: tenant)
 
       if account.nil?
@@ -224,6 +412,7 @@ namespace :hykuup do
       puts "\n⚠️  WARNING: This will overwrite the existing metadata profile!"
       puts "   Any custom profile for this tenant will be lost and replaced."
       puts "   This action cannot be undone.\n"
+      puts "   Consider using 'rake hykuup:profiles:add_tenant_profile[#{tenant}]' instead.\n"
 
       print "Are you sure you want to continue? Type 'yes' to confirm: "
       confirmation = STDIN.gets.chomp
@@ -242,7 +431,7 @@ namespace :hykuup do
         # Reset the metadata profile
         print "  Resetting profile... "
         Hyrax::FlexibleSchema.destroy_all # Clear existing profiles first
-        Hyrax::FlexibleSchema.create_default_schema
+        Hyrax::FlexibleSchema.force_create_default_schema
         puts "✓"
 
         # Update available works based on tenant filtering rules
@@ -257,7 +446,8 @@ namespace :hykuup do
         puts "  ✓ COMPLETED SUCCESSFULLY"
         puts "=" * 50
 
-      rescue => e
+      rescue StandardError => e
+        # Only rescue StandardError to avoid masking system-level exceptions.
         puts "\n  ✗ ERROR: #{e.message}"
         puts "  #{e.backtrace.first}"
         puts "=" * 50
