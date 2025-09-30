@@ -9,3 +9,6 @@
 gem "sentry-ruby"
 gem "sentry-rails"
 gem "sentry-sidekiq"
+
+ensure_gem "rubocop-rake"
+ensure_gem "rubocop-rspec"
