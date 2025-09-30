@@ -170,7 +170,7 @@ This HykuKnapsack includes several custom features for consortium-based multiten
 
 ### Consortium-Based Tenant Configuration
 
-This knapsack overrides Hyku's default profile loading behavior. Instead of all tenants using the same metadata profile, tenants can now have their own consortium-specific profiles based on their `part_of_consortia` setting.
+This knapsack overrides Hyku's default profile loading behavior. Instead of all tenants using the same default metadata profile, tenants can now have their own consortium-specific default profiles based on their `part_of_consortia` setting.
 
 **Configuration:**
 - Consortium definitions are stored in `config/consortia.yml`
