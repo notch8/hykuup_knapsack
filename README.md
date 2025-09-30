@@ -192,7 +192,7 @@ Each tenant only sees work types appropriate for their consortium membership:
 
 ### Dynamic Metadata Profile Loading
 
-Metadata profiles are automatically selected based on tenant consortium membership:
+Default metadata profiles are automatically selected based on tenant consortium membership:
 
 - **UNCA Consortium**: Loads `config/metadata_profiles/unca/m3_profile.yaml`
 - **Mobius Consortium**: Loads `config/metadata_profiles/mobius/m3_profile.yaml`
