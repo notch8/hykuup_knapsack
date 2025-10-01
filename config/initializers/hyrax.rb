@@ -29,18 +29,27 @@ Rails.application.config.after_initialize do
     end
 
     def self.force_create_default_schema
-      # Force creates a new flexible schema for the current tenant.
+      # Force creates a new flexible schema for the current tenant with validation.
       # This method is intended for use by rake tasks that need to ensure
       # a new schema is created, even if one already exists.
       #
+      # Unlike create_default_schema, this validates the profile before creation
+      # to ensure it's compatible with existing data and tenant configuration.
+      #
       # @return [Hyrax::FlexibleSchema] The newly created schema
+      # @raise [StandardError] if validation fails
       # @see create_default_schema for the safe version used during app startup
       m3_profile_path = tenant_specific_profile_path
+      profile_data = YAML.safe_load_file(m3_profile_path)
 
-      # Always create a new schema (for rake tasks)
-      Hyrax::FlexibleSchema.create do |f|
-        f.profile = YAML.safe_load_file(m3_profile_path)
-      end
+      # Validate the profile before creating (same as UI validation)
+      validator = Hyrax::FlexibleSchemaValidatorService.new(profile: profile_data)
+      validator.validate!
+
+      raise StandardError, "Profile validation failed: #{validator.errors.join('; ')}" if validator.errors.any?
+
+      # Create the schema
+      Hyrax::FlexibleSchema.create!(profile: profile_data)
     end
 
     def self.tenant_specific_profile_path

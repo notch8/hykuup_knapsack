@@ -143,6 +143,9 @@ namespace :hykuup do
       total_tenants = Account.count
       processed = 0
       errors = 0
+      skipped = 0
+      success = 0
+      skipped_tenants = [] # Track which tenants were skipped
 
       Account.find_each do |account|
         processed += 1
@@ -154,9 +157,24 @@ namespace :hykuup do
           Apartment::Tenant.switch!(account.tenant)
 
           # Add the tenant-specific profile (preserves existing)
-          print "  Adding tenant-specific profile... "
-          Hyrax::FlexibleSchema.force_create_default_schema
-          puts "✓"
+          print "  Validating and adding tenant-specific profile... "
+          result = create_validated_profile
+
+          if result[:success]
+            puts "✓"
+            success += 1
+
+            if result[:warnings].any?
+              puts "  ⚠️  Warnings:"
+              result[:warnings].each { |w| puts "    - #{w}" }
+            end
+          else
+            puts "✗ SKIPPED"
+            skipped += 1
+            skipped_tenants << { tenant: account.cname, reason: result[:error] }
+            puts "  Reason: #{result[:error]}"
+            next
+          end
 
           # Update available works based on tenant filtering rules
           print "  Updating available works... "
@@ -180,8 +198,17 @@ namespace :hykuup do
       puts "=" * 60
       puts "  Total tenants: #{total_tenants}"
       puts "  Processed: #{processed}"
+      puts "  Successfully updated: #{success}"
+      puts "  Skipped (validation failed): #{skipped}"
       puts "  Errors: #{errors}"
-      puts "  Success: #{processed - errors}"
+
+      if skipped_tenants.any?
+        puts "\n  SKIPPED TENANTS:"
+        skipped_tenants.each do |item|
+          puts "  - #{item[:tenant]}"
+          puts "    #{item[:reason]}"
+        end
+      end
       puts "=" * 60
     end
 
@@ -294,9 +321,24 @@ namespace :hykuup do
         Apartment::Tenant.switch!(account.tenant)
 
         # Add the tenant-specific profile (preserves existing)
-        print "  Adding tenant-specific profile... "
-        Hyrax::FlexibleSchema.force_create_default_schema
-        puts "✓"
+        print "  Validating and adding tenant-specific profile... "
+        result = create_validated_profile
+
+        if result[:success]
+          puts "✓"
+
+          if result[:warnings].any?
+            puts "\n  ⚠️  Warnings:"
+            result[:warnings].each { |w| puts "    - #{w}" }
+          end
+        else
+          puts "✗ FAILED"
+          puts "\n  ❌ Validation Error: #{result[:error]}"
+          puts "\n  The profile could not be created because it would be incompatible"
+          puts "  with the existing data or tenant configuration."
+          puts "=" * 50
+          exit 1
+        end
 
         # Update available works based on tenant filtering rules
         print "  Updating available works... "
@@ -342,6 +384,7 @@ namespace :hykuup do
       total_tenants = Account.count
       processed = 0
       errors = 0
+      skipped_tenants = [] # Track which tenants were skipped
 
       Account.find_each do |account|
         processed += 1
@@ -352,10 +395,29 @@ namespace :hykuup do
           # Switch to the tenant
           Apartment::Tenant.switch!(account.tenant)
 
-          # Reset the metadata profile
-          print "  Resetting profile... "
-          Hyrax::FlexibleSchema.destroy_all # Clear existing profiles first
-          Hyrax::FlexibleSchema.force_create_default_schema
+          # VALIDATE FIRST before destroying anything!
+          print "  Validating new profile... "
+          m3_profile_path = Hyrax::FlexibleSchema.tenant_specific_profile_path
+          profile_data = YAML.safe_load_file(m3_profile_path)
+
+          validator = Hyrax::FlexibleSchemaValidatorService.new(profile: profile_data)
+          validator.validate!
+
+          if validator.errors.any?
+            puts "✗ FAILED"
+            puts "\n  ❌ Validation Error: #{validator.errors.join('; ')}"
+            puts "\n  The new profile is invalid. Existing profile has NOT been deleted."
+            puts "  Your tenant still has its current profile."
+            puts "=" * 50
+            skipped_tenants << { tenant: account.cname, reason: "Validation failed for new profile" }
+            next
+          end
+          puts "✓"
+
+          # Reset the metadata profile (only after validation passes!)
+          print "  Deleting old profile and creating new one... "
+          Hyrax::FlexibleSchema.destroy_all
+          Hyrax::FlexibleSchema.create!(profile: profile_data)
           puts "✓"
 
           # Update available works based on tenant filtering rules
@@ -383,6 +445,14 @@ namespace :hykuup do
       puts "  Errors: #{errors}"
       puts "  Success: #{processed - errors}"
       puts "=" * 60
+
+      if skipped_tenants.any?
+        puts "\n  SKIPPED TENANTS:"
+        skipped_tenants.each do |item|
+          puts "  - #{item[:tenant]}"
+          puts "    #{item[:reason]}"
+        end
+      end
     end
 
     desc 'Reset metadata profiles and update available works for a specific tenant (DESTRUCTIVE)'
@@ -428,10 +498,28 @@ namespace :hykuup do
         # Switch to the tenant
         Apartment::Tenant.switch!(account.tenant)
 
-        # Reset the metadata profile
-        print "  Resetting profile... "
-        Hyrax::FlexibleSchema.destroy_all # Clear existing profiles first
-        Hyrax::FlexibleSchema.force_create_default_schema
+        # VALIDATE FIRST before destroying anything!
+        print "  Validating new profile... "
+        m3_profile_path = Hyrax::FlexibleSchema.tenant_specific_profile_path
+        profile_data = YAML.safe_load_file(m3_profile_path)
+
+        validator = Hyrax::FlexibleSchemaValidatorService.new(profile: profile_data)
+        validator.validate!
+
+        if validator.errors.any?
+          puts "✗ FAILED"
+          puts "\n  ❌ Validation Error: #{validator.errors.join('; ')}"
+          puts "\n  The new profile is invalid. Existing profile has NOT been deleted."
+          puts "  Your tenant still has its current profile."
+          puts "=" * 50
+          exit 1
+        end
+        puts "✓"
+
+        # Reset the metadata profile (only after validation passes!)
+        print "  Deleting old profile and creating new one... "
+        Hyrax::FlexibleSchema.destroy_all
+        Hyrax::FlexibleSchema.create!(profile: profile_data)
         puts "✓"
 
         # Update available works based on tenant filtering rules
@@ -454,6 +542,144 @@ namespace :hykuup do
         exit 1
       end
     end
+  end
+
+  # Helper method to create a profile with validation
+  # @return [Hash] { success: Boolean, error: String, warnings: Array<String> }
+  def create_validated_profile
+    warnings = []
+    profile_data = load_and_validate_profile
+
+    return profile_data if profile_data[:success] == false
+
+    # Check for existing works that might become orphaned
+    existing_work_warnings = check_existing_work_types(profile_data[:data])
+    warnings.concat(existing_work_warnings) if existing_work_warnings.any?
+
+    # Create the profile
+    Hyrax::FlexibleSchema.create!(profile: profile_data[:data])
+    { success: true, error: nil, warnings: }
+  rescue StandardError => e
+    error_message = enhance_error_message_for_cli(e.message)
+    { success: false, error: error_message, warnings: [] }
+  end
+
+  # Load and validate profile data
+  # @return [Hash] Profile data or error result
+  def load_and_validate_profile
+    m3_profile_path = Hyrax::FlexibleSchema.tenant_specific_profile_path
+    profile_data = YAML.safe_load_file(m3_profile_path)
+
+    validate_tenant_work_types!(profile_data)
+    validator = Hyrax::FlexibleSchemaValidatorService.new(profile: profile_data)
+    validator.validate!
+
+    if validator.errors.any?
+      error_message = enhance_error_message_for_cli(validator.errors.first)
+      return { success: false, error: error_message, warnings: [] }
+    end
+
+    { success: true, data: profile_data }
+  rescue StandardError => e
+    error_message = enhance_error_message_for_cli(e.message)
+    { success: false, error: error_message, warnings: [] }
+  end
+
+  # Enhance error messages for CLI with helpful migration instructions
+  # @param error [String] The original error message
+  # @return [String] Enhanced error message with CLI-specific guidance
+  def enhance_error_message_for_cli(error)
+    # Check if this is an "existing records" error
+    if error =~ /Classes with existing records cannot be removed from the profile: (.+)\./
+      work_types = Regexp.last_match(1).split(', ')
+      first_type = work_types.first
+
+      enhanced = "#{error}\n\n"
+      enhanced += "  💡 To fix this issue:\n"
+      enhanced += "  1. Migrate the existing works to an allowed work type:\n"
+      enhanced += "     rake hykuup:migrate_work_class[#{first_type},GenericWork,#{current_tenant_name}]\n"
+      enhanced += "  2. Then run this profile update task again\n"
+
+      enhanced += "\n  Note: You have multiple work types to migrate: #{work_types.join(', ')}" if work_types.length > 1
+
+      return enhanced
+    end
+
+    # Return original error if not an existing records error
+    error
+  end
+
+  # Get the current tenant name for helpful error messages
+  # @return [String] The current tenant's cname or a generic placeholder
+  def current_tenant_name
+    account = Account.find_by(tenant: Apartment::Tenant.current)
+    account&.cname || 'tenant_name'
+  end
+
+  # Validates that the profile doesn't contain work types restricted for the current tenant
+  # @param profile_data [Hash] The parsed YAML profile data
+  # @raise [StandardError] if profile contains work types not allowed for the current tenant
+  def validate_tenant_work_types!(profile_data)
+    return unless profile_data&.dig('classes')
+
+    profile_work_types = extract_profile_work_types(profile_data)
+    excluded_work_types = TenantWorkTypeFilter.excluded_work_types
+
+    forbidden_work_types = profile_work_types & excluded_work_types
+
+    return unless forbidden_work_types.any?
+
+    account = Account.find_by(tenant: Apartment::Tenant.current)
+    tenant_name = account&.cname || 'this tenant'
+    allowed_work_types = TenantWorkTypeFilter.allowed_work_types
+
+    raise StandardError,
+          "This profile contains work types (#{forbidden_work_types.join(', ')}) that are not allowed for #{tenant_name}. " \
+          "Please use a profile that only contains work types appropriate for your tenant. " \
+          "Allowed work types for #{tenant_name}: #{allowed_work_types.join(', ')}."
+  end
+
+  # Extract work type names from the profile data
+  # @param profile_data [Hash] The parsed YAML profile data
+  # @return [Array<String>] Array of work type names found in the profile
+  def extract_profile_work_types(profile_data)
+    profile_classes = profile_data.dig('classes')&.keys || []
+    profile_classes.map { |klass| klass.gsub(/Resource$/, '') }
+  end
+
+  # Check if there are existing works that aren't in the new profile
+  # @param profile_data [Hash] The parsed YAML profile data
+  # @return [Array<String>] Array of warning messages
+  def check_existing_work_types(profile_data)
+    warnings = []
+    profile_work_types = extract_profile_work_types(profile_data).map { |t| "#{t}Resource" }
+
+    Hyrax.config.registered_curation_concern_types.each do |work_type|
+      warning = check_work_type_for_existing_records(work_type, profile_work_types)
+      warnings << warning if warning
+    end
+
+    warnings
+  end
+
+  # Check a specific work type for existing records
+  # @param work_type [String] The work type to check
+  # @param profile_work_types [Array<String>] Work types in the new profile
+  # @return [String, nil] Warning message if records exist, nil otherwise
+  def check_work_type_for_existing_records(work_type, profile_work_types)
+    work_type_resource = "#{work_type}Resource"
+    return nil if profile_work_types.include?(work_type_resource)
+
+    model_class = work_type_resource.constantize
+    count = Hyrax.query_service.count_all_of_model(model: model_class)
+    return "Found #{count} existing #{work_type} record(s) that won't be in the new profile" if count.positive?
+
+    nil
+  rescue NameError
+    nil # Work type not defined, skip
+  rescue StandardError => e
+    Rails.logger.warn "Could not check for existing #{work_type} records: #{e.message}"
+    nil
   end
 end
 # rubocop:enable Metrics/BlockLength
