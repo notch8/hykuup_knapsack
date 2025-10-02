@@ -3,54 +3,54 @@
 module HykuKnapsack
   # Color and text formatting helpers
   module ColorFormatter
-    def self.red(text)
+    def red(text)
       "\e[31m#{text}\e[0m"
     end
 
-    def self.green(text)
+    def green(text)
       "\e[32m#{text}\e[0m"
     end
 
-    def self.yellow(text)
+    def yellow(text)
       "\e[33m#{text}\e[0m"
     end
 
-    def self.blue(text)
+    def blue(text)
       "\e[34m#{text}\e[0m"
     end
 
-    def self.magenta(text)
+    def magenta(text)
       "\e[35m#{text}\e[0m"
     end
 
-    def self.cyan(text)
+    def cyan(text)
       "\e[36m#{text}\e[0m"
     end
 
-    def self.bold(text)
+    def bold(text)
       "\e[1m#{text}\e[0m"
     end
 
-    def self.underline(text)
+    def underline(text)
       "\e[4m#{text}\e[0m"
     end
 
-    def self.bg_red(text)
+    def bg_red(text)
       "\e[41m#{text}\e[0m"
     end
 
-    def self.bg_green(text)
+    def bg_green(text)
       "\e[42m#{text}\e[0m"
     end
 
-    def self.bg_yellow(text)
+    def bg_yellow(text)
       "\e[43m#{text}\e[0m"
     end
   end
 
   # CLI formatter for consistent, colorful output across rake tasks
   class CLIFormatter
-    include ColorFormatter
+    extend ColorFormatter
 
     # Visual separators
     def self.separator(char = '=', length = 80)

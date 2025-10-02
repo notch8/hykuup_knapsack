@@ -206,10 +206,10 @@ namespace :hykuup do
       end
 
       puts fmt.section_header("SUMMARY", "📊")
-      puts fmt.summary_stats(total_tenants, processed, success, skipped, errors)
+      puts fmt.summary_stats(total_tenants, processed, success, skipped_tenants.count, failed_tenants.count)
       puts fmt.error_section("❌ FAILED TENANTS", failed_tenants)
       puts fmt.warning_section("⚠️  SKIPPED TENANTS", skipped_tenants)
-      puts fmt.final_status(errors.positive? || skipped.positive?)
+      puts fmt.final_status(errors.positive? || skipped_tenants.any?)
       puts fmt.thick_separator
     end
 
@@ -451,7 +451,7 @@ namespace :hykuup do
       puts fmt.summary_stats(total_tenants, processed, success, skipped_tenants.count, failed_tenants.count)
       puts fmt.error_section("❌ FAILED TENANTS", failed_tenants)
       puts fmt.warning_section("⚠️  SKIPPED TENANTS", skipped_tenants)
-      puts fmt.final_status(errors.positive? || skipped.positive?)
+      puts fmt.final_status(errors.positive? || skipped_tenants.any?)
       puts fmt.thick_separator
     end
 
