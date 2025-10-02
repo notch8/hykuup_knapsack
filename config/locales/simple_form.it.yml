@@ -3,6 +3,7 @@ it:
     hints:
       account:
         part_of_consortia: "Seleziona il consorzio a cui appartiene questo tenant. Ciò controllerà i tipi di lavoro e i profili di metadati disponibili."
+        part_of_consortia_edit: "Attenzione: la modifica del consorzio altererà i tipi di lavoro disponibili e i profili di metadati. Ciò potrebbe influire sui contenuti esistenti e non è consigliato."
     labels:
       account:
         part_of_consortia: "Parte di Consorzi"

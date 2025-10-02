@@ -3,6 +3,7 @@ zh:
     hints:
       account:
         part_of_consortia: "选择该租户所属的联盟。这将控制可用的工作类型和元数据配置文件。"
+        part_of_consortia_edit: "警告：更改联盟将改变可用的工作类型和元数据配置文件。这可能会影响现有内容，因此不建议这样做。"
     labels:
       account:
         part_of_consortia: "财团的一部分"

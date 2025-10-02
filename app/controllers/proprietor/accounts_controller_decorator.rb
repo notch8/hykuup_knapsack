@@ -5,6 +5,11 @@ module Proprietor
   module AccountsControllerDecorator
     private
 
+    def account_params
+      params.require(:account).permit(:name, :search_only, :part_of_consortia,
+                                      full_account_cross_searches_attributes: [:id, :full_account_id, :_destroy])
+    end
+
     # OVERRIDE: Add part_of_consortia and refactor to meet line length requirements
     def edit_account_params
       params.require(:account).permit(

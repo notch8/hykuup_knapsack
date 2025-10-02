@@ -1,0 +1,53 @@
+<%# OVERRIDE Hyku v6.2.0: Add 'Part of Consortia' dropdown to account new page %>
+<%# This file is an override of hyrax-webapp/app/views/proprietor/accounts/new.html.erb %>
+
+<% content_for :page_header do %>
+  <h1><span class="fa fa-gears"></span> <%= t(".header") %></h1>
+<% end %>
+
+<div class="row">
+  <div class="col-md-12">
+    <div class="card account-form">
+      <%= simple_form_for @account, url: [:proprietor, :accounts], html: { class: 'form' } do |f| %>
+        <div class="card-body">
+          <% if @account.errors.any? %>
+            <div id="error_explanation" class="alert alert-danger alert-dismissible fade show" role="alert">
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+              <h4 class="alert-heading">
+                <i class="fa fa-exclamation-triangle mr-2"></i>
+                <%= pluralize(@account.errors.count, "error") %> prohibited this account from being saved:
+              </h4>
+              <ul class="mb-0">
+                <% @account.errors.messages.each do |key, messages| %>
+                  <%= render 'shared/error_message', key: key, messages: messages %>
+                <% end %>
+              </ul>
+            </div>
+          <% end %>
+
+          <%= f.input :name %>
+
+          <%= f.input :part_of_consortia,
+                      collection: Consortium.options_for_select %>
+
+          <div id="full_account_cross_searches" class="mb-3" style="display: none;">
+            <h3><%= t('.accounts_to_search') %></h3>
+            <%= f.simple_fields_for :full_account_cross_searches do |full_account_cross_search| %>
+              <%= render 'full_account_cross_search_fields', f: full_account_cross_search %>
+            <% end %>
+            <div class='links'>
+              <%= link_to_add_association 'Add account to search', f, :full_account_cross_searches, class: "btn btn-outline-secondary" %>
+            </div>
+          </div>
+          <%= f.input :search_only %>
+        </div>
+        <div class="card-footer">
+          <%= f.submit class: 'btn btn-primary' %>
+          <%= link_to t('simple_form.cancel'), proprietor_accounts_path, class: 'btn btn-link' %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

@@ -3,6 +3,7 @@ en:
     hints:
       account:
         part_of_consortia: "Select the consortium this tenant belongs to. This will control available work types and metadata profiles."
+        part_of_consortia_edit: "Warning: Changing the consortium will alter available work types and metadata profiles. This may affect existing content and is not recommended."
     labels:
       account:
         part_of_consortia: "Part of Consortia"
@@ -11,6 +12,7 @@ es:
     hints:
       account:
         part_of_consortia: "Seleccione el consorcio al que pertenece este inquilino. Esto controlará los tipos de trabajo y los perfiles de metadatos disponibles."
+        part_of_consortia_edit: "Advertencia: Cambiar el consorcio alterará los tipos de trabajo y los perfiles de metadatos disponibles. Esto puede afectar el contenido existente y no se recomienda."
     labels:
       account:
         part_of_consortia: "Parte de los consorcios"
@@ -19,6 +21,7 @@ de:
     hints:
       account:
         part_of_consortia: "Wählen Sie das Konsortium aus, zu dem dieser Mandant gehört. Dadurch werden verfügbare Arbeitstypen und Metadatenprofile gesteuert."
+        part_of_consortia_edit: "Warnung: Das Ändern des Konsortiums ändert die verfügbaren Arbeitstypen und Metadatenprofile. Dies kann sich auf vorhandene Inhalte auswirken und wird nicht empfohlen."
     labels:
       account:
         part_of_consortia: "Teil von Konsortien"
@@ -27,6 +30,7 @@ fr:
     hints:
       account:
         part_of_consortia: "Sélectionnez le consortium auquel appartient ce locataire. Cela contrôlera les types de travaux et les profils de métadonnées disponibles."
+        part_of_consortia_edit: "Avertissement : La modification du consortium modifiera les types de travaux et les profils de métadonnées disponibles. Cela peut affecter le contenu existant et n'est pas recommandé."
     labels:
       account:
         part_of_consortia: "Une partie des consortiums"
@@ -35,6 +39,7 @@ it:
     hints:
       account:
         part_of_consortia: "Seleziona il consorzio a cui appartiene questo tenant. Ciò controllerà i tipi di lavoro e i profili di metadati disponibili."
+        part_of_consortia_edit: "Attenzione: la modifica del consorzio altererà i tipi di lavoro disponibili e i profili di metadati. Ciò potrebbe influire sui contenuti esistenti e non è consigliato."
     labels:
       account:
         part_of_consortia: "Parte di Consorzi"
@@ -43,6 +48,7 @@ it:
     hints:
       account:
         part_of_consortia: "Selecione o consórcio ao qual este locatário pertence. Isso controlará os tipos de trabalho e perfis de metadados disponíveis."
+        part_of_consortia_edit: "Aviso: A alteração do consórcio alterará os tipos de trabalho e os perfis de metadados disponíveis. Isso pode afetar o conteúdo existente e não é recomendado."
     labels:
       account:
         part_of_consortia: "Parte de Consórcios"
@@ -51,6 +57,7 @@ zh:
     hints:
       account:
         part_of_consortia: "选择该租户所属的联盟。这将控制可用的工作类型和元数据配置文件。"
+        part_of_consortia_edit: "警告：更改联盟将改变可用的工作类型和元数据配置文件。这可能会影响现有内容，因此不建议这样做。"
     labels:
       account:
         part_of_consortia: "财团的一部分"

@@ -3,6 +3,7 @@ fr:
     hints:
       account:
         part_of_consortia: "Sélectionnez le consortium auquel appartient ce locataire. Cela contrôlera les types de travaux et les profils de métadonnées disponibles."
+        part_of_consortia_edit: "Avertissement : La modification du consortium modifiera les types de travaux et les profils de métadonnées disponibles. Cela peut affecter le contenu existant et n'est pas recommandé."
     labels:
       account:
         part_of_consortia: "Une partie des consortiums"
