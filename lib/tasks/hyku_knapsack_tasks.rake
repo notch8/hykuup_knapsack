@@ -2,32 +2,11 @@
 
 # rubocop:disable Metrics/BlockLength
 
-# ==============================================================================
-#  Helpers for colored CLI output
-# ==============================================================================
-def red(text); "\e[31m#{text}\e[0m"; end
-def green(text); "\e[32m#{text}\e[0m"; end
-def yellow(text); "\e[33m#{text}\e[0m"; end
-def blue(text); "\e[34m#{text}\e[0m"; end
-def magenta(text); "\e[35m#{text}\e[0m"; end
-def cyan(text); "\e[36m#{text}\e[0m"; end
-def bold(text); "\e[1m#{text}\e[0m"; end
-def underline(text); "\e[4m#{text}\e[0m"; end
-def bg_red(text); "\e[41m#{text}\e[0m"; end
-def bg_green(text); "\e[42m#{text}\e[0m"; end
-def bg_yellow(text); "\e[43m#{text}\e[0m"; end
+# Load the CLI formatter for consistent output styling
+require_relative '../hyku_knapsack/cli_formatter'
 
-# Enhanced visual separators
-def separator(char = '=', length = 80); char * length; end
-def thick_separator; "=" * 80; end
-def thin_separator; "─" * 80; end
-
-# Status indicators
-def success_icon; green("✓"); end
-def error_icon; red("✗"); end
-def warning_icon; yellow("⚠"); end
-def info_icon; blue("ℹ"); end
-def arrow_icon; cyan("→"); end
+# Convenience methods for cleaner rake task code
+def fmt; HykuKnapsack::CLIFormatter; end
 
 namespace :hykuup do
   namespace :mobius do
@@ -162,10 +141,8 @@ namespace :hykuup do
   namespace :profiles do
     desc 'Add tenant-specific metadata profiles (preserves existing profiles)'
     task add_tenant_profiles: :environment do
-      puts "\n#{thick_separator}"
-      puts bold(cyan("  🚀 ADDING TENANT-SPECIFIC METADATA PROFILES"))
-      puts thick_separator
-      puts "\n#{green('✅ This will ADD new profiles without destroying existing ones.')}"
+      puts fmt.header("ADDING TENANT-SPECIFIC METADATA PROFILES", "🚀")
+      puts "\n#{fmt.green('✅ This will ADD new profiles without destroying existing ones.')}"
       puts "   Existing profiles will be preserved for historical reference.\n"
 
       total_tenants = Account.count
@@ -178,95 +155,60 @@ namespace :hykuup do
 
       Account.find_each do |account|
         processed += 1
-        puts "\n#{thin_separator}"
-        puts "#{arrow_icon} [#{processed}/#{total_tenants}] #{bold(account.cname)}"
-        puts "   #{info_icon} Tenant: #{account.tenant}"
-        puts "   #{info_icon} Consortium: #{account.part_of_consortia || 'None'}"
+        puts fmt.tenant_info(
+          "[#{processed}/#{total_tenants}] #{account.cname}",
+          account.tenant,
+          account.part_of_consortia
+        )
 
         begin
           # Switch to the tenant
           Apartment::Tenant.switch!(account.tenant)
 
           # Add the tenant-specific profile (preserves existing)
-          print "   #{info_icon} Validating and adding tenant-specific profile... "
+          print fmt.status_line(fmt.info_icon, "Validating and adding tenant-specific profile... ")
           result = create_validated_profile
 
           if result[:success]
-            puts success_icon
+            puts fmt.success_icon
             success += 1
 
             if result[:warnings].any?
-              puts "   #{warning_icon}  Warnings:"
-              result[:warnings].each { |w| puts "      #{yellow('•')} #{w}" }
+              puts "   #{fmt.warning_icon}  Warnings:"
+              result[:warnings].each { |w| puts "      #{fmt.yellow('•')} #{w}" }
             end
           else
-            puts error_icon + " " + red("SKIPPED")
+            puts fmt.status_line(fmt.error_icon, "Validating and adding tenant-specific profile... ", fmt.red("SKIPPED"))
             skipped += 1
             skipped_tenants << { tenant: account.cname, reason: result[:error] }
-            puts "   #{error_icon} Reason: #{red(result[:error])}"
+            puts "   #{fmt.error_icon} Reason: #{fmt.red(result[:error])}"
             next
           end
 
           # Update available works based on tenant filtering rules
-          print "   #{info_icon} Updating available works... "
+          print fmt.status_line(fmt.info_icon, "Updating available works... ")
           allowed_types = TenantWorkTypeFilter.allowed_work_types
           Site.instance.update!(available_works: allowed_types)
-          puts success_icon
+          puts fmt.success_icon
 
           # Show what work types this tenant can see
-          puts "   #{success_icon} Available work types: #{green(allowed_types.join(', '))}"
+          puts "   #{fmt.success_icon} Available work types: #{fmt.green(allowed_types.join(', '))}"
 
         rescue StandardError => e
           # Only rescue StandardError to avoid masking system-level exceptions.
           errors += 1
           failed_tenants << { tenant: account.cname, reason: e.message, error: e }
-          puts "   #{error_icon} #{red('ERROR')}: #{e.message}"
-          puts "      #{red('↳')} #{e.backtrace.first}"
+          puts "   #{fmt.error_icon} #{fmt.red('ERROR')}: #{e.message}"
+          puts "      #{fmt.red('↳')} #{e.backtrace.first}"
         end
       end
 
-      puts "\n#{thick_separator}"
-      puts bold(cyan("  📊 SUMMARY"))
-      puts thick_separator
-      
-      # Summary statistics with color coding
-      puts "\n#{info_icon} #{bold('Statistics:')}"
-      puts "   Total tenants: #{bold(total_tenants)}"
-      puts "   Processed: #{bold(processed)}"
-      puts "   #{success_icon} Successfully updated: #{green(bold(success))}"
-      puts "   #{warning_icon} Skipped (validation failed): #{yellow(bold(skipped))}"
-      puts "   #{error_icon} Errors: #{red(bold(errors))}"
-
-      # Show failures prominently
-      if failed_tenants.any?
-        puts "\n#{bg_red('  ❌ FAILED TENANTS  ')}"
-        puts red(thin_separator)
-        failed_tenants.each_with_index do |item, index|
-          puts "\n#{red("#{index + 1}.")} #{bold(item[:tenant])}"
-          puts "   #{error_icon} Error: #{red(item[:reason])}"
-        end
-        puts red(thin_separator)
-      end
-
-      # Show skipped tenants
-      if skipped_tenants.any?
-        puts "\n#{bg_yellow('  ⚠️  SKIPPED TENANTS  ')}"
-        puts yellow(thin_separator)
-        skipped_tenants.each_with_index do |item, index|
-          puts "\n#{yellow("#{index + 1}.")} #{bold(item[:tenant])}"
-          puts "   #{warning_icon} Reason: #{yellow(item[:reason])}"
-        end
-        puts yellow(thin_separator)
-      end
-
-      # Final status
-      if errors > 0 || skipped > 0
-        puts "\n#{red('❌ Some tenants had issues. See details above.')}"
-      else
-        puts "\n#{green('✅ All tenants processed successfully!')}"
-      end
-      
-      puts thick_separator
+      puts fmt.section_header("SUMMARY", "📊")
+      puts fmt.summary_stats(total_tenants, processed, success, skipped, errors)
+      puts fmt.error_section("❌ FAILED TENANTS", failed_tenants)
+      puts fmt.warning_section("⚠️  SKIPPED TENANTS", skipped_tenants)
+      puts fmt.final_status(errors > 0 || skipped > 0)
+      puts fmt.thick_separator
     end
 
     desc 'Add tenant-specific metadata profiles for specific consortium (preserves existing profiles)'
@@ -274,22 +216,20 @@ namespace :hykuup do
       consortium = args[:consortium]
 
       if consortium.blank?
-        puts red("\nError: Consortium must be specified")
+        puts fmt.red("\nError: Consortium must be specified")
         puts "Usage: rake hykuup:profiles:add_consortium_profiles[consortium_identifier]"
         puts "Available consortia: #{Consortium.identifiers.join(', ')}"
         exit 1
       end
 
       unless Consortium.identifiers.include?(consortium)
-        puts red("\nError: Invalid consortium '#{consortium}'")
+        puts fmt.red("\nError: Invalid consortium '#{consortium}'")
         puts "Available consortia: #{Consortium.identifiers.join(', ')}"
         exit 1
       end
 
-      puts "\n#{thick_separator}"
-      puts bold(cyan("  🏢 ADDING PROFILES FOR #{consortium.upcase} CONSORTIUM"))
-      puts thick_separator
-      puts "\n#{green('✅ This will ADD new profiles without destroying existing ones.')}"
+      puts fmt.header("ADDING PROFILES FOR #{consortium.upcase} CONSORTIUM", "🏢")
+      puts "\n#{fmt.green('✅ This will ADD new profiles without destroying existing ones.')}"
       puts "   Existing profiles will be preserved for historical reference.\n"
 
       consortium_tenants = Account.where(part_of_consortia: consortium)
@@ -301,92 +241,58 @@ namespace :hykuup do
       skipped_tenants = [] # Track which tenants were skipped
 
       if total_tenants.zero?
-        puts yellow("No tenants found for consortium '#{consortium}'")
+        puts fmt.yellow("No tenants found for consortium '#{consortium}'")
         exit 0
       end
 
       consortium_tenants.find_each do |account|
         processed += 1
-        puts "\n#{thin_separator}"
-        puts "#{arrow_icon} [#{processed}/#{total_tenants}] #{bold(account.cname)}"
-        puts "   #{info_icon} Tenant: #{account.tenant}"
-        puts "   #{info_icon} Consortium: #{account.part_of_consortia}"
+        puts fmt.tenant_info(
+          "[#{processed}/#{total_tenants}] #{account.cname}",
+          account.tenant,
+          account.part_of_consortia
+        )
 
         begin
           # Switch to the tenant
           Apartment::Tenant.switch!(account.tenant)
 
           # Add the tenant-specific profile (preserves existing)
-          print "   #{info_icon} Validating and adding tenant-specific profile... "
+          print fmt.status_line(fmt.info_icon, "Validating and adding tenant-specific profile... ")
           result = create_validated_profile
 
           if result[:success]
-            puts success_icon
+            puts fmt.success_icon
             success += 1
 
             if result[:warnings].any?
-              puts "   #{warning_icon}  Warnings:"
-              result[:warnings].each { |w| puts "      #{yellow('•')} #{w}" }
+              puts "   #{fmt.warning_icon}  Warnings:"
+              result[:warnings].each { |w| puts "      #{fmt.yellow('•')} #{w}" }
             end
           else
-            puts error_icon + " " + red("SKIPPED")
+            puts fmt.status_line(fmt.error_icon, "Validating and adding tenant-specific profile... ", fmt.red("SKIPPED"))
             errors += 1
             skipped_tenants << { tenant: account.cname, reason: result[:error] }
-            puts "   #{error_icon} Reason: #{red(result[:error])}"
+            puts "   #{fmt.error_icon} Reason: #{fmt.red(result[:error])}"
             next
           end
         rescue StandardError => e
-          puts error_icon + " " + red("FAILED")
+          puts fmt.status_line(fmt.error_icon, "Validating and adding tenant-specific profile... ", fmt.red("FAILED"))
           errors += 1
           failed_tenants << { tenant: account.cname, reason: e.message, error: e }
-          puts "   #{error_icon} #{red('ERROR')}: #{e.message}"
-          puts "      #{red('↳')} #{e.backtrace.first}"
+          puts "   #{fmt.error_icon} #{fmt.red('ERROR')}: #{e.message}"
+          puts "      #{fmt.red('↳')} #{e.backtrace.first}"
         end
       end
 
-      puts "\n#{thick_separator}"
-      puts bold(cyan("  📊 SUMMARY"))
-      puts thick_separator
-      
-      # Summary statistics with color coding
-      puts "\n#{info_icon} #{bold('Statistics:')}"
-      puts "   Consortium: #{bold(consortium)}"
-      puts "   Total tenants: #{bold(total_tenants)}"
-      puts "   Processed: #{bold(processed)}"
-      puts "   #{success_icon} Successfully updated: #{green(bold(success))}"
-      puts "   #{warning_icon} Skipped (validation failed): #{yellow(bold(skipped_tenants.count))}"
-      puts "   #{error_icon} Errors: #{red(bold(failed_tenants.count))}"
-
-      # Show failures prominently
-      if failed_tenants.any?
-        puts "\n#{bg_red('  ❌ FAILED TENANTS  ')}"
-        puts red(thin_separator)
-        failed_tenants.each_with_index do |item, index|
-          puts "\n#{red("#{index + 1}.")} #{bold(item[:tenant])}"
-          puts "   #{error_icon} Error: #{red(item[:reason])}"
-        end
-        puts red(thin_separator)
-      end
-
-      # Show skipped tenants
-      if skipped_tenants.any?
-        puts "\n#{bg_yellow('  ⚠️  SKIPPED TENANTS  ')}"
-        puts yellow(thin_separator)
-        skipped_tenants.each_with_index do |item, index|
-          puts "\n#{yellow("#{index + 1}.")} #{bold(item[:tenant])}"
-          puts "   #{warning_icon} Reason: #{yellow(item[:reason])}"
-        end
-        puts yellow(thin_separator)
-      end
-
-      # Final status
-      if failed_tenants.any? || skipped_tenants.any?
-        puts "\n#{red('❌ Some tenants had issues. See details above.')}"
-      else
-        puts "\n#{green('✅ All tenants processed successfully!')}"
-      end
-      
-      puts thick_separator
+      puts fmt.section_header("SUMMARY", "📊")
+      puts "\n#{fmt.info_icon} #{fmt.bold('Statistics:')}"
+      puts "   Consortium: #{fmt.bold(consortium)}"
+      puts fmt.summary_stats(total_tenants, processed, success, skipped_tenants.count, failed_tenants.count)
+      puts fmt.error_section("❌ FAILED TENANTS", failed_tenants)
+      puts fmt.warning_section("⚠️  SKIPPED TENANTS", skipped_tenants)
+      puts fmt.final_status(failed_tenants.any? || skipped_tenants.any?)
+      puts fmt.thick_separator
     end
 
     desc 'Add tenant-specific metadata profile for a specific tenant (preserves existing profiles)'
@@ -394,7 +300,7 @@ namespace :hykuup do
       tenant = args[:tenant]
 
       if tenant.blank?
-        puts red("\nError: Tenant must be specified")
+        puts fmt.red("\nError: Tenant must be specified")
         puts "Usage: rake hykuup:profiles:add_tenant_profile[tenant_cname_or_name]"
         exit 1
       end
@@ -403,18 +309,16 @@ namespace :hykuup do
       account = Account.find_by(tenant: tenant) || Account.find_by(cname: tenant) || Account.find_by(name: tenant)
 
       if account.nil?
-        puts red("\nError: Tenant '#{tenant}' not found by tenant UUID, cname, or name")
+        puts fmt.red("\nError: Tenant '#{tenant}' not found by tenant UUID, cname, or name")
         exit 1
       end
 
-      puts "\n#{thick_separator}"
-      puts bold(cyan("  🎯 ADDING TENANT-SPECIFIC PROFILE FOR SINGLE TENANT"))
-      puts thick_separator
-      puts "\n#{info_icon} #{bold('Tenant Details:')}"
-      puts "   Tenant: #{bold(account.cname)}"
+      puts fmt.header("ADDING TENANT-SPECIFIC PROFILE FOR SINGLE TENANT", "🎯")
+      puts "\n#{fmt.info_icon} #{fmt.bold('Tenant Details:')}"
+      puts "   Tenant: #{fmt.bold(account.cname)}"
       puts "   Database: #{account.tenant}"
       puts "   Consortium: #{account.part_of_consortia || 'None'}"
-      puts "\n#{green('✅ This will ADD a new profile without destroying existing ones.')}"
+      puts "\n#{fmt.green('✅ This will ADD a new profile without destroying existing ones.')}"
       puts "   Existing profiles will be preserved for historical reference.\n"
 
       begin
@@ -422,53 +326,51 @@ namespace :hykuup do
         Apartment::Tenant.switch!(account.tenant)
 
         # Add the tenant-specific profile (preserves existing)
-        print "#{info_icon} Validating and adding tenant-specific profile... "
+        print fmt.status_line(fmt.info_icon, "Validating and adding tenant-specific profile... ")
         result = create_validated_profile
 
         if result[:success]
-          puts success_icon
+          puts fmt.success_icon
 
           if result[:warnings].any?
-            puts "\n#{warning_icon}  Warnings:"
-            result[:warnings].each { |w| puts "   #{yellow('•')} #{w}" }
+            puts "\n#{fmt.warning_icon}  Warnings:"
+            result[:warnings].each { |w| puts "   #{fmt.yellow('•')} #{w}" }
           end
         else
-          puts error_icon + " " + red("FAILED")
-          puts "\n#{red('❌ Validation Error:')} #{result[:error]}"
+          puts fmt.status_line(fmt.error_icon, "Validating and adding tenant-specific profile... ", fmt.red("FAILED"))
+          puts "\n#{fmt.red('❌ Validation Error:')} #{result[:error]}"
           puts "\nThe profile could not be created because it would be incompatible"
           puts "with the existing data or tenant configuration."
-          puts thick_separator
+          puts fmt.thick_separator
           exit 1
         end
 
         # Update available works based on tenant filtering rules
-        print "#{info_icon} Updating available works... "
+        print fmt.status_line(fmt.info_icon, "Updating available works... ")
         allowed_types = TenantWorkTypeFilter.allowed_work_types
         Site.instance.update!(available_works: allowed_types)
-        puts success_icon
+        puts fmt.success_icon
 
         # Show what work types this tenant can see
-        puts "\n#{success_icon} Available work types: #{green(allowed_types.join(', '))}"
-        puts thick_separator
-        puts green("✅ COMPLETED SUCCESSFULLY")
-        puts thick_separator
+        puts "\n#{fmt.success_icon} Available work types: #{fmt.green(allowed_types.join(', '))}"
+        puts fmt.thick_separator
+        puts fmt.green("✅ COMPLETED SUCCESSFULLY")
+        puts fmt.thick_separator
 
       rescue StandardError => e
         # Only rescue StandardError to avoid masking system-level exceptions.
-        puts error_icon + " " + red("ERROR")
-        puts "\n#{red('❌ Error:')} #{e.message}"
-        puts "   #{red('↳')} #{e.backtrace.first}"
-        puts thick_separator
+        puts fmt.status_line(fmt.error_icon, "Processing", fmt.red("ERROR"))
+        puts "\n#{fmt.red('❌ Error:')} #{e.message}"
+        puts "   #{fmt.red('↳')} #{e.backtrace.first}"
+        puts fmt.thick_separator
         exit 1
       end
     end
 
     desc 'Reset metadata profiles and update available works for all tenants (DESTRUCTIVE)'
     task reset_all: :environment do
-      puts "\n#{thick_separator}"
-      puts bold(red("  ⚠️  RESETTING PROFILES AND AVAILABLE WORKS FOR ALL TENANTS"))
-      puts thick_separator
-      puts "\n#{bg_yellow('  ⚠️  WARNING: This will overwrite ALL existing metadata profiles!  ')}"
+      puts fmt.header("RESETTING PROFILES AND AVAILABLE WORKS FOR ALL TENANTS", "⚠️")
+      puts "\n#{fmt.bg_yellow('  ⚠️  WARNING: This will overwrite ALL existing metadata profiles!  ')}"
       puts "   Custom profiles will be lost and replaced with tenant-specific defaults."
       puts "   This action cannot be undone.\n"
       puts "   Consider using 'rake hykuup:profiles:add_tenant_profiles' instead.\n"
@@ -477,11 +379,11 @@ namespace :hykuup do
       confirmation = STDIN.gets.chomp
 
       unless confirmation.casecmp('yes').zero?
-        puts red("\n❌ Operation cancelled by user.")
+        puts fmt.red("\n❌ Operation cancelled by user.")
         exit 0
       end
 
-      puts green("\n✅ Confirmed. Proceeding with profile reset...\n")
+      puts fmt.green("\n✅ Confirmed. Proceeding with profile reset...\n")
 
       total_tenants = Account.count
       processed = 0
@@ -492,98 +394,63 @@ namespace :hykuup do
 
       Account.find_each do |account|
         processed += 1
-        puts "\n#{thin_separator}"
-        puts "#{arrow_icon} [#{processed}/#{total_tenants}] #{bold(account.cname)}"
-        puts "   #{info_icon} Tenant: #{account.tenant}"
-        puts "   #{info_icon} Consortium: #{account.part_of_consortia || 'None'}"
+        puts fmt.tenant_info(
+          "[#{processed}/#{total_tenants}] #{account.cname}",
+          account.tenant,
+          account.part_of_consortia
+        )
 
         begin
           # Switch to the tenant
           Apartment::Tenant.switch!(account.tenant)
 
           # VALIDATE FIRST before destroying anything!
-          print "   #{info_icon} Validating new profile... "
+          print fmt.status_line(fmt.info_icon, "Validating new profile... ")
           result = load_and_validate_profile
 
           unless result[:success]
-            puts error_icon + " " + red("FAILED")
-            puts "\n   #{red('❌ Validation Error:')} #{result[:error]}"
+            puts fmt.status_line(fmt.error_icon, "Validating new profile... ", fmt.red("FAILED"))
+            puts "\n   #{fmt.red('❌ Validation Error:')} #{result[:error]}"
             puts "\n   The new profile is invalid. Existing profile has NOT been deleted."
             puts "   Your tenant still has its current profile."
-            puts red(thin_separator)
+            puts fmt.red(fmt.thin_separator)
             skipped_tenants << { tenant: account.cname, reason: result[:error] }
             next
           end
-          puts success_icon
+          puts fmt.success_icon
           profile_data = result[:data]
 
           # Reset the metadata profile (only after validation passes!)
-          print "   #{info_icon} Deleting old profile and creating new one... "
+          print fmt.status_line(fmt.info_icon, "Deleting old profile and creating new one... ")
           Hyrax::FlexibleSchema.destroy_all
           Hyrax::FlexibleSchema.create!(profile: profile_data)
-          puts success_icon
+          puts fmt.success_icon
 
           # Update available works based on tenant filtering rules
-          print "   #{info_icon} Updating available works... "
+          print fmt.status_line(fmt.info_icon, "Updating available works... ")
           allowed_types = TenantWorkTypeFilter.allowed_work_types
           Site.instance.update!(available_works: allowed_types)
-          puts success_icon
+          puts fmt.success_icon
 
           # Show what work types this tenant can see
-          puts "   #{success_icon} Available work types: #{green(allowed_types.join(', '))}"
+          puts "   #{fmt.success_icon} Available work types: #{fmt.green(allowed_types.join(', '))}"
           success += 1
 
         rescue StandardError => e
           # Only rescue StandardError to avoid masking system-level exceptions.
           errors += 1
           failed_tenants << { tenant: account.cname, reason: e.message, error: e }
-          puts "   #{error_icon} #{red('ERROR')}: #{e.message}"
-          puts "      #{red('↳')} #{e.backtrace.first}"
+          puts "   #{fmt.error_icon} #{fmt.red('ERROR')}: #{e.message}"
+          puts "      #{fmt.red('↳')} #{e.backtrace.first}"
         end
       end
 
-      puts "\n#{thick_separator}"
-      puts bold(cyan("  📊 SUMMARY"))
-      puts thick_separator
-      
-      # Summary statistics with color coding
-      puts "\n#{info_icon} #{bold('Statistics:')}"
-      puts "   Total tenants: #{bold(total_tenants)}"
-      puts "   Processed: #{bold(processed)}"
-      puts "   #{success_icon} Successfully reset: #{green(bold(success))}"
-      puts "   #{warning_icon} Skipped (validation failed): #{yellow(bold(skipped_tenants.count))}"
-      puts "   #{error_icon} Errors: #{red(bold(failed_tenants.count))}"
-
-      # Show failures prominently
-      if failed_tenants.any?
-        puts "\n#{bg_red('  ❌ FAILED TENANTS  ')}"
-        puts red(thin_separator)
-        failed_tenants.each_with_index do |item, index|
-          puts "\n#{red("#{index + 1}.")} #{bold(item[:tenant])}"
-          puts "   #{error_icon} Error: #{red(item[:reason])}"
-        end
-        puts red(thin_separator)
-      end
-
-      # Show skipped tenants
-      if skipped_tenants.any?
-        puts "\n#{bg_yellow('  ⚠️  SKIPPED TENANTS  ')}"
-        puts yellow(thin_separator)
-        skipped_tenants.each_with_index do |item, index|
-          puts "\n#{yellow("#{index + 1}.")} #{bold(item[:tenant])}"
-          puts "   #{warning_icon} Reason: #{yellow(item[:reason])}"
-        end
-        puts yellow(thin_separator)
-      end
-
-      # Final status
-      if failed_tenants.any? || skipped_tenants.any?
-        puts "\n#{red('❌ Some tenants had issues. See details above.')}"
-      else
-        puts "\n#{green('✅ All tenants processed successfully!')}"
-      end
-      
-      puts thick_separator
+      puts fmt.section_header("SUMMARY", "📊")
+      puts fmt.summary_stats(total_tenants, processed, success, skipped_tenants.count, failed_tenants.count)
+      puts fmt.error_section("❌ FAILED TENANTS", failed_tenants)
+      puts fmt.warning_section("⚠️  SKIPPED TENANTS", skipped_tenants)
+      puts fmt.final_status(failed_tenants.any? || skipped_tenants.any?)
+      puts fmt.thick_separator
     end
 
     desc 'Reset metadata profiles and update available works for a specific tenant (DESTRUCTIVE)'
@@ -591,7 +458,7 @@ namespace :hykuup do
       tenant = args[:tenant]
 
       if tenant.blank?
-        puts red("\nError: Tenant must be specified")
+        puts fmt.red("\nError: Tenant must be specified")
         puts "Usage: rake hykuup:profiles:reset_tenant[tenant_cname_or_name]"
         exit 1
       end
@@ -600,18 +467,16 @@ namespace :hykuup do
       account = Account.find_by(tenant: tenant) || Account.find_by(cname: tenant) || Account.find_by(name: tenant)
 
       if account.nil?
-        puts red("\nError: Tenant '#{tenant}' not found by tenant UUID, cname, or name")
+        puts fmt.red("\nError: Tenant '#{tenant}' not found by tenant UUID, cname, or name")
         exit 1
       end
 
-      puts "\n#{thick_separator}"
-      puts bold(red("  ⚠️  RESETTING PROFILE FOR SINGLE TENANT"))
-      puts thick_separator
-      puts "\n#{info_icon} #{bold('Tenant Details:')}"
-      puts "   Tenant: #{bold(account.cname)}"
+      puts fmt.header("RESETTING PROFILE FOR SINGLE TENANT", "⚠️")
+      puts "\n#{fmt.info_icon} #{fmt.bold('Tenant Details:')}"
+      puts "   Tenant: #{fmt.bold(account.cname)}"
       puts "   Database: #{account.tenant}"
       puts "   Consortium: #{account.part_of_consortia || 'None'}"
-      puts "\n#{bg_yellow('  ⚠️  WARNING: This will overwrite the existing metadata profile!  ')}"
+      puts "\n#{fmt.bg_yellow('  ⚠️  WARNING: This will overwrite the existing metadata profile!  ')}"
       puts "   Any custom profile for this tenant will be lost and replaced."
       puts "   This action cannot be undone.\n"
       puts "   Consider using 'rake hykuup:profiles:add_tenant_profile[#{tenant}]' instead.\n"
@@ -620,56 +485,56 @@ namespace :hykuup do
       confirmation = STDIN.gets.chomp
 
       unless confirmation.casecmp('yes').zero?
-        puts red("\n❌ Operation cancelled by user.")
+        puts fmt.red("\n❌ Operation cancelled by user.")
         exit 0
       end
 
-      puts green("\n✅ Confirmed. Proceeding with profile reset...\n")
+      puts fmt.green("\n✅ Confirmed. Proceeding with profile reset...\n")
 
       begin
         # Switch to the tenant
         Apartment::Tenant.switch!(account.tenant)
 
         # VALIDATE FIRST before destroying anything!
-        print "#{info_icon} Validating new profile... "
+        print fmt.status_line(fmt.info_icon, "Validating new profile... ")
         result = load_and_validate_profile
 
         unless result[:success]
-          puts error_icon + " " + red("FAILED")
+          puts fmt.status_line(fmt.error_icon, "Validating new profile... ", fmt.red("FAILED"))
           error_message = result[:error]
-          puts "\n#{red('❌ Validation Error:')} #{error_message}"
+          puts "\n#{fmt.red('❌ Validation Error:')} #{error_message}"
           puts "\nThe new profile is invalid. Existing profile has NOT been deleted."
           puts "Your tenant still has its current profile."
-          puts thick_separator
+          puts fmt.thick_separator
           exit 1
         end
-        puts success_icon
+        puts fmt.success_icon
         profile_data = result[:data]
 
         # Reset the metadata profile (only after validation passes!)
-        print "#{info_icon} Deleting old profile and creating new one... "
+        print fmt.status_line(fmt.info_icon, "Deleting old profile and creating new one... ")
         Hyrax::FlexibleSchema.destroy_all
         Hyrax::FlexibleSchema.create!(profile: profile_data)
-        puts success_icon
+        puts fmt.success_icon
 
         # Update available works based on tenant filtering rules
-        print "#{info_icon} Updating available works... "
+        print fmt.status_line(fmt.info_icon, "Updating available works... ")
         allowed_types = TenantWorkTypeFilter.allowed_work_types
         Site.instance.update!(available_works: allowed_types)
-        puts success_icon
+        puts fmt.success_icon
 
         # Show what work types this tenant can see
-        puts "\n#{success_icon} Available work types: #{green(allowed_types.join(', '))}"
-        puts thick_separator
-        puts green("✅ COMPLETED SUCCESSFULLY")
-        puts thick_separator
+        puts "\n#{fmt.success_icon} Available work types: #{fmt.green(allowed_types.join(', '))}"
+        puts fmt.thick_separator
+        puts fmt.green("✅ COMPLETED SUCCESSFULLY")
+        puts fmt.thick_separator
 
       rescue StandardError => e
         # Only rescue StandardError to avoid masking system-level exceptions.
-        puts error_icon + " " + red("ERROR")
-        puts "\n#{red('❌ Error:')} #{e.message}"
-        puts "   #{red('↳')} #{e.backtrace.first}"
-        puts thick_separator
+        puts fmt.status_line(fmt.error_icon, "Processing", fmt.red("ERROR"))
+        puts "\n#{fmt.red('❌ Error:')} #{e.message}"
+        puts "   #{fmt.red('↳')} #{e.backtrace.first}"
+        puts fmt.thick_separator
         exit 1
       end
     end
@@ -727,7 +592,7 @@ namespace :hykuup do
       first_type = work_types.first
 
       enhanced = "#{error}\n\n"
-      enhanced += yellow("  💡 To fix this issue:\n")
+      enhanced += fmt.yellow("  💡 To fix this issue:\n")
       enhanced += "  1. Migrate the existing works to an allowed work type:\n"
       enhanced += "     rake hykuup:migrate_work_class[#{first_type},GenericWork,#{current_tenant_name}]\n"
       enhanced += "  2. Then run this profile update task again\n"
