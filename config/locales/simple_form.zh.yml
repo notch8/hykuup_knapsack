@@ -1,0 +1,8 @@
+zh:
+  simple_form:
+    hints:
+      account:
+        part_of_consortia: "选择该租户所属的联盟。这将控制可用的工作类型和元数据配置文件。"
+    labels:
+      account:
+        part_of_consortia: "财团的一部分"

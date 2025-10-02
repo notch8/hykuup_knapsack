@@ -1,0 +1,8 @@
+de:
+  simple_form:
+    hints:
+      account:
+        part_of_consortia: "Wählen Sie das Konsortium aus, zu dem dieser Mandant gehört. Dadurch werden verfügbare Arbeitstypen und Metadatenprofile gesteuert."
+    labels:
+      account:
+        part_of_consortia: "Teil von Konsortien"

@@ -1,0 +1,8 @@
+en:
+  simple_form:
+    hints:
+      account:
+        part_of_consortia: "Select the consortium this tenant belongs to. This will control available work types and metadata profiles."
+    labels:
+      account:
+        part_of_consortia: "Part of Consortia"

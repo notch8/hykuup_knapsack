@@ -1,0 +1,56 @@
+en:
+  simple_form:
+    hints:
+      account:
+        part_of_consortia: "Select the consortium this tenant belongs to. This will control available work types and metadata profiles."
+    labels:
+      account:
+        part_of_consortia: "Part of Consortia"
+es:
+  simple_form:
+    hints:
+      account:
+        part_of_consortia: "Seleccione el consorcio al que pertenece este inquilino. Esto controlará los tipos de trabajo y los perfiles de metadatos disponibles."
+    labels:
+      account:
+        part_of_consortia: "Parte de los consorcios"
+de:
+  simple_form:
+    hints:
+      account:
+        part_of_consortia: "Wählen Sie das Konsortium aus, zu dem dieser Mandant gehört. Dadurch werden verfügbare Arbeitstypen und Metadatenprofile gesteuert."
+    labels:
+      account:
+        part_of_consortia: "Teil von Konsortien"
+fr:
+  simple_form:
+    hints:
+      account:
+        part_of_consortia: "Sélectionnez le consortium auquel appartient ce locataire. Cela contrôlera les types de travaux et les profils de métadonnées disponibles."
+    labels:
+      account:
+        part_of_consortia: "Une partie des consortiums"
+it:
+  simple_form:
+    hints:
+      account:
+        part_of_consortia: "Seleziona il consorzio a cui appartiene questo tenant. Ciò controllerà i tipi di lavoro e i profili di metadati disponibili."
+    labels:
+      account:
+        part_of_consortia: "Parte di Consorzi"
+"pt-BR":
+  simple_form:
+    hints:
+      account:
+        part_of_consortia: "Selecione o consórcio ao qual este locatário pertence. Isso controlará os tipos de trabalho e perfis de metadados disponíveis."
+    labels:
+      account:
+        part_of_consortia: "Parte de Consórcios"
+zh:
+  simple_form:
+    hints:
+      account:
+        part_of_consortia: "选择该租户所属的联盟。这将控制可用的工作类型和元数据配置文件。"
+    labels:
+      account:
+        part_of_consortia: "财团的一部分"

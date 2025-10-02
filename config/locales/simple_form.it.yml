@@ -1,0 +1,8 @@
+it:
+  simple_form:
+    hints:
+      account:
+        part_of_consortia: "Seleziona il consorzio a cui appartiene questo tenant. Ciò controllerà i tipi di lavoro e i profili di metadati disponibili."
+    labels:
+      account:
+        part_of_consortia: "Parte di Consorzi"
