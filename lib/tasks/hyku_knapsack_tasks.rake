@@ -6,7 +6,9 @@
 require_relative '../hyku_knapsack/cli_formatter'
 
 # Convenience methods for cleaner rake task code
-def fmt; HykuKnapsack::CLIFormatter; end
+def fmt
+  HykuKnapsack::CLIFormatter
+end
 
 namespace :hykuup do
   namespace :mobius do
@@ -207,7 +209,7 @@ namespace :hykuup do
       puts fmt.summary_stats(total_tenants, processed, success, skipped, errors)
       puts fmt.error_section("❌ FAILED TENANTS", failed_tenants)
       puts fmt.warning_section("⚠️  SKIPPED TENANTS", skipped_tenants)
-      puts fmt.final_status(errors > 0 || skipped > 0)
+      puts fmt.final_status(errors.positive? || skipped.positive?)
       puts fmt.thick_separator
     end
 
@@ -306,7 +308,7 @@ namespace :hykuup do
       end
 
       # Find the account by its tenant UUID, cname, or internal name
-      account = Account.find_by(tenant: tenant) || Account.find_by(cname: tenant) || Account.find_by(name: tenant)
+      account = Account.find_by(tenant:) || Account.find_by(cname: tenant) || Account.find_by(name: tenant)
 
       if account.nil?
         puts fmt.red("\nError: Tenant '#{tenant}' not found by tenant UUID, cname, or name")
@@ -449,7 +451,7 @@ namespace :hykuup do
       puts fmt.summary_stats(total_tenants, processed, success, skipped_tenants.count, failed_tenants.count)
       puts fmt.error_section("❌ FAILED TENANTS", failed_tenants)
       puts fmt.warning_section("⚠️  SKIPPED TENANTS", skipped_tenants)
-      puts fmt.final_status(failed_tenants.any? || skipped_tenants.any?)
+      puts fmt.final_status(errors.positive? || skipped.positive?)
       puts fmt.thick_separator
     end
 
@@ -464,7 +466,7 @@ namespace :hykuup do
       end
 
       # Find the account by its tenant UUID, cname, or internal name
-      account = Account.find_by(tenant: tenant) || Account.find_by(cname: tenant) || Account.find_by(name: tenant)
+      account = Account.find_by(tenant:) || Account.find_by(cname: tenant) || Account.find_by(name: tenant)
 
       if account.nil?
         puts fmt.red("\nError: Tenant '#{tenant}' not found by tenant UUID, cname, or name")
@@ -554,7 +556,7 @@ namespace :hykuup do
 
     # Create the profile
     Hyrax::FlexibleSchema.create!(profile: profile_data[:data])
-    { success: true, error: nil, warnings: warnings }
+    { success: true, error: nil, warnings: }
   rescue StandardError => e
     error_message = enhance_error_message_for_cli(e.message)
     { success: false, error: error_message, warnings: [] }

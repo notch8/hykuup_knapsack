@@ -1,32 +1,90 @@
 # frozen_string_literal: true
 
 module HykuKnapsack
+  # Color and text formatting helpers
+  module ColorFormatter
+    def self.red(text)
+      "\e[31m#{text}\e[0m"
+    end
+
+    def self.green(text)
+      "\e[32m#{text}\e[0m"
+    end
+
+    def self.yellow(text)
+      "\e[33m#{text}\e[0m"
+    end
+
+    def self.blue(text)
+      "\e[34m#{text}\e[0m"
+    end
+
+    def self.magenta(text)
+      "\e[35m#{text}\e[0m"
+    end
+
+    def self.cyan(text)
+      "\e[36m#{text}\e[0m"
+    end
+
+    def self.bold(text)
+      "\e[1m#{text}\e[0m"
+    end
+
+    def self.underline(text)
+      "\e[4m#{text}\e[0m"
+    end
+
+    def self.bg_red(text)
+      "\e[41m#{text}\e[0m"
+    end
+
+    def self.bg_green(text)
+      "\e[42m#{text}\e[0m"
+    end
+
+    def self.bg_yellow(text)
+      "\e[43m#{text}\e[0m"
+    end
+  end
+
   # CLI formatter for consistent, colorful output across rake tasks
   class CLIFormatter
-    # Color and text formatting helpers
-    def self.red(text); "\e[31m#{text}\e[0m"; end
-    def self.green(text); "\e[32m#{text}\e[0m"; end
-    def self.yellow(text); "\e[33m#{text}\e[0m"; end
-    def self.blue(text); "\e[34m#{text}\e[0m"; end
-    def self.magenta(text); "\e[35m#{text}\e[0m"; end
-    def self.cyan(text); "\e[36m#{text}\e[0m"; end
-    def self.bold(text); "\e[1m#{text}\e[0m"; end
-    def self.underline(text); "\e[4m#{text}\e[0m"; end
-    def self.bg_red(text); "\e[41m#{text}\e[0m"; end
-    def self.bg_green(text); "\e[42m#{text}\e[0m"; end
-    def self.bg_yellow(text); "\e[43m#{text}\e[0m"; end
+    include ColorFormatter
 
     # Visual separators
-    def self.separator(char = '=', length = 80); char * length; end
-    def self.thick_separator; "=" * 80; end
-    def self.thin_separator; "─" * 80; end
+    def self.separator(char = '=', length = 80)
+      char * length
+    end
+
+    def self.thick_separator
+      "=" * 80
+    end
+
+    def self.thin_separator
+      "─" * 80
+    end
 
     # Status indicators
-    def self.success_icon; green("✓"); end
-    def self.error_icon; red("✗"); end
-    def self.warning_icon; yellow("⚠"); end
-    def self.info_icon; blue("ℹ"); end
-    def self.arrow_icon; cyan("→"); end
+    def self.success_icon
+      green("✓")
+    end
+
+    def self.error_icon
+      red("✗")
+    end
+
+    def self.warning_icon
+      yellow("⚠")
+    end
+
+    def self.info_icon
+      blue("ℹ")
+    end
+
+    def self.arrow_icon
+      cyan("→")
+    end
 
     # Convenience methods for common formatting patterns
     def self.header(title, emoji = nil)
@@ -63,7 +121,7 @@ module HykuKnapsack
 
     def self.error_section(title, items)
       return [] if items.empty?
-      
+
       [
         "",
         bg_red("  #{title}"),
@@ -79,7 +137,7 @@ module HykuKnapsack
 
     def self.warning_section(title, items)
       return [] if items.empty?
-      
+
       [
         "",
         bg_yellow("  #{title}"),
