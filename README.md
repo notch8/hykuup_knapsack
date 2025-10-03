@@ -199,9 +199,25 @@ Default metadata profiles are automatically selected based on tenant consortium 
 - **Generic tenants**: Loads `config/metadata_profiles/default/m3_profile.yaml`
 
 **Management:**
-- Use `rake hykuup:profiles:reset_all` to reset all tenant profiles
-- Use `rake hykuup:profiles:reset_tenant[tenant_name]` to reset a specific tenant
+- Use `rake hykuup:profiles:add_tenant_profiles` to add profiles for all tenants (preserves existing)
+- Use `rake hykuup:profiles:add_consortium_profiles[consortium]` to add profiles for a specific consortium
+- Use `rake hykuup:profiles:add_tenant_profile[tenant]` to add profile for a specific tenant
+- Use `rake hykuup:profiles:reset_all` to reset all tenant profiles (DESTRUCTIVE)
+- Use `rake hykuup:profiles:reset_tenant[tenant_name]` to reset a specific tenant (DESTRUCTIVE)
 - Profile upload validation prevents incompatible work types
+
+**Rake Task Examples:**
+```bash
+# Safe operations (preserve existing profiles)
+rake hykuup:profiles:add_tenant_profiles                   # All tenants
+rake hykuup:profiles:add_consortium_profiles[unca]         # All tenants in UNCA consortium only
+rake hykuup:profiles:add_consortium_profiles[mobius]       # All tenants in Mobius consortium only
+rake hykuup:profiles:add_tenant_profile[demo]              # Specific tenant
+
+# Destructive operations (overwrite existing profiles)
+rake hykuup:profiles:reset_all                             # All tenants
+rake hykuup:profiles:reset_tenant[demo]                    # Specific tenant
+```
 
 ## Adding New Consortia
 

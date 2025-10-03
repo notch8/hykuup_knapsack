@@ -15,7 +15,16 @@ module Hyrax
 
       begin
         profile_data = YAML.safe_load_file(params[:file].path)
+
+        # Validate tenant work types (custom validation)
         validate_tenant_work_types!(profile_data)
+
+        # Run full profile validation (includes existing records check)
+        validator = Hyrax::FlexibleSchemaValidatorService.new(profile: profile_data)
+        validator.validate!
+
+        raise StandardError, validator.errors.join('; ') if validator.errors.any?
+
         create_flexible_schema(profile_data)
       rescue => e
         redirect_to metadata_profiles_path, flash: { error: e.message }

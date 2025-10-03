@@ -31,8 +31,7 @@
           
           <%= f.input :part_of_consortia,
                       collection: Consortium.options_for_select,
-                      label: "Part of Consortia",
-                      hint: "Select the consortium this tenant belongs to. This will control available work types and metadata profiles." %>
+                      hint: t('simple_form.hints.account.part_of_consortia_edit') %>
 
           <%= f.input :tenant, readonly: @account.persisted? %>
 
