@@ -4,9 +4,9 @@ RSpec.describe TenantWorkTypeFilter, singletenant: true do
   let(:default_path) { '/path/to/default/profile.yaml' }
 
   before do
-    # Ensure all work types are registered
+    # Ensure all work types are registered (UncaWork removed)
     allow(Hyrax.config).to receive(:registered_curation_concern_types).and_return([
-                                                                                    'GenericWork', 'Image', 'Etd', 'Oer', 'MobiusWork', 'UncaWork', 'ScholarlyWork'
+                                                                                    'GenericWork', 'Image', 'Etd', 'Oer', 'MobiusWork', 'ScholarlyWork'
                                                                                   ])
   end
 
@@ -18,9 +18,9 @@ RSpec.describe TenantWorkTypeFilter, singletenant: true do
         allow(Account).to receive(:find_by).with(tenant: 'unca').and_return(account)
       end
 
-      it 'returns MobiusWork and UncaWork as excluded' do
+      it 'returns MobiusWork as excluded' do
         excluded_types = described_class.excluded_work_types
-        expect(excluded_types).to eq(%w[MobiusWork UncaWork])
+        expect(excluded_types).to eq(%w[MobiusWork])
       end
     end
 
@@ -31,9 +31,9 @@ RSpec.describe TenantWorkTypeFilter, singletenant: true do
         allow(Account).to receive(:find_by).with(tenant: 'mobius').and_return(account)
       end
 
-      it 'returns UncaWork and ScholarlyWork as excluded' do
+      it 'returns ScholarlyWork as excluded' do
         excluded_types = described_class.excluded_work_types
-        expect(excluded_types).to eq(%w[UncaWork ScholarlyWork])
+        expect(excluded_types).to eq(%w[ScholarlyWork])
       end
     end
 
@@ -46,7 +46,7 @@ RSpec.describe TenantWorkTypeFilter, singletenant: true do
 
       it 'returns all tenant-specific work types as excluded' do
         excluded_types = described_class.excluded_work_types
-        expect(excluded_types).to eq(%w[MobiusWork UncaWork ScholarlyWork])
+        expect(excluded_types).to eq(%w[MobiusWork ScholarlyWork])
       end
     end
   end
@@ -59,11 +59,11 @@ RSpec.describe TenantWorkTypeFilter, singletenant: true do
         allow(Account).to receive(:find_by).with(tenant: 'unca').and_return(account)
       end
 
-      it 'excludes MobiusWork and UncaWork' do
+      it 'excludes MobiusWork' do
         allowed_types = described_class.allowed_work_types
 
         expect(allowed_types).to include('GenericWork', 'Image', 'Etd', 'Oer', 'ScholarlyWork')
-        expect(allowed_types).not_to include('MobiusWork', 'UncaWork')
+        expect(allowed_types).not_to include('MobiusWork')
       end
     end
 
@@ -74,11 +74,11 @@ RSpec.describe TenantWorkTypeFilter, singletenant: true do
         allow(Account).to receive(:find_by).with(tenant: 'mobius').and_return(account)
       end
 
-      it 'excludes UncaWork and ScholarlyWork' do
+      it 'excludes ScholarlyWork' do
         allowed_types = described_class.allowed_work_types
 
         expect(allowed_types).to include('GenericWork', 'Image', 'Etd', 'Oer', 'MobiusWork')
-        expect(allowed_types).not_to include('UncaWork', 'ScholarlyWork')
+        expect(allowed_types).not_to include('ScholarlyWork')
       end
     end
 
@@ -93,7 +93,7 @@ RSpec.describe TenantWorkTypeFilter, singletenant: true do
         allowed_types = described_class.allowed_work_types
 
         expect(allowed_types).to include('GenericWork', 'Image', 'Etd', 'Oer')
-        expect(allowed_types).not_to include('MobiusWork', 'UncaWork', 'ScholarlyWork')
+        expect(allowed_types).not_to include('MobiusWork', 'ScholarlyWork')
       end
     end
   end

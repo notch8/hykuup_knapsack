@@ -53,7 +53,7 @@ class TenantWorkTypeFilter
     # Returns the default excluded work types for tenants without consortium membership
     # @return [Array<String>] Default excluded work types
     def default_excluded_work_types
-      %w[MobiusWork UncaWork ScholarlyWork]
+      %w[MobiusWork ScholarlyWork]
     end
 
     # Finds the consortium configuration from the YAML file

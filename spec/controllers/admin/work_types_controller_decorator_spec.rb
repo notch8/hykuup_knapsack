@@ -8,7 +8,7 @@ RSpec.describe Admin::WorkTypesController, singletenant: true do
     before do
       # Ensure all work types are registered
       allow(Hyrax.config).to receive(:registered_curation_concern_types).and_return([
-                                                                                      'GenericWork', 'Image', 'Etd', 'Oer', 'MobiusWork', 'UncaWork', 'ScholarlyWork'
+                                                                                      'GenericWork', 'Image', 'Etd', 'Oer', 'MobiusWork', 'ScholarlyWork'
                                                                                     ])
     end
   end
