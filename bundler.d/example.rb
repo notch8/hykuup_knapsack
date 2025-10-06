@@ -9,6 +9,7 @@
 gem "sentry-ruby"
 gem "sentry-rails"
 gem "sentry-sidekiq"
+gem 'hyrax-doi', github: 'samvera-labs/hyrax-doi', tag: 'v1.0.0'
 
 ensure_gem "rubocop-rake"
 ensure_gem "rubocop-rspec"
