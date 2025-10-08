@@ -7,7 +7,7 @@ RSpec.describe Hyrax::QuickClassificationQuery, singletenant: true do
     before do
       # Ensure all work types are registered
       allow(Hyrax.config).to receive(:registered_curation_concern_types).and_return([
-                                                                                      'GenericWork', 'Image', 'Etd', 'Oer', 'MobiusWork', 'UncaWork', 'ScholarlyWork'
+                                                                                      'GenericWork', 'Image', 'Etd', 'Oer', 'MobiusWork', 'ScholarlyWork'
                                                                                     ])
 
       # Mock user permissions to allow creation of all work types
@@ -21,12 +21,12 @@ RSpec.describe Hyrax::QuickClassificationQuery, singletenant: true do
           allow(Site).to receive(:instance).and_return(site_instance)
         end
 
-        it "excludes MobiusWork and UncaWork from work creation options" do
+        it "excludes MobiusWork from work creation options" do
           query = described_class.new(user)
           authorized_models = query.authorized_models
 
           expect(authorized_models.map(&:name)).to include('GenericWork', 'Image', 'Etd', 'Oer', 'ScholarlyWork')
-          expect(authorized_models.map(&:name)).not_to include('MobiusWork', 'UncaWork')
+          expect(authorized_models.map(&:name)).not_to include('MobiusWork')
         end
       end
 
@@ -36,12 +36,12 @@ RSpec.describe Hyrax::QuickClassificationQuery, singletenant: true do
           allow(Site).to receive(:instance).and_return(site_instance)
         end
 
-        it "excludes UncaWork and ScholarlyWork from work creation options" do
+        it "excludes ScholarlyWork from work creation options" do
           query = described_class.new(user)
           authorized_models = query.authorized_models
 
           expect(authorized_models.map(&:name)).to include('GenericWork', 'Image', 'Etd', 'Oer', 'MobiusWork')
-          expect(authorized_models.map(&:name)).not_to include('UncaWork', 'ScholarlyWork')
+          expect(authorized_models.map(&:name)).not_to include('ScholarlyWork')
         end
       end
 
@@ -56,7 +56,7 @@ RSpec.describe Hyrax::QuickClassificationQuery, singletenant: true do
           authorized_models = query.authorized_models
 
           expect(authorized_models.map(&:name)).to include('GenericWork', 'Image', 'Etd', 'Oer')
-          expect(authorized_models.map(&:name)).not_to include('MobiusWork', 'UncaWork', 'ScholarlyWork')
+          expect(authorized_models.map(&:name)).not_to include('MobiusWork', 'ScholarlyWork')
         end
       end
     end

@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-# Copied from UncaWorkIndexer as part of renaming UncaWork to ScholarlyWork
 class ScholarlyWorkIndexer < Hyrax::ValkyrieWorkIndexer
   # Basic metadata has been included via :scholarly_work so we can customize it
   # include Hyrax::Indexer(:basic_metadata) unless Hyrax.config.flexible?

@@ -181,8 +181,7 @@ This knapsack overrides Hyku's default profile loading behavior. Instead of all 
 
 Each tenant only sees work types appropriate for their consortium membership:
 
-- **UNCA Consortium**: Excludes `MobiusWork` and `UncaWork`
-- **Mobius Consortium**: Excludes `UncaWork` and `ScholarlyWork`  
+- **Mobius Consortium**: Excludes `ScholarlyWork`
 - **Generic tenants**: Excludes all tenant-specific work types
 
 **Implementation:**
@@ -194,7 +193,6 @@ Each tenant only sees work types appropriate for their consortium membership:
 
 Default metadata profiles are automatically selected based on tenant consortium membership:
 
-- **UNCA Consortium**: Loads `config/metadata_profiles/unca/m3_profile.yaml`
 - **Mobius Consortium**: Loads `config/metadata_profiles/mobius/m3_profile.yaml`
 - **Generic tenants**: Loads `config/metadata_profiles/default/m3_profile.yaml`
 
@@ -235,11 +233,9 @@ Add your consortium to `config/consortia.yml` with its excluded work types:
   identifier: "unca"
   excluded_work_types:
     - "MobiusWork"
-    - "UncaWork"
 - name: "Mobius Consortium"
   identifier: "mobius"
   excluded_work_types:
-    - "UncaWork"
     - "ScholarlyWork"
 - name: "Your New Consortium"
   identifier: "your_consortium"

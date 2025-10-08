@@ -11,7 +11,6 @@ Rails.application.config.after_initialize do
     config.default_m3_profile_path = HykuKnapsack::Engine.root.join('config', 'metadata_profiles', 'default', 'm3_profile.yaml')
 
     config.register_curation_concern :mobius_work
-    config.register_curation_concern :unca_work
     config.register_curation_concern :scholarly_work
   end
 

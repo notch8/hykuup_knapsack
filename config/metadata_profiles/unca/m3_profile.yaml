@@ -23,8 +23,6 @@ classes:
     display_label: FileSet
   ScholarlyWork:
     display_label: Scholarly Work
-  UncaWork:
-    display_label: Unca Work (obsolete)
 contexts:
   flexible_context:
     display_label: Flexible Metadata Example
@@ -53,7 +51,6 @@ properties:
         - OerResource
         - EtdResource
         - ScholarlyWork
-        - UncaWork
     cardinality:
       minimum: 1
     data_type: array
@@ -99,7 +96,6 @@ properties:
         - OerResource
         - EtdResource
         - ScholarlyWork
-        - UncaWork
     cardinality:
       minimum: 0
       maximum: 1
@@ -131,7 +127,6 @@ properties:
         - OerResource
         - EtdResource
         - ScholarlyWork
-        - UncaWork
     cardinality:
       minimum: 0
       maximum: 1
@@ -153,7 +148,6 @@ properties:
         - OerResource
         - EtdResource
         - ScholarlyWork
-        - UncaWork
     cardinality:
       minimum: 0
       maximum: 1
@@ -183,7 +177,6 @@ properties:
         - OerResource
         - EtdResource
         - ScholarlyWork
-        - UncaWork
     cardinality:
       minimum: 0
     data_type: array
@@ -217,7 +210,6 @@ properties:
         - OerResource
         - EtdResource
         - ScholarlyWork
-        - UncaWork
     cardinality:
       minimum: 0
     data_type: array
@@ -250,7 +242,6 @@ properties:
         - OerResource
         - EtdResource
         - ScholarlyWork
-        - UncaWork
     cardinality:
       minimum: 0
     data_type: array
@@ -281,7 +272,6 @@ properties:
         - OerResource
         - EtdResource
         - ScholarlyWork
-        - UncaWork
     cardinality:
       minimum: 0
     data_type: array
@@ -313,7 +303,6 @@ properties:
         - OerResource
         - EtdResource
         - ScholarlyWork
-        - UncaWork
     cardinality:
       minimum: 0
     data_type: array
@@ -347,7 +336,6 @@ properties:
         - OerResource
         - EtdResource
         - ScholarlyWork
-        - UncaWork
     cardinality:
       minimum: 0
       maximum: 1
@@ -374,7 +362,6 @@ properties:
         - OerResource
         - EtdResource
         - ScholarlyWork
-        - UncaWork
     cardinality:
       minimum: 0
     data_type: array
@@ -407,7 +394,6 @@ properties:
         - OerResource
         - EtdResource
         - ScholarlyWork
-        - UncaWork
     cardinality:
       minimum: 0
     data_type: array
@@ -439,7 +425,6 @@ properties:
         - OerResource
         - EtdResource
         - ScholarlyWork
-        - UncaWork
     cardinality:
       minimum: 0
     data_type: array
@@ -472,7 +457,6 @@ properties:
         - OerResource
         - EtdResource
         - ScholarlyWork
-        - UncaWork
     cardinality:
       minimum: 0
     data_type: array
@@ -500,7 +484,6 @@ properties:
     available_on:
       class:
         - ScholarlyWork
-        - UncaWork
     cardinality:
       minimum: 0
       maximum: 1
@@ -534,7 +517,6 @@ properties:
         - OerResource
         - EtdResource
         - ScholarlyWork
-        - UncaWork
     cardinality:
       minimum: 0
     data_type: array
@@ -564,7 +546,6 @@ properties:
         - OerResource
         - EtdResource
         - ScholarlyWork
-        - UncaWork
     cardinality:
       minimum: 0
     data_type: array
@@ -597,7 +578,6 @@ properties:
         - OerResource
         - EtdResource
         - ScholarlyWork
-        - UncaWork
     cardinality:
       minimum: 0
       maximum: 1
@@ -622,7 +602,6 @@ properties:
         - OerResource
         - EtdResource
         - ScholarlyWork
-        - UncaWork
     cardinality:
       minimum: 0
     data_type: array
@@ -656,7 +635,6 @@ properties:
         - OerResource
         - EtdResource
         - ScholarlyWork
-        - UncaWork
     cardinality:
       minimum: 0
       maximum: 1
@@ -687,7 +665,6 @@ properties:
         - OerResource
         - EtdResource
         - ScholarlyWork
-        - UncaWork
     cardinality:
       minimum: 0
     data_type: array
@@ -721,7 +698,6 @@ properties:
         - OerResource
         - EtdResource
         - ScholarlyWork
-        - UncaWork
     cardinality:
       minimum: 0
     data_type: array
@@ -754,7 +730,6 @@ properties:
         - OerResource
         - EtdResource
         - ScholarlyWork
-        - UncaWork
     cardinality:
       minimum: 0
     data_type: array
@@ -810,7 +785,6 @@ properties:
         - OerResource
         - EtdResource
         - ScholarlyWork
-        - UncaWork
     cardinality:
       minimum: 0
     data_type: array
@@ -844,7 +818,6 @@ properties:
         - OerResource
         - EtdResource
         - ScholarlyWork
-        - UncaWork
     cardinality:
       minimum: 0
     data_type: array
@@ -876,7 +849,6 @@ properties:
         - OerResource
         - EtdResource
         - ScholarlyWork
-        - UncaWork
     cardinality:
       minimum: 0
     data_type: array
@@ -910,7 +882,6 @@ properties:
         - OerResource
         - EtdResource
         - ScholarlyWork
-        - UncaWork
     cardinality:
       minimum: 0
     data_type: array
@@ -943,7 +914,6 @@ properties:
         - OerResource
         - EtdResource
         - ScholarlyWork
-        - UncaWork
     cardinality:
       minimum: 0
     data_type: array
@@ -973,7 +943,6 @@ properties:
         - CollectionResource
         - EtdResource
         - ScholarlyWork
-        - UncaWork
     cardinality:
       minimum: 0
       maximum: 1
@@ -1020,7 +989,6 @@ properties:
       class:
         - EtdResource
         - ScholarlyWork
-        - UncaWork
     cardinality:
       minimum: 0
     data_type: array
@@ -1657,7 +1625,6 @@ properties:
     available_on:
       class:
         - ScholarlyWork
-        - UncaWork
     cardinality:
       minimum: 0
     data_type: array
@@ -1684,7 +1651,6 @@ properties:
     available_on:
       class:
         - ScholarlyWork
-        - UncaWork
     cardinality:
       minimum: 0
     data_type: array
@@ -1704,9 +1670,6 @@ properties:
     range: http://www.w3.org/2001/XMLSchema#string
     view:
       html_dl: true
-    indexing:
-    - temporal_coverage_sim
-    - temporal_coverage_tesim
   # Bulkrax metadata from bulkrax_metadata.yaml
   bulkrax_identifier:
     available_on:

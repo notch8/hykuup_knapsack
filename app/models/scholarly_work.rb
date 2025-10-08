@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-# Copied from UncaWork as part of renaming UncaWork to ScholarlyWork
 class ScholarlyWork < Hyrax::Work
   # Basic metadata has been included via :scholarly_work so we can customize it
   # include Hyrax::Schema(:basic_metadata) unless Hyrax.config.flexible?
