@@ -1661,9 +1661,6 @@ properties:
     display_label:
       default: Coverage - Historic era
     index_documentation: searchable, displayable
-    indexing:
-      - temporal_coverage_sim
-      - temporal_coverage_tesim
     form:
       primary: true
     property_uri: http://purl.org/dc/terms/temporal
@@ -1675,6 +1672,7 @@ properties:
     available_on:
       class:
         - Hyrax::FileSet
+        - FileSet
         - CollectionResource
         - GenericWorkResource
         - ImageResource
@@ -1692,7 +1690,7 @@ properties:
       default: Bulkrax Identifier
     index_documentation: displayable, searchable
     indexing:
-      - "bulkrax_identifier_tesi"
+      - "bulkrax_identifier_tesim"
       - "bulkrax_identifier_ssi"
     form:
       display: false
