@@ -4,7 +4,7 @@ RSpec.describe TenantWorkTypeFilter, singletenant: true do
   let(:default_path) { '/path/to/default/profile.yaml' }
 
   before do
-    # Ensure all work types are registered (UncaWork removed)
+    # Ensure all work types are registered
     allow(Hyrax.config).to receive(:registered_curation_concern_types).and_return([
                                                                                     'GenericWork', 'Image', 'Etd', 'Oer', 'MobiusWork', 'ScholarlyWork'
                                                                                   ])

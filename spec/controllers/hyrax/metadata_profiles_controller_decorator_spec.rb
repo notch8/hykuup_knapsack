@@ -41,8 +41,6 @@ RSpec.describe Hyrax::MetadataProfilesController, singletenant: true, type: :con
             .to raise_error(StandardError, /not allowed for unca\.hykuup\.com/)
         end
 
-        # UncaWork removed from codebase
-
         it "includes allowed work types in error message" do
           profile_data = { 'classes' => { 'MobiusWorkResource' => {} } }
           expect { controller_instance.send(:validate_tenant_work_types!, profile_data) }
