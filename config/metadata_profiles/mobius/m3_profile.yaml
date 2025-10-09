@@ -1707,7 +1707,7 @@ properties:
       default: Bulkrax Identifier
     index_documentation: displayable, searchable
     indexing:
-      - "bulkrax_identifier_tesi"
+      - "bulkrax_identifier_tesim"
       - "bulkrax_identifier_ssi"
     form:
       display: false
