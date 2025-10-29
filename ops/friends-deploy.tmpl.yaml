@@ -1,5 +1,11 @@
 replicaCount: 2
 
+tolerations:
+  - key: "linux-version"
+    operator: "Equal"
+    value: "al2023"
+    effect: "NoSchedule"
+
 resources:
   limits:
     memory: "4Gi"
@@ -219,6 +225,11 @@ worker:
   replicaCount: 1
   extraVolumeMounts: *volMounts
   extraEnvVars: *envVars
+  tolerations:
+    - key: "linux-version"
+      operator: "Equal"
+      value: "al2023"
+      effect: "NoSchedule"
   podSecurityContext:
     runAsUser: 1001
     runAsGroup: 101
@@ -245,6 +256,9 @@ redis:
     tag: 7.0.2-debian-11-r7
   enabled: true
   architecture: standalone
+  master:
+    persistence:
+      enabled: true
   auth:
     password: $REDIS_PASSWORD
 solr:
