@@ -1,5 +1,11 @@
 replicaCount: 2
 
+tolerations:
+  - key: "linux-version"
+    operator: "Equal"
+    value: "al2023"
+    effect: "NoSchedule"
+
 resources:
   limits:
     memory: "4Gi"
@@ -217,6 +223,11 @@ extraEnvVars: &envVars
 
 worker:
   replicaCount: 1
+  tolerations:
+    - key: "linux-version"
+      operator: "Equal"
+      value: "al2023"
+      effect: "NoSchedule"
   extraVolumeMounts: *volMounts
   extraEnvVars: *envVars
   podSecurityContext:
@@ -240,6 +251,12 @@ fcrepo:
 postgresql:
   enabled: false
 redis:
+  master:
+    tolerations:
+      - key: "linux-version"
+        operator: "Equal"
+        value: "al2023"
+        effect: "NoSchedule"
   image:
     repository: bitnamilegacy/redis
     tag: 7.0.2-debian-11-r7
@@ -263,6 +280,11 @@ externalSolrCollection: "hykuup-knapsack-staging"
 externalSolrPassword: $SOLR_ADMIN_PASSWORD
 
 fits:
+  tolerations:
+    - key: "linux-version"
+      operator: "Equal"
+      value: "al2023"
+      effect: "NoSchedule"
   enabled: true
   servicePort: 8080
   subPath: /fits
