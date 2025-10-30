@@ -250,6 +250,7 @@ fcrepo:
   enabled: false
 postgresql:
   enabled: false
+
 redis:
   image:
     repository: bitnamilegacy/redis
@@ -258,6 +259,12 @@ redis:
   architecture: standalone
   auth:
     password: $REDIS_PASSWORD
+  tolerations:
+    - key: "linux-version"
+      operator: "Equal"
+      value: "al2023"
+      effect: "NoSchedule"
+
 solr:
   enabled: false
 
@@ -277,6 +284,11 @@ fits:
   enabled: true
   servicePort: 8080
   subPath: /fits
+  tolerations:
+    - key: "linux-version"
+      operator: "Equal"
+      value: "al2023"
+      effect: "NoSchedule"
 
 global:
   hyraxName: hykuup-knapsack-friends-hyrax
