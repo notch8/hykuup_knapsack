@@ -32,6 +32,8 @@ attributes:
       primary: false
       multiple: true
     predicate: http://purl.org/dc/terms/rightsHolder
+    view:
+      html_dl: true
   relation:
     type: string
     multiple: true
@@ -42,6 +44,8 @@ attributes:
       primary: false
       multiple: true
     predicate: http://purl.org/dc/terms/relation
+    view:
+      html_dl: true
   coverage:
     type: string
     multiple: true
@@ -52,6 +56,8 @@ attributes:
       primary: false
       multiple: true
     predicate: http://purl.org/dc/terms/coverage
+    view:
+      html_dl: true
   file_format:
     type: string
     multiple: true
@@ -62,3 +68,5 @@ attributes:
       primary: false
       multiple: true
     predicate: http://purl.org/dc/terms/FileFormat
+    view:
+      html_dl: true
