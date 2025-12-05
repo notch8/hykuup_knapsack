@@ -1,7 +1,7 @@
 ---
 m3_version: 1.0.beta2
 profile:
-  date_modified: "2024-06-01"
+  date_modified: "2025-12-05"
   responsibility: https://samvera.org
   responsibility_statement: HykuUp Initial Profile
   type: Default HykuUp Profile
@@ -112,6 +112,8 @@ properties:
         pt-BR: "Última modificação"
         zh: "最新修改"
       html_dl: true
+    mappings:
+      simple_dc_pmh: dc:date
   date_uploaded:
     available_on:
       class:
@@ -132,6 +134,8 @@ properties:
     range: http://www.w3.org/2001/XMLSchema#dateTime
     sample_values:
       - "2024-06-06 21:06:51 +0000"
+    mappings:
+      simple_dc_pmh: dc:date
   depositor:
     available_on:
       class:
@@ -193,6 +197,8 @@ properties:
     view:
       render_as: "faceted"
       html_dl: true
+    mappings:
+      simple_dc_pmh: dc:creator
   license:
     available_on:
       class:
@@ -224,6 +230,8 @@ properties:
     view:
       render_as: "external_link"
       html_dl: true
+    mappings:
+      simple_dc_pmh: dc:rights
   abstract:
     available_on:
       class:
@@ -254,6 +262,8 @@ properties:
       - This is an abstract.
     view:
       html_dl: true
+    mappings:
+      simple_dc_pmh: dc:description
   access_right:
     available_on:
       class:
@@ -283,6 +293,8 @@ properties:
       - Open Access
     view:
       html_dl: true
+    mappings:
+      simple_dc_pmh: dc:rights
   alternative_title:
     available_on:
       class:
@@ -316,6 +328,8 @@ properties:
         en: "Alternative Title"
         es: "Título Alternativo"
       html_dl: true
+    mappings:
+      simple_dc_pmh: dc:title
   arkivo_checksum:
     available_on:
       class:
@@ -372,6 +386,8 @@ properties:
       label: Based Near
       render_term: "based_near_label"
       html_dl: true
+    mappings:
+      simple_dc_pmh: dc:coverage
   bibliographic_citation:
     available_on:
       class:
@@ -401,6 +417,8 @@ properties:
       - Doe, J. (2024). Example Citation. Journal of Examples, 12(3), 45-67.
     view:
       html_dl: true
+    mappings:
+      simple_dc_pmh: dc:relation
   contributor:
     available_on:
       class:
@@ -432,6 +450,8 @@ properties:
     view:
       render_as: "faceted"
       html_dl: true
+    mappings:
+      simple_dc_pmh: dc:contributor
   date_created:
     available_on:
       class:
@@ -464,6 +484,8 @@ properties:
       render_as: "linked"
       search_field: "date_created_tesim"
       html_dl: true
+    mappings:
+      simple_dc_pmh: dc:date
   description:
     available_on:
       class:
@@ -492,6 +514,8 @@ properties:
     range: http://www.w3.org/2001/XMLSchema#string
     sample_values:
       - This is a description.
+    mappings:
+      simple_dc_pmh: dc:description
   identifier:
     available_on:
       class:
@@ -524,6 +548,8 @@ properties:
       render_as: "linked"
       search_field: "identifier_tesim"
       html_dl: true
+    mappings:
+      simple_dc_pmh: dc:identifier
   import_url:
     available_on:
       class:
@@ -578,6 +604,8 @@ properties:
     view:
       render_as: "faceted"
       html_dl: true
+    mappings:
+      simple_dc_pmh: dc:subject
   label:
     available_on:
       class:
@@ -639,6 +667,8 @@ properties:
     view:
       render_as: "faceted"
       html_dl: true
+    mappings:
+      simple_dc_pmh: dc:language
   publisher:
     available_on:
       class:
@@ -670,6 +700,8 @@ properties:
     view:
       render_as: "faceted"
       html_dl: true
+    mappings:
+      simple_dc_pmh: dc:publisher
   related_url:
     available_on:
       class:
@@ -701,6 +733,8 @@ properties:
     view:
       render_as: "external_link"
       html_dl: true
+    mappings:
+      simple_dc_pmh: dc:relation
   relative_path:
     available_on:
       class:
@@ -756,6 +790,8 @@ properties:
     view:
       render_as: "faceted"
       html_dl: true
+    mappings:
+      simple_dc_pmh: dc:type
   rights_notes:
     available_on:
       class:
@@ -786,6 +822,8 @@ properties:
       - Creative Commons license.
     view:
       html_dl: true
+    mappings:
+      simple_dc_pmh: dc:rights
   rights_statement:
     available_on:
       class:
@@ -818,6 +856,8 @@ properties:
     view:
       html_dl: true
       render_as: "rights_statement"
+    mappings:
+      simple_dc_pmh: dc:rights
   source:
     available_on:
       class:
@@ -849,6 +889,8 @@ properties:
       - Digital Archive
     view:
       html_dl: true
+    mappings:
+      simple_dc_pmh: dc:source
   subject:
     available_on:
       class:
@@ -881,6 +923,8 @@ properties:
     view:
       render_as: "faceted"
       html_dl: true
+    mappings:
+      simple_dc_pmh: dc:subject
   department:
     available_on:
       class:
@@ -905,6 +949,8 @@ properties:
       - History
     view:
       html_dl: true
+    mappings:
+      simple_dc_pmh: dc:contributor
   course:
     available_on:
       class:
@@ -927,6 +973,8 @@ properties:
       - Computer Science 50
     view:
       html_dl: true
+    mappings:
+      simple_dc_pmh: dc:description
   format:
     available_on:
       class:
@@ -951,6 +999,10 @@ properties:
     range: http://www.w3.org/2001/XMLSchema#string
     sample_values:
       - PDF
+    view:
+      html_dl: true
+    mappings:
+      simple_dc_pmh: dc:format
   # Image-specific metadata from image_resource.yaml
   extent:
     available_on:
@@ -977,6 +1029,10 @@ properties:
     sample_values:
       - "300 dpi"
       - "1024x768 pixels"
+    view:
+      html_dl: true
+    mappings:
+      simple_dc_pmh: dc:format
   # OER-specific metadata from oer_resource.yaml
   accessibility_feature:
     available_on:
@@ -1004,6 +1060,10 @@ properties:
       - Subtitles
       - Audio Description
       - Transcripts
+    view:
+      html_dl: true
+    mappings:
+      simple_dc_pmh: dc:description
   accessibility_hazard:
     available_on:
       class:
@@ -1028,6 +1088,10 @@ properties:
     range: http://www.w3.org/2001/XMLSchema#string
     sample_values:
       - Motion Simulation
+    view:
+      html_dl: true
+    mappings:
+      simple_dc_pmh: dc:description
   accessibility_summary:
     available_on:
       class:
@@ -1054,6 +1118,10 @@ properties:
     sample_values:
       - This resource includes subtitles for all video content.
       - The resource provides text descriptions for all images.
+    view:
+      html_dl: true
+    mappings:
+      simple_dc_pmh: dc:description
   admin_note:
     available_on:
       class:
@@ -1082,6 +1150,8 @@ properties:
       - Another example of an admin note.
     view:
       html_dl: true
+    mappings:
+      simple_dc_pmh: dc:description
   additional_information:
     available_on:
       class:
@@ -1107,6 +1177,10 @@ properties:
     sample_values:
       - This is some additional information.
       - More details and context.
+    view:
+      html_dl: true
+    mappings:
+      simple_dc_pmh: dc:description
   alternate_version_id:
     available_on:
       class:
@@ -1157,6 +1231,8 @@ properties:
     view:
       html_dl: true
       render_as: "faceted"
+    mappings:
+      simple_dc_pmh: dc:description
   date:
     available_on:
       class:
@@ -1180,6 +1256,12 @@ properties:
     sample_values:
       - "2024-06-07"
       - "2023-05-12"
+    view:
+      html_dl: true
+      render_as: "linked"
+      search_field: "date_tesim"
+    mappings:
+      simple_dc_pmh: dc:date
   discipline:
     available_on:
       class:
@@ -1207,6 +1289,8 @@ properties:
     view:
       html_dl: true
       render_as: "faceted"
+    mappings:
+      simple_dc_pmh: dc:subject
   education_level:
     available_on:
       class:
@@ -1235,6 +1319,8 @@ properties:
     view:
       html_dl: true
       render_as: "faceted"
+    mappings:
+      simple_dc_pmh: dc:description
   learning_resource_type:
     available_on:
       class:
@@ -1263,6 +1349,8 @@ properties:
     view:
       html_dl: true
       render_as: "faceted"
+    mappings:
+      simple_dc_pmh: dc:type
   newer_version_id:
     available_on:
       class:
@@ -1309,6 +1397,10 @@ properties:
     sample_values:
       - 15MB
       - 200 pages
+    view:
+      html_dl: true
+    mappings:
+      simple_dc_pmh: dc:format
   previous_version_id:
     available_on:
       class:
@@ -1378,6 +1470,10 @@ properties:
     sample_values:
       - John Doe
       - Jane Smith
+    view:
+      html_dl: true
+    mappings:
+      simple_dc_pmh: dc:rights
   table_of_contents:
     available_on:
       class:
@@ -1403,6 +1499,10 @@ properties:
       - "Chapter 1: Introduction"
       - "Chapter 2: Literature Review"
       - "Chapter 3: Methodology"
+    view:
+      html_dl: true
+    mappings:
+      simple_dc_pmh: dc:description
   # ETD-specific metadata - etd_resource.yaml
   advisor:
     available_on:
@@ -1429,6 +1529,11 @@ properties:
     sample_values:
       - Dr. John Doe
       - Dr. Jane Smith
+    view:
+      html_dl: true
+      render_as: "faceted"
+    mappings:
+      simple_dc_pmh: dc:contributor
   committee_member:
     available_on:
       class:
@@ -1454,6 +1559,11 @@ properties:
     sample_values:
       - Dr. John Doe
       - Dr. Jane Smith
+    view:
+      html_dl: true
+      render_as: "faceted"
+    mappings:
+      simple_dc_pmh: dc:contributor
   degree_name:
     available_on:
       class:
@@ -1481,6 +1591,9 @@ properties:
       - Master of Arts
     view:
       html_dl: true
+      render_as: "faceted"
+    mappings:
+      simple_dc_pmh: dc:type
   degree_level:
     available_on:
       class:
@@ -1508,6 +1621,9 @@ properties:
       - Graduate
     view:
       html_dl: true
+      render_as: "faceted"
+    mappings:
+      simple_dc_pmh: dc:type
   degree_discipline:
     available_on:
       class:
@@ -1535,6 +1651,9 @@ properties:
       - Biology
     view:
       html_dl: true
+      render_as: "faceted"
+    mappings:
+      simple_dc_pmh: dc:subject
   degree_grantor:
     available_on:
       class:
@@ -1562,6 +1681,9 @@ properties:
       - Example State University
     view:
       html_dl: true
+      render_as: "faceted"
+    mappings:
+      simple_dc_pmh: dc:publisher
   # Bulkrax metadata from bulkrax_metadata.yaml
   bulkrax_identifier:
     available_on:
@@ -1777,6 +1899,8 @@ properties:
     view:
       render_as: "faceted"
       html_dl: true
+    mappings:
+      simple_dc_pmh: dc:format
   hide_from_catalog_search:
     available_on:
       class:
