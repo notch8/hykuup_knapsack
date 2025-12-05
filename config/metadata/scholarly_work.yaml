@@ -23,6 +23,18 @@
 #
 # rails generate hyrax:work_resource ScholarlyWork
 attributes:
+  abstract:
+    type: string
+    multiple: true
+    form:
+      primary: true
+      required: false
+    index_keys:
+      - "abstract_sim"
+      - "abstract_tesim"
+    predicate: http://purl.org/dc/terms/abstract
+    view:
+      html_dl: true
   creator:
     type: string
     multiple: true
@@ -135,17 +147,6 @@ attributes:
     view:
       html_dl: true
       render_as: "license"
-  abstract:
-    type: string
-    multiple: true
-    form:
-      primary: false
-    index_keys:
-      - "abstract_sim"
-      - "abstract_tesim"
-    predicate: http://purl.org/dc/terms/abstract
-    view:
-      html_dl: true
   access_right:
     type: string
     multiple: true
@@ -287,8 +288,8 @@ attributes:
     type: string
     multiple: true
     form:
-      required: true
-      primary: true
+      required: false
+      primary: false
     index_keys:
       - "description_sim"
       - "description_tesim"
