@@ -47,6 +47,9 @@ attributes:
     predicate: http://purl.org/dc/elements/1.1/creator
     view:
       html_dl: true
+      render_as: "faceted"
+    mappings:
+      simple_dc_pmh: dc:creator
   keyword:
     type: string
     multiple: true
@@ -60,6 +63,8 @@ attributes:
     view:
       html_dl: true
       render_as: "faceted"
+    mappings:
+      simple_dc_pmh: dc:subject
   rights_statement:
     type: string
     multiple: true
@@ -73,6 +78,8 @@ attributes:
     view:
       html_dl: true
       render_as: "rights_statement"
+    mappings:
+      simple_dc_pmh: dc:rights
   degree_name:
     type: string
     multiple: true
@@ -85,6 +92,9 @@ attributes:
     predicate: https://hykuup.com/terms/degree_name
     view:
       html_dl: true
+      render_as: "faceted"
+    mappings:
+      simple_dc_pmh: dc:type
   degree_level:
     type: string
     multiple: true
@@ -97,6 +107,9 @@ attributes:
     predicate: https://hykuup.com/terms/degree_level
     view:
       html_dl: true
+      render_as: "faceted"
+    mappings:
+      simple_dc_pmh: dc:type
   degree_discipline:
     type: string
     multiple: true
@@ -109,6 +122,9 @@ attributes:
     predicate: https://hykuup.com/terms/degree_discipline
     view:
       html_dl: true
+      render_as: "faceted"
+    mappings:
+      simple_dc_pmh: dc:subject
   degree_grantor:
     type: string
     multiple: true
@@ -121,6 +137,9 @@ attributes:
     predicate: https://hykuup.com/terms/degree_grantor
     view:
       html_dl: true
+      render_as: "faceted"
+    mappings:
+      simple_dc_pmh: dc:publisher
   resource_type:
     type: string
     multiple: true
@@ -135,6 +154,8 @@ attributes:
     view:
       html_dl: true
       render_as: "faceted"
+    mappings:
+      simple_dc_pmh: dc:type
   license:
     type: string
     multiple: true
@@ -147,6 +168,21 @@ attributes:
     view:
       html_dl: true
       render_as: "license"
+    mappings:
+      simple_dc_pmh: dc:rights
+  abstract:
+    type: string
+    multiple: true
+    form:
+      primary: false
+    index_keys:
+      - "abstract_sim"
+      - "abstract_tesim"
+    predicate: http://purl.org/dc/terms/abstract
+    view:
+      html_dl: true
+    mappings:
+      simple_dc_pmh: dc:description
   access_right:
     type: string
     multiple: true
@@ -158,6 +194,8 @@ attributes:
     predicate: http://purl.org/dc/terms/accessRights
     view:
       html_dl: true
+    mappings:
+      simple_dc_pmh: dc:rights
   additional_information:
     type: string
     multiple: true
@@ -170,6 +208,8 @@ attributes:
     predicate: http://purl.org/dc/terms/accessRights
     view:
       html_dl: true
+    mappings:
+      simple_dc_pmh: dc:description
   admin_note:
     type: string
     multiple: false
@@ -182,6 +222,8 @@ attributes:
     predicate: http://schema.org/positiveNotes
     view:
       html_dl: true
+    mappings:
+      simple_dc_pmh: dc:description
   advisor:
     type: string
     multiple: true
@@ -194,6 +236,9 @@ attributes:
     predicate: https://hykuup.com/terms/advisor
     view:
       html_dl: true
+      render_as: "faceted"
+    mappings:
+      simple_dc_pmh: dc:contributor
   alternative_title:
     type: string
     multiple: true
@@ -205,6 +250,8 @@ attributes:
     predicate: http://purl.org/dc/terms/alternative
     view:
       html_dl: true
+    mappings:
+      simple_dc_pmh: dc:title
   based_near:
     type: string
     multiple: true
@@ -217,6 +264,8 @@ attributes:
     view:
       html_dl: true
       render_term: "based_near_label"
+    mappings:
+      simple_dc_pmh: dc:coverage
   spatial_coverage:
     type: string
     multiple: true
@@ -227,6 +276,9 @@ attributes:
       - "spatial_coverage_tesim"
     view:
       html_dl: true
+      render_as: "faceted"
+    mappings:
+      simple_dc_pmh: dc:coverage
   temporal_coverage:
     type: string
     multiple: true
@@ -237,6 +289,9 @@ attributes:
       - "temporal_coverage_tesim"
     view:
       html_dl: true
+      render_as: "faceted"
+    mappings:
+      simple_dc_pmh: dc:coverage
   bibliographic_citation:
     type: string
     multiple: true
@@ -248,6 +303,8 @@ attributes:
     predicate: http://purl.org/dc/terms/bibliographicCitation
     view:
       html_dl: true
+    mappings:
+      simple_dc_pmh: dc:relation
   committee_member:
     type: string
     multiple: true
@@ -260,6 +317,9 @@ attributes:
     predicate: https://hykuup.com/terms/committee_member
     view:
       html_dl: true
+      render_as: "faceted"
+    mappings:
+      simple_dc_pmh: dc:contributor
   contributor:
     type: string
     multiple: true
@@ -272,6 +332,8 @@ attributes:
     view:
       html_dl: true
       render_as: "faceted"
+    mappings:
+      simple_dc_pmh: dc:contributor
   department:
     type: string
     multiple: true
@@ -284,6 +346,9 @@ attributes:
     predicate: https://hykuup.com/terms/department
     view:
       html_dl: true
+      render_as: "faceted"
+    mappings:
+      simple_dc_pmh: dc:contributor
   description:
     type: string
     multiple: true
@@ -294,6 +359,10 @@ attributes:
       - "description_sim"
       - "description_tesim"
     predicate: http://purl.org/dc/elements/1.1/description
+    view:
+      html_dl: true
+    mappings:
+      simple_dc_pmh: dc:description
   format:
     type: string
     multiple: true
@@ -306,6 +375,8 @@ attributes:
     predicate: http://purl.org/dc/terms/format
     view:
       html_dl: true
+    mappings:
+      simple_dc_pmh: dc:format
   identifier:
     type: string
     multiple: true
@@ -319,6 +390,8 @@ attributes:
       html_dl: true
       render_as: "linked"
       search_field: 'identifier_tesim'
+    mappings:
+      simple_dc_pmh: dc:identifier
   language:
     type: string
     multiple: true
@@ -332,6 +405,8 @@ attributes:
     view:
       html_dl: true
       render_as: "faceted"
+    mappings:
+      simple_dc_pmh: dc:language
   publisher:
     type: string
     multiple: true
@@ -344,6 +419,8 @@ attributes:
     view:
       html_dl: true
       render_as: "faceted"
+    mappings:
+      simple_dc_pmh: dc:publisher
   related_url:
     type: string
     multiple: true
@@ -356,6 +433,8 @@ attributes:
     view:
       html_dl: true
       render_as: "external_link"
+    mappings:
+      simple_dc_pmh: dc:relation
   rights_notes:
     type: string
     multiple: true
@@ -367,6 +446,8 @@ attributes:
     predicate: http://purl.org/dc/elements/1.1/rights
     view:
       html_dl: true
+    mappings:
+      simple_dc_pmh: dc:rights
   source:
     type: string
     multiple: true
@@ -378,6 +459,8 @@ attributes:
     predicate: http://purl.org/dc/terms/source
     view:
       html_dl: true
+    mappings:
+      simple_dc_pmh: dc:source
   subject:
     type: string
     multiple: true
@@ -390,6 +473,8 @@ attributes:
     view:
       html_dl: true
       render_as: "faceted"
+    mappings:
+      simple_dc_pmh: dc:subject
   arkivo_checksum:
     type: string
     multiple: false
@@ -410,6 +495,8 @@ attributes:
       html_dl: true
       render_as: "linked"
       search_field: 'date_created_tesim'
+    mappings:
+      simple_dc_pmh: dc:date
   date_published:
     type: date_time
     multiple: false
@@ -425,6 +512,8 @@ attributes:
       html_dl: true
       render_as: "linked"
       search_field: 'date_published_tesim'
+    mappings:
+      simple_dc_pmh: dc:date
   import_url:
     type: string
     predicate: http://scholarsphere.psu.edu/ns#importUrl
