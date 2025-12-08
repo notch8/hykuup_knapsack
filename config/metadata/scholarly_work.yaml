@@ -35,6 +35,8 @@ attributes:
     predicate: http://purl.org/dc/terms/abstract
     view:
       html_dl: true
+    mappings:
+      simple_dc_pmh: dc:description
   creator:
     type: string
     multiple: true
@@ -170,19 +172,6 @@ attributes:
       render_as: "license"
     mappings:
       simple_dc_pmh: dc:rights
-  abstract:
-    type: string
-    multiple: true
-    form:
-      primary: false
-    index_keys:
-      - "abstract_sim"
-      - "abstract_tesim"
-    predicate: http://purl.org/dc/terms/abstract
-    view:
-      html_dl: true
-    mappings:
-      simple_dc_pmh: dc:description
   access_right:
     type: string
     multiple: true
