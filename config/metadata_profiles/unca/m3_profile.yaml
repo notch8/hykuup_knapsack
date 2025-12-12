@@ -489,7 +489,8 @@ properties:
       - date_created_sim
       - date_created_tesim
     form:
-      primary: false
+      required: true
+      primary: true
     property_uri: http://purl.org/dc/terms/created
     range: http://www.w3.org/2001/XMLSchema#dateTime
     sample_values:
@@ -555,7 +556,8 @@ properties:
       - description_sim
       - description_tesim
     form:
-      primary: false
+      required: true
+      primary: true
     property_uri: http://purl.org/dc/elements/1.1/description
     range: http://www.w3.org/2001/XMLSchema#string
     sample_values:
@@ -644,7 +646,8 @@ properties:
       - keyword_sim
       - keyword_tesim
     form:
-      primary: false
+      required: false
+      primary: true
     property_uri: http://schema.org/keywords
     range: http://www.w3.org/2001/XMLSchema#string
     sample_values:
@@ -709,7 +712,8 @@ properties:
       - language_sim
       - language_tesim
     form:
-      primary: false
+      required: true
+      primary: true
     property_uri: http://purl.org/dc/elements/1.1/language
     range: http://www.w3.org/2001/XMLSchema#string
     sample_values:
@@ -797,6 +801,7 @@ properties:
         - ImageResource
         - OerResource
         - EtdResource
+        - ScholarlyWork
     cardinality:
       minimum: 0
       maximum: 1
@@ -835,7 +840,8 @@ properties:
       - resource_type_sim
       - resource_type_tesim
     form:
-      primary: false
+      required: true
+      primary: true
     property_uri: http://purl.org/dc/terms/type
     range: http://www.w3.org/2001/XMLSchema#string
     sample_values:
@@ -904,7 +910,7 @@ properties:
       - rights_statement_tesim
     form:
       primary: true
-      required: true
+      required: false
     property_uri: http://www.europeana.eu/schemas/edm/rights
     range: http://www.w3.org/2001/XMLSchema#string
     sample_values:
@@ -972,7 +978,7 @@ properties:
       - subject_sim
       - subject_tesim
     form:
-      primary: false
+      primary: true
     property_uri: http://purl.org/dc/elements/1.1/subject
     range: http://www.w3.org/2001/XMLSchema#string
     sample_values:
@@ -991,23 +997,28 @@ properties:
         - ScholarlyWork
     cardinality:
       minimum: 0
-      maximum: 1
-    data_type: string
+    data_type: array
     controlled_values:
       format: http://www.w3.org/2001/XMLSchema#string
       sources:
         - "null"
     display_label:
       default: Department
+    index_documentation: searchable
+    indexing:
+      - "department_tesim"
     form:
-      primary: true
-    property_uri: http://hyrax-example.com/department
+      required: false
+      primary: false
+      multiple: true
+    property_uri: https://hykucommons.org/terms/department
     range: http://www.w3.org/2001/XMLSchema#string
     sample_values:
       - Mathematics
       - History
     view:
       html_dl: true
+      render_as: "faceted"
     mappings:
       simple_dc_pmh: dc:contributor
   course:
@@ -1053,7 +1064,7 @@ properties:
       - "format_tesim"
     form:
       required: false
-      primary: false
+      primary: true
       multiple: true
     property_uri: http://purl.org/dc/terms/format
     range: http://www.w3.org/2001/XMLSchema#string
@@ -1187,6 +1198,7 @@ properties:
       class:
         - OerResource
         - EtdResource
+        - ScholarlyWork
     cardinality:
       minimum: 0
       maximum: 1
@@ -1217,6 +1229,7 @@ properties:
       class:
         - OerResource
         - EtdResource
+        - ScholarlyWork
     cardinality:
       minimum: 0
     data_type: array
@@ -1568,6 +1581,7 @@ properties:
     available_on:
       class:
         - EtdResource
+        - ScholarlyWork
     cardinality:
       minimum: 0
     data_type: array
@@ -1582,7 +1596,7 @@ properties:
       - "advisor_tesim"
     form:
       required: false
-      primary: false
+      primary: true
       multiple: true
     property_uri: https://hykucommons.org/terms/advisor
     range: http://www.w3.org/2001/XMLSchema#string
@@ -1598,6 +1612,7 @@ properties:
     available_on:
       class:
         - EtdResource
+        - ScholarlyWork
     cardinality:
       minimum: 0
     data_type: array
@@ -1628,8 +1643,9 @@ properties:
     available_on:
       class:
         - EtdResource
+        - ScholarlyWork
     cardinality:
-      minimum: 1
+      minimum: 0
     data_type: array
     controlled_values:
       format: http://www.w3.org/2001/XMLSchema#string
@@ -1641,7 +1657,7 @@ properties:
     indexing:
       - "degree_name_tesim"
     form:
-      required: true
+      required: false
       primary: true
       multiple: true
     property_uri: https://hykucommons.org/terms/degree_name
@@ -1658,8 +1674,9 @@ properties:
     available_on:
       class:
         - EtdResource
+        - ScholarlyWork
     cardinality:
-      minimum: 1
+      minimum: 0
     data_type: array
     controlled_values:
       format: http://www.w3.org/2001/XMLSchema#string
@@ -1671,7 +1688,7 @@ properties:
     indexing:
       - "degree_level_tesim"
     form:
-      required: true
+      required: false
       primary: true
       multiple: true
     property_uri: https://hykucommons.org/terms/degree_level
@@ -1688,8 +1705,9 @@ properties:
     available_on:
       class:
         - EtdResource
+        - ScholarlyWork
     cardinality:
-      minimum: 1
+      minimum: 0
     data_type: array
     controlled_values:
       format: http://www.w3.org/2001/XMLSchema#string
@@ -1701,7 +1719,7 @@ properties:
     indexing:
       - "degree_discipline_tesim"
     form:
-      required: true
+      required: false
       primary: true
       multiple: true
     property_uri: https://hykucommons.org/terms/degree_discipline
@@ -1718,8 +1736,9 @@ properties:
     available_on:
       class:
         - EtdResource
+        - ScholarlyWork
     cardinality:
-      minimum: 1
+      minimum: 0
     data_type: array
     controlled_values:
       format: http://www.w3.org/2001/XMLSchema#string
@@ -1731,7 +1750,7 @@ properties:
     indexing:
       - "degree_grantor_tesim"
     form:
-      required: true
+      required: false
       primary: true
       multiple: true
     property_uri: https://hykucommons.org/terms/degree_grantor
@@ -1841,6 +1860,7 @@ properties:
         - ImageResource
         - OerResource
         - EtdResource
+        - ScholarlyWork
     cardinality:
       minimum: 0
       maximum: 1
@@ -1871,6 +1891,7 @@ properties:
         - ImageResource
         - OerResource
         - EtdResource
+        - ScholarlyWork
     cardinality:
       minimum: 0
       maximum: 1
@@ -1902,6 +1923,7 @@ properties:
         - ImageResource
         - OerResource
         - EtdResource
+        - ScholarlyWork
     cardinality:
       minimum: 0
       maximum: 1
@@ -1933,6 +1955,7 @@ properties:
         - ImageResource
         - OerResource
         - EtdResource
+        - ScholarlyWork
     cardinality:
       minimum: 0
       maximum: 1
@@ -1963,6 +1986,7 @@ properties:
         - ImageResource
         - OerResource
         - EtdResource
+        - ScholarlyWork
     cardinality:
       minimum: 0
       maximum: 1
