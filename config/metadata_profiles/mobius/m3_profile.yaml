@@ -873,7 +873,7 @@ properties:
       - rights_statement_tesim
     form:
       primary: true
-      required: true
+      required: false
     property_uri: http://www.europeana.eu/schemas/edm/rights
     range: http://www.w3.org/2001/XMLSchema#string
     sample_values:
@@ -1729,7 +1729,9 @@ properties:
     indexing:
       - rights_tesim
     form:
+      required: false
       primary: false
+      multiple: true
     property_uri: http://purl.org/dc/terms/rightsHolder
     range: http://www.w3.org/2001/XMLSchema#string
     sample_values:
@@ -1755,7 +1757,9 @@ properties:
     indexing:
       - relation_tesim
     form:
+      required: false
       primary: false
+      multiple: true
     property_uri: http://purl.org/dc/terms/relation
     range: http://www.w3.org/2001/XMLSchema#string
     view:
@@ -1779,7 +1783,9 @@ properties:
     indexing:
       - "coverage_tesim"
     form:
+      required: false
       primary: false
+      multiple: true
     property_uri: http://purl.org/dc/terms/coverage
     range: http://www.w3.org/2001/XMLSchema#string
     view:
@@ -1806,7 +1812,7 @@ properties:
       required: false
       primary: false
       multiple: true
-    property_uri: http://purl.org/dc/terms/format
+    property_uri: http://purl.org/dc/terms/FileFormat
     range: http://www.w3.org/2001/XMLSchema#string
     sample_values:
       - JPEG
@@ -1856,6 +1862,7 @@ properties:
         - ImageResource
         - OerResource
         - EtdResource
+        - MobiusWork
     cardinality:
       minimum: 0
       maximum: 1
@@ -1886,6 +1893,7 @@ properties:
         - ImageResource
         - OerResource
         - EtdResource
+        - MobiusWork
     cardinality:
       minimum: 0
       maximum: 1
@@ -1917,6 +1925,7 @@ properties:
         - ImageResource
         - OerResource
         - EtdResource
+        - MobiusWork
     cardinality:
       minimum: 0
       maximum: 1
@@ -1948,6 +1957,7 @@ properties:
         - ImageResource
         - OerResource
         - EtdResource
+        - MobiusWork
     cardinality:
       minimum: 0
       maximum: 1
@@ -1978,6 +1988,7 @@ properties:
         - ImageResource
         - OerResource
         - EtdResource
+        - MobiusWork
     cardinality:
       minimum: 0
       maximum: 1
