@@ -873,7 +873,7 @@ properties:
       - rights_statement_tesim
     form:
       primary: true
-      required: true
+      required: false
     property_uri: http://www.europeana.eu/schemas/edm/rights
     range: http://www.w3.org/2001/XMLSchema#string
     sample_values:
