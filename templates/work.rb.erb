@@ -1,0 +1,19 @@
+# frozen_string_literal: true
+
+# Generated via
+#  `rails generate hyku_knapsack:work_resource <%= class_name %><%= " --flexible" if flexible? %>`
+class <%= class_name %> < Hyrax::Work
+  include Hyrax::Schema(:basic_metadata) unless Hyrax.config.flexible?
+  include Hyrax::Schema(:<%= file_name %>) unless Hyrax.config.flexible?
+  include Hyrax::Schema(:with_pdf_viewer) unless Hyrax.config.flexible?
+  include Hyrax::Schema(:with_video_embed) unless Hyrax.config.flexible?
+  include Hyrax::ArResource
+  include Hyrax::NestedWorks
+
+  include IiifPrint.model_configuration(
+    pdf_split_child_model: GenericWorkResource,
+    pdf_splitter_service: IiifPrint::TenantConfig::PdfSplitter
+  )
+
+  prepend OrderAlready.for(:creator) unless Hyrax.config.flexible?
+end 

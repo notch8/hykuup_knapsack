@@ -7,8 +7,8 @@ Rails.application.config.after_initialize do
   Hyrax.config do |config|
     config.flexible = ActiveModel::Type::Boolean.new.cast(ENV.fetch('HYRAX_FLEXIBLE', false))
 
-    # Set default profile path
-    config.default_m3_profile_path = HykuKnapsack::Engine.root.join('config', 'metadata_profiles', 'default', 'm3_profile.yaml')
+    # Set default profile path - prepend to ensure knapsack profile is checked first
+    config.schema_loader_config_search_paths.unshift(HykuKnapsack::Engine.root)
 
     config.register_curation_concern :mobius_work
     config.register_curation_concern :scholarly_work

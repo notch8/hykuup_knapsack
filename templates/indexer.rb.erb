@@ -1,0 +1,10 @@
+# frozen_string_literal: true
+
+# Generated via
+#  `rails generate hyku_knapsack:work_resource <%= class_name %><%= " --flexible" if flexible? %>`
+class <%= class_name %>Indexer < Hyrax::ValkyrieWorkIndexer
+<% unless flexible? -%>
+  include Hyrax::Indexer(:basic_metadata)
+  include Hyrax::Indexer(:<%= file_name %>)
+<% end -%>
+end 

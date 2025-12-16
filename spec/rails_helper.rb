@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
 # This file is copied to spec/ when you run 'rails generate rspec:install'
+# Set environment variables BEFORE requiring Rails environment
+# so initializers can read the correct values
+ENV["RAILS_ENV"] ||= "test"
+ENV['HYRAX_FLEXIBLE'] = 'true' # Must be set before Rails loads (use = not ||=)
 require "spec_helper"
 
 ENV["RAILS_ENV"] ||= "test"
@@ -35,12 +39,18 @@ Dir[HykuKnapsack::Engine.root.join('spec', 'support', '**', '*.rb')].each { |f| 
 
 RSpec.configure do |config|
   # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
-  config.fixture_path = Rails.root.join('spec', 'fixtures')
+  config.file_fixture_path = Rails.root.join('spec', 'fixtures').to_s
 
   # They enable url_helpers not to throw error in Rspec system spec and request spec.
   # config.include Rails.application.routes.url_helpers
   # TODO is this needed?
   config.include HykuKnapsack::Engine.routes.url_helpers
   config.include Capybara::DSL
-  config.include Fixtures::FixtureFileUpload
+  config.include ActionDispatch::TestProcess::FixtureFile
+  # To run specs locally without the spec/hyku_specs/ directory do: `bundle exec rspec --tag ~hyku`
+  config.define_derived_metadata(file_path: %r{spec/hyku_specs/}) do |metadata|
+    metadata[:hyku] = true
+  end
+  ## End override
+  config.include Fixtures::FixtureFileUpload if defined?(Fixtures::FixtureFileUpload)
 end

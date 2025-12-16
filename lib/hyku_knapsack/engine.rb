@@ -4,6 +4,15 @@ module HykuKnapsack
   class Engine < ::Rails::Engine
     isolate_namespace HykuKnapsack
 
+    # Load knapsack initializers from config/initializers/
+    # These must run AFTER the main app's initializers (e.g., after 1flexible.rb)
+    # so that we can append to ENV vars set by the main app
+    initializer 'hyku_knapsack.load_initializers', after: :load_config_initializers do
+      Dir[HykuKnapsack::Engine.root.join('config', 'initializers', '*.rb')].sort.each do |initializer|
+        load initializer
+      end
+    end
+
     def self.load_translations!
       HykuKnapsack::Engine.root.glob("config/locales/**/*.yml").each do |path|
         I18n.load_path << path.to_s
@@ -30,6 +39,18 @@ module HykuKnapsack
     end
 
     config.before_initialize do
+      # Disable include_metadata for all resource types when flexible mode is enabled
+      # This is a backup to the ENV setting in lib/hyku_knapsack.rb
+      if ActiveModel::Type::Boolean.new.cast(ENV.fetch('HYRAX_FLEXIBLE', 'true'))
+        # Force the configuration to false, overriding any memoized defaults
+        if defined?(Hyrax) && Hyrax.respond_to?(:config)
+          Hyrax.config.work_include_metadata = false
+          Hyrax.config.collection_include_metadata = false
+          Hyrax.config.file_set_include_metadata = false
+          Hyrax.config.admin_set_include_metadata = false
+        end
+      end
+
       config.i18n.load_path += Dir["#{config.root}/config/locales/**/*.yml"]
 
       # if Hyku::Application.respond_to?(:user_devise_parameters=)
@@ -44,8 +65,8 @@ module HykuKnapsack
       #  ]
       # end
 
-      # Ensure we are prepending the Hyrax::SimpleSchemaLoaderDecorator early
-      Hyrax::SimpleSchemaLoader.prepend(Hyrax::SimpleSchemaLoaderDecorator)
+      # Add knapsack schema search path
+      Hyrax.config.schema_loader_config_search_paths += [HykuKnapsack::Engine.root] if Hyrax.config.respond_to?(:schema_loader_config_search_paths)
     end
 
     config.to_prepare do
