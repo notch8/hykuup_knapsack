@@ -240,7 +240,7 @@ worker:
       cpu: "1000m"
     requests:
       memory: "4Gi"
-      cpu: "250m"
+      cpu: "100m"
   podSecurityContext:
     runAsUser: 1001
     runAsGroup: 101
@@ -266,12 +266,12 @@ redis:
   architecture: standalone
   master:
     resources:
-    limits:
-      memory: "896Mi"
-      cpu: "250m"
-    requests:
-      memory: "896Mi"
-      cpu: "50m"
+      limits:
+        memory: "896Mi"
+        cpu: "100m"
+      requests:
+        memory: "896Mi"
+        cpu: "20m"
     persistence:
       enabled: true
       storageClass: gp2
@@ -305,7 +305,7 @@ fits:
       cpu: "1000m"
     requests:
       memory: "4Gi"
-      cpu: "500m"
+      cpu: "250m"
   enabled: true
   servicePort: 8080
   subPath: /fits
