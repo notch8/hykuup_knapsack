@@ -3,7 +3,7 @@ replicaCount: 2
 resources:
   limits:
     memory: "4Gi"
-    cpu: "500m"
+    cpu: "1000m"
   requests:
     memory: "2Gi"
     cpu: "250m"
@@ -217,6 +217,13 @@ extraEnvVars: &envVars
 
 worker:
   replicaCount: 1
+  resources:
+    limits:
+      memory: "4Gi"
+      cpu: "1000m"
+    requests:
+      memory: "2Gi"
+      cpu: "250m"
   extraVolumeMounts: *volMounts
   extraEnvVars: *envVars
   podSecurityContext:
@@ -243,6 +250,14 @@ redis:
   image:
     repository: bitnamilegacy/redis
     tag: 7.0.2-debian-11-r7
+  master:
+    resources:
+      limits:
+        memory: "512Mi"
+        cpu: "250m"
+      requests:
+        memory: "256Mi"
+        cpu: "50m"
   enabled: true
   architecture: standalone
   auth:
@@ -264,6 +279,13 @@ externalSolrPassword: $SOLR_ADMIN_PASSWORD
 
 fits:
   enabled: true
+  resources:
+    limits:
+      memory: "2Gi"
+      cpu: "1000m"
+    requests:
+      memory: "1Gi"
+      cpu: "500m"
   servicePort: 8080
   subPath: /fits
 
