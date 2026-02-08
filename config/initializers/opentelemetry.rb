@@ -18,11 +18,9 @@ if ENV['OTEL_EXPORTER_OTLP_ENDPOINT'].present?
   app_version = defined?(HykuKnapsack::VERSION) ? HykuKnapsack::VERSION : 'unknown'
 
   OpenTelemetry::SDK.configure do |c|
-    # Dynamic service name: OTEL_SERVICE_NAME > SENTRY_ENVIRONMENT > derived from HYKU_ADMIN_HOST
+    # Dynamic service name: OTEL_SERVICE_NAME > SENTRY_ENVIRONMENT
     c.service_name = ENV.fetch('OTEL_SERVICE_NAME') {
-      ENV.fetch('SENTRY_ENVIRONMENT') {
-        "hykuup-#{ENV.fetch('HYKU_ADMIN_HOST', 'unknown').split('.').first}"
-      }
+      ENV.fetch('SENTRY_ENVIRONMENT', 'hykuup-knapsack-unknown')
     }
 
     # Resource attributes for better trace identification
