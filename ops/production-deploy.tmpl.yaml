@@ -159,6 +159,10 @@ extraEnvVars: &envVars
     value: /app/fits/tools/mediainfo/linux
   - name: OTEL_EXPORTER_OTLP_ENDPOINT
     value: "http://alloy.monitoring.svc.cluster.local:4318"
+  - name: OTEL_SERVICE_NAME
+    value: hykuup-knapsack-production
+  - name: PYROSCOPE_SERVER_ADDRESS
+    value: "http://alloy.monitoring.svc.cluster.local:4040"
   - name: PASSENGER_APP_ENV
     value: production
   - name: RAILS_CACHE_STORE_URL
@@ -229,6 +233,8 @@ extraEnvVars: &envVars
     value: "true"
   - name: OTEL_EXPORTER_OTLP_ENDPOINT
     value: "http://alloy.monitoring.svc.cluster.local:4318"
+  - name: PYROSCOPE_SERVER_ADDRESS
+    value: "http://alloy.monitoring.svc.cluster.local:4040"
 
 podSecurityContext: &podSecValues
   runAsUser: 1001
