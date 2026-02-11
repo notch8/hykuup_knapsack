@@ -5,11 +5,11 @@ imagePullSecrets:
 
 resources:
   limits:
-    memory: "4Gi"
-    cpu: "2"
+    memory: "6Gi"
+    cpu: "1500m"
   requests:
-    memory: "2Gi"
-    cpu: "1"
+    memory: "5Gi"
+    cpu: "1250m"
 
 livenessProbe:
   enabled: false
@@ -236,11 +236,11 @@ worker:
   replicaCount: 1
   resources:
     limits:
-      memory: "6Gi"
-      cpu: "3"
+      memory: "4Gi"
+      cpu: "1000m"
     requests:
-      memory: "3Gi"
-      cpu: "1"
+      memory: "4Gi"
+      cpu: "100m"
   podSecurityContext:
     runAsUser: 1001
     runAsGroup: 101
@@ -265,6 +265,13 @@ redis:
     tag: 7.0.2-debian-11-r7
   architecture: standalone
   master:
+    resources:
+      limits:
+        memory: "896Mi"
+        cpu: "100m"
+      requests:
+        memory: "896Mi"
+        cpu: "20m"
     persistence:
       enabled: true
       storageClass: gp2
@@ -290,3 +297,15 @@ nginx:
   enabled: false
   service:
     port: 80
+
+fits:
+  resources:
+    limits:
+      memory: "4Gi"
+      cpu: "1000m"
+    requests:
+      memory: "4Gi"
+      cpu: "250m"
+  enabled: true
+  servicePort: 8080
+  subPath: /fits
