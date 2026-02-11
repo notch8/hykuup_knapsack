@@ -17,21 +17,19 @@ if ENV['OTEL_EXPORTER_OTLP_ENDPOINT'].present?
   # Determine version safely — this initializer may run before version.rb is loaded
   app_version = defined?(HykuKnapsack::VERSION) ? HykuKnapsack::VERSION : 'unknown'
 
-  OpenTelemetry::SDK.configure do |c|
+  OpenTelemetry::SDK.configure do |config|
     # Dynamic service name: OTEL_SERVICE_NAME > SENTRY_ENVIRONMENT
-    c.service_name = ENV.fetch('OTEL_SERVICE_NAME') {
-      ENV.fetch('SENTRY_ENVIRONMENT', 'hykuup-knapsack-unknown')
-    }
+    config.service_name = ENV.fetch('OTEL_SERVICE_NAME', "my-app-#{Rails.env}")
 
     # Resource attributes for better trace identification
-    c.resource = OpenTelemetry::SDK::Resources::Resource.create(
+    config.resource = OpenTelemetry::SDK::Resources::Resource.create(
       'deployment.environment' => ENV.fetch('RAILS_ENV', 'production'),
       'service.namespace' => 'hykuup-knapsack',
       'service.version' => app_version
     )
 
     # Auto-instrument Rails, ActiveRecord, Faraday, Net::HTTP, Rack, Sidekiq, etc.
-    c.use_all
+    config.use_all
   end
 
   Rails.logger.info "[OpenTelemetry] Tracing enabled → #{ENV['OTEL_EXPORTER_OTLP_ENDPOINT']}"

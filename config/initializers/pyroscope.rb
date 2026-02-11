@@ -16,9 +16,7 @@ if ENV['PYROSCOPE_SERVER_ADDRESS'].present?
 
   Pyroscope.configure do |config|
     # Dynamic app name: PYROSCOPE_APPLICATION_NAME > SENTRY_ENVIRONMENT > fallback
-    config.application_name = ENV.fetch('PYROSCOPE_APPLICATION_NAME') {
-      ENV.fetch('SENTRY_ENVIRONMENT', 'hykuup-knapsack-unknown')
-    }
+    config.application_name = ENV.fetch('PYROSCOPE_APPLICATION_NAME', "my-app-#{Rails.env}")
 
     config.server_address = ENV['PYROSCOPE_SERVER_ADDRESS']
 
