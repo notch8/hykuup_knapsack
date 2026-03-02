@@ -7,6 +7,7 @@
 # @see https://github.com/samvera/valkyrie/wiki/ChangeSets-and-Dirty-Tracking
 
 class ScholarlyWorkForm < Hyrax::Forms::ResourceForm(ScholarlyWork)
+  check_if_flexible(ScholarlyWork)
   # include Hyrax::FormFields(:basic_metadata) unless Hyrax.config.flexible?
   include Hyrax::FormFields(:scholarly_work) unless Hyrax.config.flexible?
   include Hyrax::FormFields(:with_pdf_viewer) unless Hyrax.config.flexible?

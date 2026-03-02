@@ -5,10 +5,11 @@
 # rubocop:disable Metrics/BlockLength
 Rails.application.config.after_initialize do
   Hyrax.config do |config|
-    config.flexible = ActiveModel::Type::Boolean.new.cast(ENV.fetch('HYRAX_FLEXIBLE', false))
+    config.flexible = ActiveModel::Type::Boolean.new.cast(ENV.fetch('HYRAX_FLEXIBLE', true))
 
-    # Set default profile path
+    # Set default profile path - prepend so knapsack profile is checked first
     config.default_m3_profile_path = HykuKnapsack::Engine.root.join('config', 'metadata_profiles', 'default', 'm3_profile.yaml')
+    config.schema_loader_config_search_paths.unshift(HykuKnapsack::Engine.root) if config.respond_to?(:schema_loader_config_search_paths)
 
     config.register_curation_concern :mobius_work
     config.register_curation_concern :scholarly_work

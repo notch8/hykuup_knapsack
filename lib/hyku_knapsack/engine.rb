@@ -4,6 +4,12 @@ module HykuKnapsack
   class Engine < ::Rails::Engine
     isolate_namespace HykuKnapsack
 
+    initializer 'hyku_knapsack.load_initializers', after: :load_config_initializers do
+      Dir[HykuKnapsack::Engine.root.join('config', 'initializers', '*.rb')].sort.each do |initializer|
+        load initializer
+      end
+    end
+
     def self.load_translations!
       HykuKnapsack::Engine.root.glob("config/locales/**/*.yml").each do |path|
         I18n.load_path << path.to_s
@@ -32,20 +38,15 @@ module HykuKnapsack
     config.before_initialize do
       config.i18n.load_path += Dir["#{config.root}/config/locales/**/*.yml"]
 
-      # if Hyku::Application.respond_to?(:user_devise_parameters=)
-      #  Hyku::Application.user_devise_parameters = %i[
-      #    database_authenticatable
-      #    invitable
-      #    recoverable
-      #    rememberable
-      #    trackable
-      #    validatable
-      #    omniauthable
-      #  ]
-      # end
+      if ActiveModel::Type::Boolean.new.cast(ENV.fetch('HYRAX_FLEXIBLE', 'true'))
+        if defined?(Hyrax) && Hyrax.respond_to?(:config)
+          Hyrax.config.work_include_metadata = false
+          Hyrax.config.collection_include_metadata = false
+          Hyrax.config.file_set_include_metadata = false
+          Hyrax.config.admin_set_include_metadata = false
+        end
+      end
 
-      # Ensure we are prepending the Hyrax::SimpleSchemaLoaderDecorator early
-      Hyrax::SimpleSchemaLoader.prepend(Hyrax::SimpleSchemaLoaderDecorator)
     end
 
     config.to_prepare do

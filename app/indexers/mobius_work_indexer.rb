@@ -4,13 +4,10 @@
 #  `rails generate hyrax:work_resource MobiusWork`
 
 class MobiusWorkIndexer < Hyrax::ValkyrieWorkIndexer
-  include Hyrax::Indexer(:basic_metadata) unless Hyrax.config.flexible?
-  include Hyrax::Indexer(:mobius_work) unless Hyrax.config.flexible?
-  include Hyrax::Indexer(:with_pdf_viewer) unless Hyrax.config.flexible?
-  include Hyrax::Indexer(:with_video_embed) unless Hyrax.config.flexible?
-
-  include Hyrax::Indexer('MobiusWork') if Hyrax.config.flexible?
+  include Hyrax::Indexer('MobiusWork')
   include HykuIndexing
+  # check_if_flexible adds Hyrax::Indexer with M3SchemaLoader for flexible models
+  check_if_flexible(MobiusWork)
   # Uncomment this block if you want to add custom indexing behavior:
   #  def to_solr
   #    super.tap do |index_document|
