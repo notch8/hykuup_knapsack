@@ -100,4 +100,6 @@ module Hyrax
   end
 end
 
-Hyrax::MetadataProfilesController.prepend(Hyrax::MetadataProfilesControllerDecorator)
+if defined?(Hyrax::MetadataProfilesController)
+  Hyrax::MetadataProfilesController.prepend(Hyrax::MetadataProfilesControllerDecorator)
+end

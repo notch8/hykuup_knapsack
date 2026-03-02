@@ -3,12 +3,17 @@
 # Use this to override any Hyrax configuration from the Knapsack
 
 # rubocop:disable Metrics/BlockLength
+# Path used when Hyrax::Configuration does not define default_m3_profile_path (e.g. Hyku 7)
+HykuKnapsack::DEFAULT_M3_PROFILE_PATH = HykuKnapsack::Engine.root.join('config', 'metadata_profiles', 'default', 'm3_profile.yaml')
+
 Rails.application.config.after_initialize do
   Hyrax.config do |config|
     config.flexible = ActiveModel::Type::Boolean.new.cast(ENV.fetch('HYRAX_FLEXIBLE', true))
 
-    # Set default profile path - prepend so knapsack profile is checked first
-    config.default_m3_profile_path = HykuKnapsack::Engine.root.join('config', 'metadata_profiles', 'default', 'm3_profile.yaml')
+    # Set default profile path when supported (Hyrax 5/6); Hyku 7 may use schema_loader_config_search_paths only
+    if config.respond_to?(:default_m3_profile_path=)
+      config.default_m3_profile_path = HykuKnapsack::DEFAULT_M3_PROFILE_PATH
+    end
     config.schema_loader_config_search_paths.unshift(HykuKnapsack::Engine.root) if config.respond_to?(:schema_loader_config_search_paths)
 
     config.register_curation_concern :mobius_work
@@ -53,12 +58,13 @@ Rails.application.config.after_initialize do
     end
 
     def self.tenant_specific_profile_path
-      return Hyrax.config.default_m3_profile_path unless defined?(Account) && Apartment::Tenant.current
+      default_path = Hyrax.config.respond_to?(:default_m3_profile_path) ? Hyrax.config.default_m3_profile_path : HykuKnapsack::DEFAULT_M3_PROFILE_PATH
+      return default_path unless defined?(Account) && Apartment::Tenant.current
 
       account = Account.find_by(tenant: Apartment::Tenant.current)
-      return Hyrax.config.default_m3_profile_path unless account
+      return default_path unless account
 
-      TenantWorkTypeFilter.tenant_metadata_profile_path(Hyrax.config.default_m3_profile_path)
+      TenantWorkTypeFilter.tenant_metadata_profile_path(default_path)
     end
   end
 end
