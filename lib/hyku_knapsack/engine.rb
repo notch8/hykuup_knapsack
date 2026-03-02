@@ -46,7 +46,6 @@ module HykuKnapsack
           Hyrax.config.admin_set_include_metadata = false
         end
       end
-
     end
 
     config.to_prepare do
