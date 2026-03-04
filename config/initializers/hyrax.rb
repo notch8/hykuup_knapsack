@@ -16,9 +16,7 @@ Rails.application.config.after_initialize do
       if config.respond_to?(:schema_loader_config_search_paths)
 
     # Set default profile path when supported (Hyrax 5/6); Hyku 7 may use schema_loader_config_search_paths only
-    if config.respond_to?(:default_m3_profile_path=)
-      config.default_m3_profile_path = HykuKnapsack::DEFAULT_M3_PROFILE_PATH
-    end
+    config.default_m3_profile_path = HykuKnapsack::DEFAULT_M3_PROFILE_PATH if config.respond_to?(:default_m3_profile_path=)
 
     config.register_curation_concern :mobius_work
     config.register_curation_concern :scholarly_work
