@@ -520,13 +520,6 @@ Add the gem to Hyku's Gemfile. Use the ref that matches your [version compatibil
 gem "hyku_knapsack", github: 'samvera-labs/hyku_knapsack', branch: 'main'
 ```
 
-**Hyku 6 (legacy):**
-```ruby
-gem "hyku_knapsack", github: 'samvera-labs/hyku_knapsack', ref: 'v0.0.1-hyku6-compat'
-# or
-gem "hyku_knapsack", github: 'samvera-labs/hyku_knapsack', branch: 'hyku-6-support'
-```
-
 Then run:
 ```bash
 $ bundle
