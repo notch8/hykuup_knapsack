@@ -8,13 +8,17 @@ HykuKnapsack::DEFAULT_M3_PROFILE_PATH = HykuKnapsack::Engine.root.join('config',
 
 Rails.application.config.after_initialize do
   Hyrax.config do |config|
-    config.flexible = ActiveModel::Type::Boolean.new.cast(ENV.fetch('HYRAX_FLEXIBLE', true))
+    # This project uses flexible metadata (Hyku 7); default true.
+    config.flexible = ActiveModel::Type::Boolean.new.cast(ENV.fetch('HYRAX_FLEXIBLE', 'true'))
+
+    # Prepend to ensure knapsack profile is checked before the host app's profiles.
+    config.schema_loader_config_search_paths.unshift(HykuKnapsack::Engine.root) \
+      if config.respond_to?(:schema_loader_config_search_paths)
 
     # Set default profile path when supported (Hyrax 5/6); Hyku 7 may use schema_loader_config_search_paths only
     if config.respond_to?(:default_m3_profile_path=)
       config.default_m3_profile_path = HykuKnapsack::DEFAULT_M3_PROFILE_PATH
     end
-    config.schema_loader_config_search_paths.unshift(HykuKnapsack::Engine.root) if config.respond_to?(:schema_loader_config_search_paths)
 
     config.register_curation_concern :mobius_work
     config.register_curation_concern :scholarly_work

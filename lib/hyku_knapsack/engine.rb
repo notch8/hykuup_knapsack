@@ -4,6 +4,8 @@ module HykuKnapsack
   class Engine < ::Rails::Engine
     isolate_namespace HykuKnapsack
 
+    # Load knapsack initializers from config/initializers/ AFTER the host app's
+    # initializers run (e.g. after hyku's 1flexible.rb), so knapsack overrides win.
     initializer 'hyku_knapsack.load_initializers', after: :load_config_initializers do
       Dir[HykuKnapsack::Engine.root.join('config', 'initializers', '*.rb')].sort.each do |initializer|
         load initializer
@@ -36,8 +38,9 @@ module HykuKnapsack
     end
 
     config.before_initialize do
-      config.i18n.load_path += Dir["#{config.root}/config/locales/**/*.yml"]
-
+      # When running in flexible metadata mode, disable include_metadata for all resource
+      # types so that schemas are driven entirely by the M3 profile rather than core_metadata.
+      # This project defaults HYRAX_FLEXIBLE to true.
       if ActiveModel::Type::Boolean.new.cast(ENV.fetch('HYRAX_FLEXIBLE', 'true'))
         if defined?(Hyrax) && Hyrax.respond_to?(:config)
           Hyrax.config.work_include_metadata = false
@@ -46,6 +49,12 @@ module HykuKnapsack
           Hyrax.config.admin_set_include_metadata = false
         end
       end
+
+      config.i18n.load_path += Dir["#{config.root}/config/locales/**/*.yml"]
+
+      # Prepend knapsack root so its config/metadata/*.yaml schemas are found first.
+      Hyrax.config.schema_loader_config_search_paths.unshift(HykuKnapsack::Engine.root) \
+        if Hyrax.config.respond_to?(:schema_loader_config_search_paths)
     end
 
     config.to_prepare do

@@ -4,6 +4,7 @@
 
 - [HykuKnapsack](#hykuknapsack)
   - [Introduction](#introduction)
+    - [Version strategy](#version-strategy)
     - [Precedence](#precedence)
   - [Usage](#usage)
     - [Creating Your Knapsack](#creating-your-knapsack)
@@ -35,6 +36,10 @@ include making contributing back to the Hyku project easier and making upgrades 
 
 [Hyku](https://github.com/samvera/hyku) is a Rails application that leverages Rails Engines and other gems to provide functionality.  A Hyku Knapsack is also a Rails engine, but it integrates differently than other engines.
 
+### Version strategy
+
+Hyku Knapsack versions are aligned with [Hyku](https://github.com/samvera/hyku) versions: **Knapsack 6** works with the **Hyku 6** series, **Knapsack 7** with the **Hyku 7** series (which introduces breaking changes), and so on. That way you can tell at a glance which Knapsack release to use for a given Hyku version. Pick the Knapsack major version that matches your Hyku major version.
+
 ### Precedence
 
 In a traditional setup, a Rails' application's views, translations, and code supsedes all other gems and engines.  However, we have setup Hyku Knapsack to have a higher load precedence than the underlying Hyku application.
@@ -42,6 +47,7 @@ In a traditional setup, a Rails' application's views, translations, and code sup
 The goal being that a Hyku Knapsack should make it easier to maintain, upgrade, and contribute fixes back to Hyku.
 
 See [Overrides](#overrides) for more discussion on working with a Hyku Knapsack.
+
 
 ## Usage
 
@@ -176,7 +182,7 @@ This will checkout the submodule to the HEAD of the specified branch.
 
 ### 🚀 Getting Started with Stack Car
 
-Hyku Knapsack uses [Stack Car](https://github.com/samvera-labs/stack_car) to manage Docker-based development.
+Hyku Knapsack uses [Stack Car](https://github.com/notch8/stack_car) to manage Docker-based development.
 For alternative setup options, refer to [Hyku's Getting Started](https://github.com/samvera/hyku/blob/main/docs/getting-started.md).
 
 > **Important:** All commands below should be run from the **root of your Knapsack project**, **not** from within the `hyrax-webapp` submodule.
@@ -507,13 +513,21 @@ They are prefixed with a `Δ'
 
 ## Installation
 
-If not using a current version, add this line to Hyku's Gemfile:
+Add the gem to Hyku's Gemfile. Use the ref that matches your [version compatibility](#version-compatibility):
 
+**Hyku 7 (default):**
 ```ruby
 gem "hyku_knapsack", github: 'samvera-labs/hyku_knapsack', branch: 'main'
 ```
 
-And then execute:
+**Hyku 6 (legacy):**
+```ruby
+gem "hyku_knapsack", github: 'samvera-labs/hyku_knapsack', ref: 'v0.0.1-hyku6-compat'
+# or
+gem "hyku_knapsack", github: 'samvera-labs/hyku_knapsack', branch: 'hyku-6-support'
+```
+
+Then run:
 ```bash
 $ bundle
 ```

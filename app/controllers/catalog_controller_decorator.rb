@@ -5,6 +5,7 @@ module CatalogControllerDecorator
 end
 CatalogController.prepend(CatalogControllerDecorator)
 
+# OVERRIDE: Hyku 6.1 to support linked identifiers which contain a colon
 module CatalogControllerDecorator
   CatalogController.configure_blacklight do |config|
     config.advanced_search[:form_facet_partial] = "advanced_search_facets"
