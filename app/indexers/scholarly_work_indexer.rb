@@ -1,7 +1,13 @@
 # frozen_string_literal: true
 
 class ScholarlyWorkIndexer < Hyrax::ValkyrieWorkIndexer
-  include Hyrax::Indexer('ScholarlyWork') if Hyrax.config.work_include_metadata?
+  if Hyrax.config.work_include_metadata?
+    # Basic metadata has been included via :scholarly_work so we can customize it
+    # include Hyrax::Indexer(:basic_metadata)
+    include Hyrax::Indexer(:scholarly_work)
+    include Hyrax::Indexer(:with_pdf_viewer)
+    include Hyrax::Indexer(:with_video_embed)
+  end
   include HykuIndexing
   # check_if_flexible adds Hyrax::Indexer with M3SchemaLoader for flexible models
   check_if_flexible(ScholarlyWork)
