@@ -4,7 +4,11 @@ require 'rails_helper'
 
 RSpec.describe ScholarlyWorkForm do
   subject(:form) { described_class.for(work) }
-  let(:base_attributes) { { title: "My Title", creator: "John Doe" } }
+  let(:base_attributes) do
+    { title: ["My Title"], creator: ["John Doe"],
+      date_created: ["2024"], description: ["A description"],
+      language: ["English"], resource_type: ["Article"] }
+  end
   let(:work) do
     seed_flexible_schema_for('ScholarlyWork')
     ScholarlyWork.new(base_attributes.merge(attributes))

@@ -8,8 +8,17 @@ class MobiusWork < Hyrax::Work
     include Hyrax::Schema(:mobius_work)
     include Hyrax::Schema(:with_pdf_viewer)
     include Hyrax::Schema(:with_video_embed)
+    prepend OrderAlready.for(:creator)
   else
     acts_as_flexible_resource
+
+    def creator
+      OrderAlready::InputOrderSerializer.deserialize(@attributes[:creator])
+    end
+
+    def creator=(values)
+      set_value(:creator, OrderAlready::InputOrderSerializer.serialize(values))
+    end
   end
 
   include Hyrax::ArResource
@@ -19,6 +28,4 @@ class MobiusWork < Hyrax::Work
     pdf_split_child_model: GenericWorkResource,
     pdf_splitter_service: IiifPrint::TenantConfig::PdfSplitter
   )
-
-  prepend OrderAlready.for(:creator)
 end
