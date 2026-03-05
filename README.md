@@ -513,7 +513,7 @@ They are prefixed with a `Δ'
 
 ## Installation
 
-Add the gem to Hyku's Gemfile. Use the ref that matches your [version compatibility](#version-compatibility):
+Add the gem to Hyku's Gemfile:
 
 **Hyku 7 (default):**
 ```ruby
