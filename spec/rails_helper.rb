@@ -40,6 +40,13 @@ FactoryBot.definition_file_paths = [
 ]
 FactoryBot.find_definitions
 
+# Appeasing the Hyrax user factory interface.
+def RoleMapper.add(user:, groups:)
+  groups.each do |group|
+    user.add_role(group.to_sym, Site.instance)
+  end
+end
+
 # Load only knapsack-specific support files (not all of hyrax-webapp's).
 Dir[HykuKnapsack::Engine.root.join('spec', 'support', '**', '*.rb')].each { |f| require f }
 
