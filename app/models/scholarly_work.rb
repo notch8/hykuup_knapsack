@@ -6,6 +6,8 @@ class ScholarlyWork < Hyrax::Work
     include Hyrax::Schema(:scholarly_work)
     include Hyrax::Schema(:with_pdf_viewer)
     include Hyrax::Schema(:with_video_embed)
+  else
+    acts_as_flexible_resource
   end
 
   include Hyrax::ArResource

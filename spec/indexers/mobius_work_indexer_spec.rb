@@ -7,7 +7,10 @@ require 'hyrax/specs/shared_specs/indexers'
 
 RSpec.describe MobiusWorkIndexer do
   let(:indexer_class) { described_class }
-  let!(:resource) { Hyrax.persister.save(resource: MobiusWork.new) }
+  let!(:resource) do
+    seed_flexible_schema_for('MobiusWork')
+    Hyrax.persister.save(resource: MobiusWork.new)
+  end
 
   it_behaves_like 'a Hyrax::Resource indexer'
 end
