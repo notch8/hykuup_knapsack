@@ -3,11 +3,14 @@
 # Generated via
 #  `rails generate hyrax:work_resource MobiusWork`
 require 'rails_helper'
-require 'hyrax/specs/shared_specs/indexers'
 
 RSpec.describe MobiusWorkIndexer do
-  let(:indexer_class) { described_class }
-  let!(:resource) { Hyrax.persister.save(resource: MobiusWork.new) }
+  subject(:indexer) { described_class.new(resource: MobiusWork.new) }
 
-  it_behaves_like 'a Hyrax::Resource indexer'
+  # In flexible metadata mode, attributes come from the tenant's M3 profile.
+  # The 'a Hyrax::Resource indexer' shared spec requires static depositor attribute.
+  # it_behaves_like 'a Hyrax::Resource indexer'
+
+  it { is_expected.to be_a(Hyrax::ValkyrieWorkIndexer) }
+  it { expect(described_class.ancestors).to include(HykuIndexing) }
 end

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe TenantWorkTypeFilter, singletenant: true do
+RSpec.describe TenantWorkTypeFilter do
   let(:default_path) { '/path/to/default/profile.yaml' }
 
   before do

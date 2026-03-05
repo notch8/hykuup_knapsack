@@ -8,10 +8,12 @@
 
 class MobiusWorkForm < Hyrax::Forms::ResourceForm(MobiusWork)
   check_if_flexible(MobiusWork)
-  include Hyrax::FormFields(:basic_metadata) unless Hyrax.config.flexible?
-  include Hyrax::FormFields(:mobius_work) unless Hyrax.config.flexible?
-  include Hyrax::FormFields(:with_pdf_viewer) unless Hyrax.config.flexible?
-  include Hyrax::FormFields(:with_video_embed) unless Hyrax.config.flexible?
+  if Hyrax.config.work_include_metadata?
+    include Hyrax::FormFields(:basic_metadata)
+    include Hyrax::FormFields(:mobius_work)
+    include Hyrax::FormFields(:with_pdf_viewer)
+    include Hyrax::FormFields(:with_video_embed)
+  end
 
   include VideoEmbedBehavior::Validation
   # Define custom form fields using the Valkyrie::ChangeSet interface

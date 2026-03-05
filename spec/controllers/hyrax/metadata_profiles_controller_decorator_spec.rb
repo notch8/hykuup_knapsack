@@ -2,7 +2,7 @@
 
 # Skip when Hyrax::MetadataProfilesController is not defined (e.g. Hyku 7)
 if defined?(Hyrax::MetadataProfilesController)
-  RSpec.describe Hyrax::MetadataProfilesController, singletenant: true, type: :controller do
+  RSpec.describe Hyrax::MetadataProfilesController, type: :controller do
     # This makes the tests independent of the actual consortia.yml file.
     before do
       allow(Consortium).to receive(:identifiers).and_return(['unca', 'mobius'])
