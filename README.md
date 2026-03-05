@@ -513,14 +513,13 @@ They are prefixed with a `Δ'
 
 ## Installation
 
-Add the gem to Hyku's Gemfile:
+If not using a current version, add this line to Hyku's Gemfile:
 
-**Hyku 7 (default):**
 ```ruby
 gem "hyku_knapsack", github: 'samvera-labs/hyku_knapsack', branch: 'main'
 ```
 
-Then run:
+And then execute:
 ```bash
 $ bundle
 ```
