@@ -10,6 +10,10 @@ RSpec.describe Hyrax::QuickClassificationQuery, singletenant: true do
                                                                                       'GenericWork', 'Image', 'Etd', 'Oer', 'MobiusWork', 'ScholarlyWork'
                                                                                     ])
 
+      # Disable flexible metadata filtering so filtered_available_works returns
+      # Site.instance.available_works directly without calling Site.account
+      allow(Hyrax.config).to receive(:flexible?).and_return(false)
+
       # Mock user permissions to allow creation of all work types
       allow(user).to receive(:can?).with(:create, anything).and_return(true)
     end

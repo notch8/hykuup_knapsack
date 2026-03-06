@@ -11,7 +11,6 @@ scratch.md
 /coverage
 file_cache/
 .byebug_history
-
 Gemfile.lock
 /.cache
 .bash_history

@@ -7,14 +7,17 @@
 # @see https://github.com/samvera/valkyrie/wiki/ChangeSets-and-Dirty-Tracking
 
 class ScholarlyWorkForm < Hyrax::Forms::ResourceForm(ScholarlyWork)
+  check_if_flexible(ScholarlyWork)
   # include Hyrax::FormFields(:basic_metadata) unless Hyrax.config.flexible?
-  include Hyrax::FormFields(:scholarly_work) unless Hyrax.config.flexible?
-  include Hyrax::FormFields(:with_pdf_viewer) unless Hyrax.config.flexible?
-  include Hyrax::FormFields(:with_video_embed) unless Hyrax.config.flexible?
-  # Hyrax expects :based_near to be included via the :basic_metadata. Since we've included
-  # it via the :scholarly_work schema (in order to customize it's default metadata), we need to
-  # include the based_near behavior manually.
-  include Hyrax::BasedNearFieldBehavior unless Hyrax.config.flexible?
+  if Hyrax.config.work_include_metadata?
+    include Hyrax::FormFields(:scholarly_work)
+    include Hyrax::FormFields(:with_pdf_viewer)
+    include Hyrax::FormFields(:with_video_embed)
+    # Hyrax expects :based_near to be included via the :basic_metadata. Since we've included
+    # it via the :scholarly_work schema (in order to customize it's default metadata), we need to
+    # include the based_near behavior manually.
+    include Hyrax::BasedNearFieldBehavior
+  end
 
   include VideoEmbedBehavior::Validation
 

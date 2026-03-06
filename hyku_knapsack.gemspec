@@ -5,8 +5,8 @@ require_relative "lib/hyku_knapsack/version"
 Gem::Specification.new do |spec|
   spec.name        = "hyku_knapsack"
   spec.version     = HykuKnapsack::VERSION
-  spec.authors     = ["Rob Kaufman"]
-  spec.email       = ["rob@scientist.com"]
+  spec.authors     = ["Notch8"]
+  spec.email       = ["info@notch8.com"]
   spec.homepage    = "https://github.com/samvera-labs/hyku-knapsack"
   spec.summary     = "This gem provides a starting template for deploying Hyku, creating themes and adding overrides."
   spec.description = spec.summary
@@ -24,8 +24,10 @@ Gem::Specification.new do |spec|
     Dir["{app,config,db,lib}/**/*", "LICENSE", "Rakefile", "README.md"]
   end
 
-  spec.add_dependency "rails", ">= 5.2.0"
+  spec.add_dependency "rails", ">= 7.2.0"
   spec.add_dependency "sentry-ruby"
   spec.add_dependency "sentry-rails"
   spec.add_dependency "sentry-sidekiq"
+
+  spec.add_development_dependency "rubocop-rake"
 end

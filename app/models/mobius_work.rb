@@ -2,22 +2,30 @@
 
 # Generated via
 #  `rails generate hyrax:work_resource MobiusWork`
-#  updated to only work for flexible true since app is now using flexible metadat
 class MobiusWork < Hyrax::Work
-  include Hyrax::Schema(:basic_metadata) unless Hyrax.config.flexible?
-  include Hyrax::Schema(:mobius_work) unless Hyrax.config.flexible?
-  include Hyrax::Schema(:with_pdf_viewer) unless Hyrax.config.flexible?
-  include Hyrax::Schema(:with_video_embed) unless Hyrax.config.flexible?
+  if Hyrax.config.work_include_metadata?
+    include Hyrax::Schema(:basic_metadata)
+    include Hyrax::Schema(:mobius_work)
+    include Hyrax::Schema(:with_pdf_viewer)
+    include Hyrax::Schema(:with_video_embed)
+    prepend OrderAlready.for(:creator)
+  else
+    acts_as_flexible_resource
+
+    def creator
+      OrderAlready::InputOrderSerializer.deserialize(@attributes[:creator])
+    end
+
+    def creator=(values)
+      set_value(:creator, OrderAlready::InputOrderSerializer.serialize(values))
+    end
+  end
+
   include Hyrax::ArResource
   include Hyrax::NestedWorks
-  # include specifically so specs will include it, as flexible? was false in hyrax's code
-  # in the Resource module, resulting in unexpected behavior for the specs.
-  include Hyrax::Flexibility if Hyrax.config.flexible?
 
   include IiifPrint.model_configuration(
     pdf_split_child_model: GenericWorkResource,
     pdf_splitter_service: IiifPrint::TenantConfig::PdfSplitter
   )
-
-  prepend OrderAlready.for(:creator) unless Hyrax.config.flexible?
 end
