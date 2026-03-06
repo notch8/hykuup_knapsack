@@ -167,7 +167,6 @@ properties:
   creator:
     available_on:
       class:
-        - AdminSetResource
         - Hyrax::FileSet
         - CollectionResource
         - GenericWorkResource
@@ -190,6 +189,35 @@ properties:
     form:
       required: true
       primary: true
+    property_uri: http://purl.org/dc/elements/1.1/creator
+    range: http://www.w3.org/2001/XMLSchema#string
+    sample_values:
+      - Julie Allinson
+    view:
+      render_as: "faceted"
+      html_dl: true
+    mappings:
+      simple_dc_pmh: dc:creator
+  creator_hidden:
+    name: creator
+    available_on:
+      class:
+      - AdminSetResource
+    cardinality:
+      minimum: 0
+    data_type: array
+    controlled_values:
+      format: http://www.w3.org/2001/XMLSchema#string
+      sources:
+        - "null"
+    display_label:
+      default: Creator
+    index_documentation: displayable, searchable
+    indexing:
+      - creator_sim
+      - creator_tesim
+    form:
+      display: false
     property_uri: http://purl.org/dc/elements/1.1/creator
     range: http://www.w3.org/2001/XMLSchema#string
     sample_values:
@@ -295,6 +323,32 @@ properties:
       html_dl: true
     mappings:
       simple_dc_pmh: dc:rights
+  alt_text:
+    available_on:
+      class:
+        - Hyrax::FileSet
+    cardinality:
+      minimum: 0
+      maximum: 1
+    data_type: array
+    controlled_values:
+      format: http://www.w3.org/2001/XMLSchema#string
+      sources:
+        - "null"
+    display_label:
+      default: blacklight.search.fields.index.alt_text_tesim
+    index_documentation: displayable, searchable
+    indexing:
+      - alt_text_sim
+      - alt_text_tesim
+    form:
+      primary: true
+    property_uri: https://schema.org/description
+    range: http://www.w3.org/2001/XMLSchema#string
+    sample_values:
+      - A description of the file for accessibility purposes.
+    view:
+      html_dl: true
   alternative_title:
     available_on:
       class:
