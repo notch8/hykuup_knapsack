@@ -386,6 +386,7 @@ namespace :hykuup do
       processed = 0
       added = 0
       skipped = 0
+      unchanged = 0
       errors = 0
       already_multiple = []
       failed_tenants = []
@@ -403,10 +404,15 @@ namespace :hykuup do
           profile_count = Hyrax::FlexibleSchema.count
 
           if profile_count > 1
-            puts "   #{fmt.warning_icon}  #{fmt.yellow("Already has #{profile_count} profiles — migrating most recent.")}"
-            already_multiple << { tenant: account.cname, count: profile_count }
+            most_recent = Hyrax::FlexibleSchema.order(created_at: :desc).first
+            migrated_data = M3ProfileMigrationService.new_from_data(most_recent.profile).migrate_without_saving
 
-            if apply_changes
+            if migrated_data == most_recent.profile
+              puts "   #{fmt.info_icon} Profile already up to date — no changes needed."
+              unchanged += 1
+            elsif apply_changes
+              puts "   #{fmt.warning_icon}  #{fmt.yellow("Has #{profile_count} profiles — migrating most recent.")}"
+              already_multiple << { tenant: account.cname, count: profile_count }
               print fmt.status_line(fmt.info_icon, "Migrating most recent profile... ")
               result = migrate_most_recent_profile
 
@@ -424,8 +430,8 @@ namespace :hykuup do
                 puts "   #{fmt.error_icon} Reason: #{fmt.red(result[:error])}"
               end
             else
-              most_recent = Hyrax::FlexibleSchema.order(created_at: :desc).first
-              migrated_data = M3ProfileMigrationService.new_from_data(most_recent.profile).migrate_without_saving
+              puts "   #{fmt.warning_icon}  #{fmt.yellow("Has #{profile_count} profiles — would migrate most recent.")}"
+              already_multiple << { tenant: account.cname, count: profile_count }
               existing_work_warnings = check_existing_work_types(migrated_data)
               puts "   #{fmt.info_icon} Would migrate most recent profile (id: #{most_recent.id})"
               skipped += 1
@@ -434,27 +440,39 @@ namespace :hykuup do
                 existing_work_warnings.each { |w| puts "      #{fmt.yellow('•')} #{w}" }
               end
             end
-          elsif apply_changes
-            print fmt.status_line(fmt.info_icon, "Validating and adding tenant-specific profile... ")
-            result = create_validated_profile
-
-            if result[:success]
-              puts fmt.success_icon
-              added += 1
-
-              if result[:warnings].any?
-                puts "   #{fmt.warning_icon}  Warnings:"
-                result[:warnings].each { |w| puts "      #{fmt.yellow('•')} #{w}" }
-              end
-            else
-              puts fmt.status_line(fmt.error_icon, "Validating and adding tenant-specific profile... ", fmt.red("FAILED"))
-              errors += 1
-              failed_tenants << { tenant: account.cname, reason: result[:error] }
-              puts "   #{fmt.error_icon} Reason: #{fmt.red(result[:error])}"
-            end
           else
             result = load_and_validate_profile
-            if result[:success]
+            unless result[:success]
+              puts "   #{fmt.error_icon} Validation would fail: #{fmt.red(result[:error])}"
+              errors += 1
+              failed_tenants << { tenant: account.cname, reason: result[:error] }
+              next
+            end
+
+            current_profile = Hyrax::FlexibleSchema.order(created_at: :desc).first&.profile
+
+            if result[:data] == current_profile
+              puts "   #{fmt.info_icon} Profile already up to date — no changes needed."
+              unchanged += 1
+            elsif apply_changes
+              print fmt.status_line(fmt.info_icon, "Validating and adding tenant-specific profile... ")
+              result = create_validated_profile
+
+              if result[:success]
+                puts fmt.success_icon
+                added += 1
+
+                if result[:warnings].any?
+                  puts "   #{fmt.warning_icon}  Warnings:"
+                  result[:warnings].each { |w| puts "      #{fmt.yellow('•')} #{w}" }
+                end
+              else
+                puts fmt.status_line(fmt.error_icon, "Validating and adding tenant-specific profile... ", fmt.red("FAILED"))
+                errors += 1
+                failed_tenants << { tenant: account.cname, reason: result[:error] }
+                puts "   #{fmt.error_icon} Reason: #{fmt.red(result[:error])}"
+              end
+            else
               existing_work_warnings = check_existing_work_types(result[:data])
               puts "   #{fmt.info_icon} Would add profile from: #{Hyrax::FlexibleSchema.tenant_specific_profile_path}"
               added += 1
@@ -462,10 +480,6 @@ namespace :hykuup do
                 puts "   #{fmt.warning_icon}  Warnings:"
                 existing_work_warnings.each { |w| puts "      #{fmt.yellow('•')} #{w}" }
               end
-            else
-              puts "   #{fmt.error_icon} Validation would fail: #{fmt.red(result[:error])}"
-              errors += 1
-              failed_tenants << { tenant: account.cname, reason: result[:error] }
             end
           end
         rescue StandardError => e
@@ -477,15 +491,17 @@ namespace :hykuup do
       end
 
       puts fmt.section_header("SUMMARY", "📊")
-      puts fmt.bg_yellow('  AUDIT MODE — no changes were made. Run with apply_changes=true to apply.  ') unless apply_changes
+      puts fmt.bg_yellow('  AUDIT MODE — no changes were made. Run bundle exec rake hykuup:profiles:backfill_profiles[true] to apply.  ') unless apply_changes
       puts "\n#{fmt.info_icon} #{fmt.bold('Statistics:')}"
       puts "   Total tenants:                 #{total_tenants}"
       puts "   Profiles #{apply_changes ? 'added' : 'to be added'}:             #{fmt.green(added.to_s)}"
       puts "   #{apply_changes ? 'Migrated' : 'To be migrated'} (had multiple): #{fmt.yellow(skipped.to_s)}"
+      puts "   Already up to date:            #{unchanged}"
       puts "   Errors:                        #{errors.positive? ? fmt.red(errors.to_s) : errors.to_s}"
 
       if already_multiple.any?
-        puts "\n#{fmt.warning_icon}  #{fmt.bold('Tenants with multiple profiles (most recent will be migrated):')}"
+        label = apply_changes ? 'Tenants with multiple profiles (most recent was migrated):' : 'Tenants with multiple profiles (most recent will be migrated):'
+        puts "\n#{fmt.warning_icon}  #{fmt.bold(label)}"
         already_multiple.each { |t| puts "   #{fmt.yellow('•')} #{t[:tenant]} (#{t[:count]} profiles)" }
       end
 
