@@ -36,6 +36,7 @@
 #
 #      service = M3ProfileMigrationService.new_from_data(Hyrax::FlexibleSchema.last.profile)
 #      service.migrate_without_saving
+# rubocop:disable Metrics/ClassLength
 class M3ProfileMigrationService
   # Classes to move from rights_statement to rights_statement_optional.
   RIGHTS_STATEMENT_OPTIONAL_CLASSES = %w[Hyrax::FileSet CollectionResource].freeze
@@ -217,3 +218,4 @@ class M3ProfileMigrationService
     @profile_data_override || profile_editor.profile_data
   end
 end
+# rubocop:enable Metrics/ClassLength
