@@ -62,6 +62,14 @@ class M3ProfileMigrationService
     save
   end
 
+  # Applies all migration transformations and saves without validating.
+  # Useful when migrating knapsack profile files outside of a tenant context.
+  def migrate_without_validating
+    transform
+    File.write(@output_path, profile_data.to_yaml)
+    Rails.logger.debug "Migrated M3 profile saved to: #{@output_path}"
+  end
+
   # Applies all migration transformations and validates without saving.
   # Returns the transformed profile data for inspection.
   def migrate_without_saving
