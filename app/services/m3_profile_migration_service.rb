@@ -84,23 +84,36 @@ class M3ProfileMigrationService
     I18n.t('blacklight.search.fields.show.title_tesim')
 
     profile_data['properties'].each do |property_name, property_data|
-      default_label = case property_data['display_label']
-                      when String
-                        property_data['display_label']
-                      when Hash
-                        property_data['display_label']['default']
-                      else
-                        property_name.humanize
-                      end
-
-      existing_hash = property_data['view']&.fetch('label', nil)
-      existing_hash = nil if !existing_hash.is_a?(Hash) || existing_hash.keys.size <= 1
-      existing_hash ||= property_data['display_label'] if property_data['display_label'].is_a?(Hash) && property_data['display_label'].keys.size > 1
-
-      profile_data['properties'][property_name]['display_label'] = existing_hash.presence || {}
-      profile_data['properties'][property_name]['display_label']['default'] = find_i18n(default_label)
-      profile_data['properties'][property_name]['view']&.delete('label')
+      normalize_property_display_label(property_name, property_data)
     end
+  end
+
+  def normalize_property_display_label(property_name, property_data)
+    default_label = extract_default_label(property_name, property_data)
+    existing_hash = extract_existing_label_hash(property_data)
+
+    profile_data['properties'][property_name]['display_label'] = existing_hash.presence || {}
+    profile_data['properties'][property_name]['display_label']['default'] = find_i18n(default_label)
+    profile_data['properties'][property_name]['view']&.delete('label')
+  end
+
+  def extract_default_label(property_name, property_data)
+    case property_data['display_label']
+    when String then property_data['display_label']
+    when Hash   then property_data['display_label']['default']
+    else             property_name.humanize
+    end
+  end
+
+  def extract_existing_label_hash(property_data)
+    existing = property_data['view']&.fetch('label', nil)
+    existing = nil if !existing.is_a?(Hash) || existing.keys.size <= 1
+    existing ||= property_data['display_label'] if multilingual_hash?(property_data['display_label'])
+    existing
+  end
+
+  def multilingual_hash?(value)
+    value.is_a?(Hash) && value.keys.size > 1
   end
 
   # Step 2: Convert render_as: faceted for each property based on its indexing.
@@ -153,6 +166,7 @@ class M3ProfileMigrationService
     profile_data['properties']['rights_statement_optional'] = build_rights_statement_optional(rs, optional_classes)
   end
 
+  # rubocop:disable Metrics/MethodLength
   def build_rights_statement_optional(rs, available_classes)
     {
       'name' => 'rights_statement',
@@ -171,6 +185,7 @@ class M3ProfileMigrationService
       'mappings' => rs['mappings']&.dup
     }.compact
   end
+  # rubocop:enable Metrics/MethodLength
 
   def validate!
     validator = Hyrax::FlexibleSchemaValidatorService.new(profile: profile_data)

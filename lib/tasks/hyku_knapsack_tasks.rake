@@ -419,10 +419,7 @@ namespace :hykuup do
               if result[:success]
                 puts fmt.success_icon
                 added += 1
-                if result[:warnings].any?
-                  puts "   #{fmt.warning_icon}  Warnings:"
-                  result[:warnings].each { |w| puts "      #{fmt.yellow('•')} #{w}" }
-                end
+                print_warnings(result[:warnings])
               else
                 puts fmt.status_line(fmt.error_icon, "Migrating most recent profile... ", fmt.red("FAILED"))
                 errors += 1
@@ -432,13 +429,9 @@ namespace :hykuup do
             else
               puts "   #{fmt.warning_icon}  #{fmt.yellow("Has #{profile_count} profiles — would migrate most recent.")}"
               already_multiple << { tenant: account.cname, count: profile_count }
-              existing_work_warnings = check_existing_work_types(migrated_data)
               puts "   #{fmt.info_icon} Would migrate most recent profile (id: #{most_recent.id})"
               skipped += 1
-              if existing_work_warnings.any?
-                puts "   #{fmt.warning_icon}  Warnings:"
-                existing_work_warnings.each { |w| puts "      #{fmt.yellow('•')} #{w}" }
-              end
+              print_warnings(check_existing_work_types(migrated_data))
             end
           else
             result = load_and_validate_profile
@@ -461,11 +454,7 @@ namespace :hykuup do
               if result[:success]
                 puts fmt.success_icon
                 added += 1
-
-                if result[:warnings].any?
-                  puts "   #{fmt.warning_icon}  Warnings:"
-                  result[:warnings].each { |w| puts "      #{fmt.yellow('•')} #{w}" }
-                end
+                print_warnings(result[:warnings])
               else
                 puts fmt.status_line(fmt.error_icon, "Validating and adding tenant-specific profile... ", fmt.red("FAILED"))
                 errors += 1
@@ -473,13 +462,9 @@ namespace :hykuup do
                 puts "   #{fmt.error_icon} Reason: #{fmt.red(result[:error])}"
               end
             else
-              existing_work_warnings = check_existing_work_types(result[:data])
               puts "   #{fmt.info_icon} Would add profile from: #{Hyrax::FlexibleSchema.tenant_specific_profile_path}"
               added += 1
-              if existing_work_warnings.any?
-                puts "   #{fmt.warning_icon}  Warnings:"
-                existing_work_warnings.each { |w| puts "      #{fmt.yellow('•')} #{w}" }
-              end
+              print_warnings(check_existing_work_types(result[:data]))
             end
           end
         rescue StandardError => e
@@ -823,6 +808,13 @@ namespace :hykuup do
   # @param work_type [String] The work type to check
   # @param profile_work_types [Array<String>] Work types in the new profile
   # @return [String, nil] Warning message if records exist, nil otherwise
+  def print_warnings(warnings)
+    return unless warnings.any?
+
+    puts "   #{fmt.warning_icon}  Warnings:"
+    warnings.each { |w| puts "      #{fmt.yellow('•')} #{w}" }
+  end
+
   def check_work_type_for_existing_records(work_type, profile_work_types)
     work_type_resource = "#{work_type}Resource"
     return nil if profile_work_types.include?(work_type_resource)
