@@ -434,17 +434,11 @@ namespace :hykuup do
               print_warnings(check_existing_work_types(migrated_data))
             end
           else
-            result = load_and_validate_profile
-            unless result[:success]
-              puts "   #{fmt.error_icon} Validation would fail: #{fmt.red(result[:error])}"
-              errors += 1
-              failed_tenants << { tenant: account.cname, reason: result[:error] }
-              next
-            end
-
+            source_path = Hyrax::FlexibleSchema.tenant_specific_profile_path
+            migrated_data = M3ProfileMigrationService.new(source_path).migrate_without_saving
             current_profile = Hyrax::FlexibleSchema.order(created_at: :desc).first&.profile
 
-            if result[:data] == current_profile
+            if migrated_data == current_profile
               puts "   #{fmt.info_icon} Profile already up to date — no changes needed."
               unchanged += 1
             elsif apply_changes
@@ -462,9 +456,9 @@ namespace :hykuup do
                 puts "   #{fmt.error_icon} Reason: #{fmt.red(result[:error])}"
               end
             else
-              puts "   #{fmt.info_icon} Would add profile from: #{Hyrax::FlexibleSchema.tenant_specific_profile_path}"
+              puts "   #{fmt.info_icon} Would add profile from: #{source_path}"
               added += 1
-              print_warnings(check_existing_work_types(result[:data]))
+              print_warnings(check_existing_work_types(migrated_data))
             end
           end
         rescue StandardError => e
@@ -669,19 +663,18 @@ namespace :hykuup do
   end
 
   # Helper method to create a profile with validation
+  # Uses M3ProfileMigrationService to migrate the tenant-specific profile
+  # (resolved via consortium) before creating the new FlexibleSchema record.
   # @return [Hash] { success: Boolean, error: String, warnings: Array<String> }
   def create_validated_profile
     warnings = []
-    profile_data = load_and_validate_profile
+    source_path = Hyrax::FlexibleSchema.tenant_specific_profile_path
+    migrated_data = M3ProfileMigrationService.new(source_path).migrate_without_saving
 
-    return profile_data if profile_data[:success] == false
-
-    # Check for existing works that might become orphaned
-    existing_work_warnings = check_existing_work_types(profile_data[:data])
+    existing_work_warnings = check_existing_work_types(migrated_data)
     warnings.concat(existing_work_warnings) if existing_work_warnings.any?
 
-    # Create the profile
-    Hyrax::FlexibleSchema.create!(profile: profile_data[:data])
+    Hyrax::FlexibleSchema.create!(profile: migrated_data)
     { success: true, error: nil, warnings: }
   rescue StandardError => e
     error_message = enhance_error_message_for_cli(e.message)
