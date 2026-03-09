@@ -403,9 +403,37 @@ namespace :hykuup do
           profile_count = Hyrax::FlexibleSchema.count
 
           if profile_count > 1
-            puts "   #{fmt.warning_icon}  #{fmt.yellow("Already has #{profile_count} profiles — skipping.")}"
+            puts "   #{fmt.warning_icon}  #{fmt.yellow("Already has #{profile_count} profiles — migrating most recent.")}"
             already_multiple << { tenant: account.cname, count: profile_count }
-            skipped += 1
+
+            if apply_changes
+              print fmt.status_line(fmt.info_icon, "Migrating most recent profile... ")
+              result = migrate_most_recent_profile
+
+              if result[:success]
+                puts fmt.success_icon
+                added += 1
+                if result[:warnings].any?
+                  puts "   #{fmt.warning_icon}  Warnings:"
+                  result[:warnings].each { |w| puts "      #{fmt.yellow('•')} #{w}" }
+                end
+              else
+                puts fmt.status_line(fmt.error_icon, "Migrating most recent profile... ", fmt.red("FAILED"))
+                errors += 1
+                failed_tenants << { tenant: account.cname, reason: result[:error] }
+                puts "   #{fmt.error_icon} Reason: #{fmt.red(result[:error])}"
+              end
+            else
+              most_recent = Hyrax::FlexibleSchema.order(created_at: :desc).first
+              migrated_data = M3ProfileMigrationService.new_from_data(most_recent.profile).migrate_without_saving
+              existing_work_warnings = check_existing_work_types(migrated_data)
+              puts "   #{fmt.info_icon} Would migrate most recent profile (id: #{most_recent.id})"
+              skipped += 1
+              if existing_work_warnings.any?
+                puts "   #{fmt.warning_icon}  Warnings:"
+                existing_work_warnings.each { |w| puts "      #{fmt.yellow('•')} #{w}" }
+              end
+            end
           elsif apply_changes
             print fmt.status_line(fmt.info_icon, "Validating and adding tenant-specific profile... ")
             result = create_validated_profile
@@ -451,13 +479,13 @@ namespace :hykuup do
       puts fmt.section_header("SUMMARY", "📊")
       puts fmt.bg_yellow('  AUDIT MODE — no changes were made. Run with apply_changes=true to apply.  ') unless apply_changes
       puts "\n#{fmt.info_icon} #{fmt.bold('Statistics:')}"
-      puts "   Total tenants:        #{total_tenants}"
-      puts "   Profiles #{apply_changes ? 'added' : 'to be added'}:    #{fmt.green(added.to_s)}"
-      puts "   Already had multiple: #{fmt.yellow(skipped.to_s)}"
-      puts "   Errors:               #{errors.positive? ? fmt.red(errors.to_s) : errors.to_s}"
+      puts "   Total tenants:                 #{total_tenants}"
+      puts "   Profiles #{apply_changes ? 'added' : 'to be added'}:             #{fmt.green(added.to_s)}"
+      puts "   #{apply_changes ? 'Migrated' : 'To be migrated'} (had multiple): #{fmt.yellow(skipped.to_s)}"
+      puts "   Errors:                        #{errors.positive? ? fmt.red(errors.to_s) : errors.to_s}"
 
       if already_multiple.any?
-        puts "\n#{fmt.warning_icon}  #{fmt.bold('Tenants already with multiple profiles:')}"
+        puts "\n#{fmt.warning_icon}  #{fmt.bold('Tenants with multiple profiles (most recent will be migrated):')}"
         already_multiple.each { |t| puts "   #{fmt.yellow('•')} #{t[:tenant]} (#{t[:count]} profiles)" }
       end
 
@@ -653,6 +681,23 @@ namespace :hykuup do
 
     # Create the profile
     Hyrax::FlexibleSchema.create!(profile: profile_data[:data])
+    { success: true, error: nil, warnings: }
+  rescue StandardError => e
+    error_message = enhance_error_message_for_cli(e.message)
+    { success: false, error: error_message, warnings: [] }
+  end
+
+  # Migrates the most recent FlexibleSchema profile record using M3ProfileMigrationService.
+  # @return [Hash] { success: Boolean, error: String, warnings: Array<String> }
+  def migrate_most_recent_profile
+    warnings = []
+    most_recent = Hyrax::FlexibleSchema.order(created_at: :desc).first
+    migrated_data = M3ProfileMigrationService.new_from_data(most_recent.profile).migrate_without_saving
+
+    existing_work_warnings = check_existing_work_types(migrated_data)
+    warnings.concat(existing_work_warnings) if existing_work_warnings.any?
+
+    Hyrax::FlexibleSchema.create!(profile: migrated_data)
     { success: true, error: nil, warnings: }
   rescue StandardError => e
     error_message = enhance_error_message_for_cli(e.message)
