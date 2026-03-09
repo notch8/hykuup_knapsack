@@ -187,6 +187,7 @@ class M3ProfileMigrationService
     add_creator_hidden
   end
 
+  # rubocop:disable Metrics/MethodLength
   def add_alt_text
     return if profile_data['properties'].key?('alt_text')
 
@@ -205,7 +206,9 @@ class M3ProfileMigrationService
       'view' => { 'html_dl' => true }
     }
   end
+  # rubocop:enable Metrics/MethodLength
 
+  # rubocop:disable Metrics/MethodLength
   def add_creator_hidden
     return if profile_data['properties'].key?('creator_hidden')
 
@@ -232,6 +235,7 @@ class M3ProfileMigrationService
       'mappings' => { 'simple_dc_pmh' => 'dc:creator' }
     }
   end
+  # rubocop:enable Metrics/MethodLength
 
   # rubocop:disable Metrics/MethodLength
   def build_rights_statement_optional(rs, available_classes)
