@@ -76,6 +76,7 @@ class M3ProfileMigrationService
     normalize_display_labels
     convert_faceted_render_as
     split_rights_statement
+    add_missing_properties
   end
 
   # Step 1: Normalize display_label fields using Hyrax::M3ProfileEditor.
@@ -167,6 +168,61 @@ class M3ProfileMigrationService
     return if profile_data['properties'].key?('rights_statement_optional')
 
     profile_data['properties']['rights_statement_optional'] = build_rights_statement_optional(rs, optional_classes)
+  end
+
+  # Step 4: Add properties that are standard now but may be missing from older profiles.
+  # - alt_text: FileSet accessibility description
+  # - creator_hidden: AdminSetResource alias for creator (hidden in form)
+  # Also removes AdminSetResource from creator.available_on if creator_hidden is added.
+  def add_missing_properties
+    add_alt_text
+    add_creator_hidden
+  end
+
+  def add_alt_text
+    return if profile_data['properties'].key?('alt_text')
+
+    profile_data['properties']['alt_text'] = {
+      'available_on' => { 'class' => ['Hyrax::FileSet'] },
+      'cardinality' => { 'minimum' => 0, 'maximum' => 1 },
+      'data_type' => 'array',
+      'controlled_values' => { 'format' => 'http://www.w3.org/2001/XMLSchema#string', 'sources' => ['null'] },
+      'display_label' => { 'default' => find_i18n('Alt Text') },
+      'index_documentation' => 'displayable, searchable',
+      'indexing' => %w[alt_text_sim alt_text_tesim],
+      'form' => { 'primary' => true },
+      'property_uri' => 'https://schema.org/description',
+      'range' => 'http://www.w3.org/2001/XMLSchema#string',
+      'sample_values' => ['A description of the file for accessibility purposes.'],
+      'view' => { 'html_dl' => true }
+    }
+  end
+
+  def add_creator_hidden
+    return if profile_data['properties'].key?('creator_hidden')
+
+    creator = profile_data['properties']['creator']
+    return unless creator
+
+    # Remove AdminSetResource from creator.available_on
+    creator.dig('available_on', 'class')&.delete('AdminSetResource')
+
+    profile_data['properties']['creator_hidden'] = {
+      'name' => 'creator',
+      'available_on' => { 'class' => ['AdminSetResource'] },
+      'cardinality' => { 'minimum' => 0 },
+      'data_type' => 'array',
+      'controlled_values' => { 'format' => 'http://www.w3.org/2001/XMLSchema#string', 'sources' => ['null'] },
+      'display_label' => { 'default' => find_i18n('Creator') },
+      'index_documentation' => 'displayable, searchable',
+      'indexing' => %w[creator_sim creator_tesim facetable],
+      'form' => { 'display' => false },
+      'property_uri' => 'http://purl.org/dc/elements/1.1/creator',
+      'range' => 'http://www.w3.org/2001/XMLSchema#string',
+      'sample_values' => ['Julie Allinson'],
+      'view' => { 'render_as' => 'linked', 'html_dl' => true },
+      'mappings' => { 'simple_dc_pmh' => 'dc:creator' }
+    }
   end
 
   # rubocop:disable Metrics/MethodLength
