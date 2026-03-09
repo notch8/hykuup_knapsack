@@ -80,8 +80,10 @@ class M3ProfileMigrationService
   # Step 1: Normalize display_label fields using Hyrax::M3ProfileEditor.
   # This mirrors the hyrax:metadata:update_labels rake task logic.
   def normalize_display_labels
-    # Force i18n to load show/index field translations
-    I18n.t('blacklight.search.fields.show.title_tesim')
+    # Force i18n to load all blacklight show/index field translations so that
+    # reverse lookups in find_i18n resolve correctly.
+    I18n.t('blacklight.search.fields.show')
+    I18n.t('blacklight.search.fields.index')
 
     profile_data['properties'].each do |property_name, property_data|
       normalize_property_display_label(property_name, property_data)
