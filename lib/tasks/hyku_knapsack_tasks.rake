@@ -369,6 +369,103 @@ namespace :hykuup do
       end
     end
 
+    desc 'Audit tenants: add a second profile from default if only one exists, report if more than one already exists. Pass apply_changes=true to apply.'
+    task :backfill_profiles, [:apply_changes] => :environment do |_t, args|
+      apply_changes = args[:apply_changes] == 'true'
+
+      if apply_changes
+        puts fmt.header("BACKFILLING METADATA PROFILES FOR ALL TENANTS", "🔍")
+      else
+        puts fmt.header("BACKFILLING METADATA PROFILES — AUDIT MODE", "🔍")
+        puts "\n#{fmt.bg_yellow('  AUDIT MODE: No changes will be made. Pass apply_changes=true to apply.  ')}"
+      end
+      puts "\n#{fmt.info_icon} Tenants with only one profile will #{apply_changes ? 'have a new one added' : 'be flagged for update'}."
+      puts "   Tenants with more than one profile will be reported only.\n\n"
+
+      total_tenants = Account.count
+      processed = 0
+      added = 0
+      skipped = 0
+      errors = 0
+      already_multiple = []
+      failed_tenants = []
+
+      Account.find_each do |account|
+        processed += 1
+        puts fmt.tenant_info(
+          "[#{processed}/#{total_tenants}] #{account.cname}",
+          account.tenant,
+          account.part_of_consortia
+        )
+
+        begin
+          Apartment::Tenant.switch!(account.tenant)
+          profile_count = Hyrax::FlexibleSchema.count
+
+          if profile_count > 1
+            puts "   #{fmt.warning_icon}  #{fmt.yellow("Already has #{profile_count} profiles — skipping.")}"
+            already_multiple << { tenant: account.cname, count: profile_count }
+            skipped += 1
+          elsif apply_changes
+            print fmt.status_line(fmt.info_icon, "Validating and adding tenant-specific profile... ")
+            result = create_validated_profile
+
+            if result[:success]
+              puts fmt.success_icon
+              added += 1
+
+              if result[:warnings].any?
+                puts "   #{fmt.warning_icon}  Warnings:"
+                result[:warnings].each { |w| puts "      #{fmt.yellow('•')} #{w}" }
+              end
+            else
+              puts fmt.status_line(fmt.error_icon, "Validating and adding tenant-specific profile... ", fmt.red("FAILED"))
+              errors += 1
+              failed_tenants << { tenant: account.cname, reason: result[:error] }
+              puts "   #{fmt.error_icon} Reason: #{fmt.red(result[:error])}"
+            end
+          else
+            result = load_and_validate_profile
+            if result[:success]
+              existing_work_warnings = check_existing_work_types(result[:data])
+              puts "   #{fmt.info_icon} Would add profile from: #{Hyrax::FlexibleSchema.tenant_specific_profile_path}"
+              added += 1
+              if existing_work_warnings.any?
+                puts "   #{fmt.warning_icon}  Warnings:"
+                existing_work_warnings.each { |w| puts "      #{fmt.yellow('•')} #{w}" }
+              end
+            else
+              puts "   #{fmt.error_icon} Validation would fail: #{fmt.red(result[:error])}"
+              errors += 1
+              failed_tenants << { tenant: account.cname, reason: result[:error] }
+            end
+          end
+        rescue StandardError => e
+          errors += 1
+          failed_tenants << { tenant: account.cname, reason: e.message, error: e }
+          puts "   #{fmt.error_icon} #{fmt.red('ERROR')}: #{e.message}"
+          puts "      #{fmt.red('↳')} #{e.backtrace.first}"
+        end
+      end
+
+      puts fmt.section_header("SUMMARY", "📊")
+      puts fmt.bg_yellow('  AUDIT MODE — no changes were made. Run with apply_changes=true to apply.  ') unless apply_changes
+      puts "\n#{fmt.info_icon} #{fmt.bold('Statistics:')}"
+      puts "   Total tenants:        #{total_tenants}"
+      puts "   Profiles #{apply_changes ? 'added' : 'to be added'}:    #{fmt.green(added.to_s)}"
+      puts "   Already had multiple: #{fmt.yellow(skipped.to_s)}"
+      puts "   Errors:               #{errors.positive? ? fmt.red(errors.to_s) : errors.to_s}"
+
+      if already_multiple.any?
+        puts "\n#{fmt.warning_icon}  #{fmt.bold('Tenants already with multiple profiles:')}"
+        already_multiple.each { |t| puts "   #{fmt.yellow('•')} #{t[:tenant]} (#{t[:count]} profiles)" }
+      end
+
+      puts fmt.error_section("❌ FAILED TENANTS", failed_tenants)
+      puts fmt.final_status(errors.positive?)
+      puts fmt.thick_separator
+    end
+
     desc 'Reset metadata profiles and update available works for all tenants (DESTRUCTIVE)'
     task reset_all: :environment do
       puts fmt.header("RESETTING PROFILES AND AVAILABLE WORKS FOR ALL TENANTS", "⚠️")
