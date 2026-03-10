@@ -382,7 +382,8 @@ namespace :hykuup do
       puts "\n#{fmt.info_icon} Tenants with only one profile will #{apply_changes ? 'have a new one added' : 'be flagged for update'}."
       puts "   Tenants with more than one profile will be reported only.\n\n"
 
-      total_tenants = Account.count
+      accounts = Account.where(search_only: false)
+      total_tenants = accounts.count
       processed = 0
       added = 0
       skipped = 0
@@ -391,7 +392,7 @@ namespace :hykuup do
       already_multiple = []
       failed_tenants = []
 
-      Account.find_each do |account|
+      accounts.find_each do |account|
         processed += 1
         puts fmt.tenant_info(
           "[#{processed}/#{total_tenants}] #{account.cname}",
