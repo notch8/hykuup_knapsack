@@ -369,6 +369,127 @@ namespace :hykuup do
       end
     end
 
+    desc 'Audit tenants: add a second profile from default if only one exists, report if more than one already exists. Pass apply_changes=true to apply.'
+    task :backfill_profiles, [:apply_changes] => :environment do |_t, args|
+      apply_changes = args[:apply_changes] == 'true'
+
+      if apply_changes
+        puts fmt.header("BACKFILLING METADATA PROFILES FOR ALL TENANTS", "🔍")
+      else
+        puts fmt.header("BACKFILLING METADATA PROFILES — AUDIT MODE", "🔍")
+        puts "\n#{fmt.bg_yellow('  AUDIT MODE: No changes will be made. Pass apply_changes=true to apply.  ')}"
+      end
+      puts "\n#{fmt.info_icon} Tenants with only one profile will #{apply_changes ? 'have a new one added' : 'be flagged for update'}."
+      puts "   Tenants with more than one profile will be reported only.\n\n"
+
+      accounts = Account.where(search_only: false)
+      total_tenants = accounts.count
+      processed = 0
+      added = 0
+      skipped = 0
+      unchanged = 0
+      errors = 0
+      already_multiple = []
+      failed_tenants = []
+
+      accounts.find_each do |account|
+        processed += 1
+        puts fmt.tenant_info(
+          "[#{processed}/#{total_tenants}] #{account.cname}",
+          account.tenant,
+          account.part_of_consortia
+        )
+
+        begin
+          Apartment::Tenant.switch!(account.tenant)
+          profile_count = Hyrax::FlexibleSchema.count
+
+          if profile_count > 1
+            most_recent = Hyrax::FlexibleSchema.order(created_at: :desc).first
+            migrated_data = M3ProfileMigrationService.new_from_data(most_recent.profile).migrate_without_saving
+
+            if migrated_data == most_recent.profile
+              puts "   #{fmt.info_icon} Profile already up to date — no changes needed."
+              unchanged += 1
+            elsif apply_changes
+              puts "   #{fmt.warning_icon}  #{fmt.yellow("Has #{profile_count} profiles — migrating most recent.")}"
+              already_multiple << { tenant: account.cname, count: profile_count }
+              print fmt.status_line(fmt.info_icon, "Migrating most recent profile... ")
+              result = migrate_most_recent_profile
+
+              if result[:success]
+                puts fmt.success_icon
+                added += 1
+                print_warnings(result[:warnings])
+              else
+                puts fmt.status_line(fmt.error_icon, "Migrating most recent profile... ", fmt.red("FAILED"))
+                errors += 1
+                failed_tenants << { tenant: account.cname, reason: result[:error] }
+                puts "   #{fmt.error_icon} Reason: #{fmt.red(result[:error])}"
+              end
+            else
+              puts "   #{fmt.warning_icon}  #{fmt.yellow("Has #{profile_count} profiles — would migrate most recent.")}"
+              already_multiple << { tenant: account.cname, count: profile_count }
+              puts "   #{fmt.info_icon} Would migrate most recent profile (id: #{most_recent.id})"
+              skipped += 1
+              print_warnings(check_existing_work_types(migrated_data))
+            end
+          else
+            source_path = Hyrax::FlexibleSchema.tenant_specific_profile_path
+            migrated_data = M3ProfileMigrationService.new(source_path).migrate_without_saving
+            current_profile = Hyrax::FlexibleSchema.order(created_at: :desc).first&.profile
+
+            if migrated_data == current_profile
+              puts "   #{fmt.info_icon} Profile already up to date — no changes needed."
+              unchanged += 1
+            elsif apply_changes
+              print fmt.status_line(fmt.info_icon, "Validating and adding tenant-specific profile... ")
+              result = create_validated_profile
+
+              if result[:success]
+                puts fmt.success_icon
+                added += 1
+                print_warnings(result[:warnings])
+              else
+                puts fmt.status_line(fmt.error_icon, "Validating and adding tenant-specific profile... ", fmt.red("FAILED"))
+                errors += 1
+                failed_tenants << { tenant: account.cname, reason: result[:error] }
+                puts "   #{fmt.error_icon} Reason: #{fmt.red(result[:error])}"
+              end
+            else
+              puts "   #{fmt.info_icon} Would add profile from: #{source_path}"
+              added += 1
+              print_warnings(check_existing_work_types(migrated_data))
+            end
+          end
+        rescue StandardError => e
+          errors += 1
+          failed_tenants << { tenant: account.cname, reason: e.message, error: e }
+          puts "   #{fmt.error_icon} #{fmt.red('ERROR')}: #{e.message}"
+          puts "      #{fmt.red('↳')} #{e.backtrace.first}"
+        end
+      end
+
+      puts fmt.section_header("SUMMARY", "📊")
+      puts fmt.bg_yellow('  AUDIT MODE — no changes were made. Run bundle exec rake hykuup:profiles:backfill_profiles[true] to apply.  ') unless apply_changes
+      puts "\n#{fmt.info_icon} #{fmt.bold('Statistics:')}"
+      puts "   Total tenants:                 #{total_tenants}"
+      puts "   Profiles #{apply_changes ? 'added' : 'to be added'}:             #{fmt.green(added.to_s)}"
+      puts "   #{apply_changes ? 'Migrated' : 'To be migrated'} (had multiple): #{fmt.yellow(skipped.to_s)}"
+      puts "   Already up to date:            #{unchanged}"
+      puts "   Errors:                        #{errors.positive? ? fmt.red(errors.to_s) : errors.to_s}"
+
+      if already_multiple.any?
+        label = apply_changes ? 'Tenants with multiple profiles (most recent was migrated):' : 'Tenants with multiple profiles (most recent will be migrated):'
+        puts "\n#{fmt.warning_icon}  #{fmt.bold(label)}"
+        already_multiple.each { |t| puts "   #{fmt.yellow('•')} #{t[:tenant]} (#{t[:count]} profiles)" }
+      end
+
+      puts fmt.error_section("❌ FAILED TENANTS", failed_tenants)
+      puts fmt.final_status(errors.positive?)
+      puts fmt.thick_separator
+    end
+
     desc 'Reset metadata profiles and update available works for all tenants (DESTRUCTIVE)'
     task reset_all: :environment do
       puts fmt.header("RESETTING PROFILES AND AVAILABLE WORKS FOR ALL TENANTS", "⚠️")
@@ -543,19 +664,35 @@ namespace :hykuup do
   end
 
   # Helper method to create a profile with validation
+  # Uses M3ProfileMigrationService to migrate the tenant-specific profile
+  # (resolved via consortium) before creating the new FlexibleSchema record.
   # @return [Hash] { success: Boolean, error: String, warnings: Array<String> }
   def create_validated_profile
     warnings = []
-    profile_data = load_and_validate_profile
+    source_path = Hyrax::FlexibleSchema.tenant_specific_profile_path
+    migrated_data = M3ProfileMigrationService.new(source_path).migrate_without_saving
 
-    return profile_data if profile_data[:success] == false
-
-    # Check for existing works that might become orphaned
-    existing_work_warnings = check_existing_work_types(profile_data[:data])
+    existing_work_warnings = check_existing_work_types(migrated_data)
     warnings.concat(existing_work_warnings) if existing_work_warnings.any?
 
-    # Create the profile
-    Hyrax::FlexibleSchema.create!(profile: profile_data[:data])
+    Hyrax::FlexibleSchema.create!(profile: migrated_data)
+    { success: true, error: nil, warnings: }
+  rescue StandardError => e
+    error_message = enhance_error_message_for_cli(e.message)
+    { success: false, error: error_message, warnings: [] }
+  end
+
+  # Migrates the most recent FlexibleSchema profile record using M3ProfileMigrationService.
+  # @return [Hash] { success: Boolean, error: String, warnings: Array<String> }
+  def migrate_most_recent_profile
+    warnings = []
+    most_recent = Hyrax::FlexibleSchema.order(created_at: :desc).first
+    migrated_data = M3ProfileMigrationService.new_from_data(most_recent.profile).migrate_without_saving
+
+    existing_work_warnings = check_existing_work_types(migrated_data)
+    warnings.concat(existing_work_warnings) if existing_work_warnings.any?
+
+    Hyrax::FlexibleSchema.create!(profile: migrated_data)
     { success: true, error: nil, warnings: }
   rescue StandardError => e
     error_message = enhance_error_message_for_cli(e.message)
@@ -665,6 +802,13 @@ namespace :hykuup do
   # @param work_type [String] The work type to check
   # @param profile_work_types [Array<String>] Work types in the new profile
   # @return [String, nil] Warning message if records exist, nil otherwise
+  def print_warnings(warnings)
+    return unless warnings.any?
+
+    puts "   #{fmt.warning_icon}  Warnings:"
+    warnings.each { |w| puts "      #{fmt.yellow('•')} #{w}" }
+  end
+
   def check_work_type_for_existing_records(work_type, profile_work_types)
     work_type_resource = "#{work_type}Resource"
     return nil if profile_work_types.include?(work_type_resource)
