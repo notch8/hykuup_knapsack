@@ -14,7 +14,7 @@ module FlexibleSchemaHelpers
     path = PROFILE_PATHS.fetch(work_type.to_s)
     profile = YAML.safe_load_file(path)
     Hyrax::FlexibleSchema.delete_all
-    Hyrax::FlexibleSchema.create!(profile: profile)
+    Hyrax::FlexibleSchema.create!(profile:)
   end
 end
 
