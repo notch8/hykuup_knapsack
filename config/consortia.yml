@@ -6,6 +6,8 @@
   identifier: "mobius"
   excluded_work_types:
     - "ScholarlyWork"
+- name: "St. Jude Consortium"
+  identifier: "stjude"
 
 
 
