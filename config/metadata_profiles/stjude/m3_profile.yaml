@@ -535,6 +535,7 @@ properties:
     form:
       primary: true
       required: true
+      multiple: false
     property_uri: http://purl.org/dc/terms/RightsStatement
     range: http://www.w3.org/2001/XMLSchema#string
     sample_values:
