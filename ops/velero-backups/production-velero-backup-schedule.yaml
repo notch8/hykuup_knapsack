@@ -1,0 +1,37 @@
+apiVersion: velero.io/v1
+kind: Schedule
+metadata:
+  name: hykuup-knapsack-production-daily
+  namespace: velero
+spec:
+  schedule: "10 2 * * *"  # Daily at 2:10 AM UTC
+  template:
+    ttl: 168h
+    includedNamespaces:
+      - hykuup-knapsack-production
+    snapshotVolumes: true
+    includeClusterResources: false
+---
+apiVersion: velero.io/v1
+kind: Schedule
+metadata:
+  name: hykuup-knapsack-production-weekly
+  namespace: velero
+spec:
+  schedule: "15 3 * * Sun"  # Sunday at 3:15 AM UTC
+  template:
+    ttl: 720h
+    includedNamespaces:
+      - hykuup-knapsack-production
+---
+apiVersion: velero.io/v1
+kind: Schedule
+metadata:
+  name: hykuup-knapsack-production-monthly
+  namespace: velero
+spec:
+  schedule: "20 4 1 * *"  # 1st of month at 4:20 AM UTC
+  template:
+    ttl: 2256h
+    includedNamespaces:
+      - hykuup-knapsack-production
