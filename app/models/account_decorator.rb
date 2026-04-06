@@ -22,6 +22,15 @@ module AccountDecorator
     part_of_consortia
   end
 
+  class_methods do
+    # OVERRIDE: add replication_factor from environment, preserving all other defaults from Hyku core.
+    # Per-tenant overrides still work: Account#solr_collection_options (instance method) reads from
+    # the account's stored settings first, falling back to this class-level default.
+    def solr_collection_options
+      super.merge(replication_factor: ENV.fetch('SOLR_COLLECTION_REPLICAS', 1).to_i)
+    end
+  end
+
   private
 
   # A `before_validation` callback that converts a blank `part_of_consortia`
