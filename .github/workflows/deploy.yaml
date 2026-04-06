@@ -10,6 +10,7 @@ on:
         type: choice
         options:
           - friends
+          - friends-zone
           - staging
           - argo
           - production
