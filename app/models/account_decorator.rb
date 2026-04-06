@@ -31,6 +31,15 @@ module AccountDecorator
     end
   end
 
+  def solr_collection_options
+    stored = super
+    class_solr_collection_options = Account.solr_collection_options
+    return class_solr_collection_options if stored.nil?
+    return stored if stored[:replication_factor].nil?
+
+    class_solr_collection_options.merge(stored.reject { |_key, val| val.nil? })
+  end
+
   private
 
   # A `before_validation` callback that converts a blank `part_of_consortia`

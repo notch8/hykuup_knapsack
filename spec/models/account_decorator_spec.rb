@@ -41,13 +41,28 @@ RSpec.describe AccountDecorator do
   end
 
   describe 'instance method #solr_collection_options' do
-    subject(:account) { Account.new }
+    context 'when SOLR_COLLECTION_REPLICAS is set to 3' do
+      before do
+        allow(Account).to receive(:solr_collection_options).and_return(
+          Account.solr_collection_options.merge(replication_factor: 3)
+        )
+      end
 
-    it 'returns nil from stored settings, not the class-level default' do
-      expect(account.solr_collection_options[:replication_factor]).to be_nil
-      expect(account.solr_collection_options[:replication_factor]).not_to eq(
-        Account.solr_collection_options[:replication_factor]
-      )
+      it 'stores replication_factor of 3 in account settings on creation' do
+        account = Account.new
+        expect(account.solr_collection_options[:replication_factor]).to eq(3)
+      end
+    end
+    context 'when SOLR_COLLECTION_REPLICAS is not set' do
+      before do
+        allow(Account).to receive(:solr_collection_options).and_return(
+          Account.solr_collection_options.merge(replication_factor: nil)
+        )
+      end
+      it 'returns nil from stored settings, not the class-level default' do
+        account = Account.new
+        expect(account.solr_collection_options[:replication_factor]).to be_nil
+      end
     end
   end
 end
