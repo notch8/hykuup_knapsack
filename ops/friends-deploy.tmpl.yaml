@@ -271,6 +271,7 @@ externalPostgresql:
   host: postgres-postgresql.postgres.svc.cluster.local
   username: postgres
   password: $DB_PASSWORD
+  database: hykuup-knapsack-friends-zone
 
 externalSolrHost: solr.solr.svc.cluster.local
 externalSolrUser: admin
