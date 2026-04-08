@@ -3,11 +3,11 @@ x-app: &app
     context: .
     target: hyku-web
     cache_from:
-      - ghcr.io/notch8/hykuup_knapsack:latest
+      - ghcr.io/notch8/hykuup_knapsack/web:latest
     args:
       BUILDKIT_INLINE_CACHE: 1
       APP_PATH: ./hyrax-webapp
-  image: ghcr.io/notch8/hykuup_knapsack:${TAG:-latest}
+  image: ghcr.io/notch8/hykuup_knapsack/web:${TAG:-latest}
   env_file:
     - .env
     - .env.development
@@ -51,7 +51,6 @@ services:
       service: zoo
 
   solr:
-    image: ghcr.io/samvera-labs/hyku_knapsack/solr:${TAG:-latest}
     extends:
       file: hyrax-webapp/docker-compose.yml
       service: solr
