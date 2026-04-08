@@ -1,0 +1,73 @@
+# frozen_string_literal: true
+
+# Use this to override any Hyrax configuration from the Knapsack
+
+# rubocop:disable Metrics/BlockLength
+# Path used when Hyrax::Configuration does not define default_m3_profile_path (e.g. Hyku 7)
+HykuKnapsack::DEFAULT_M3_PROFILE_PATH = HykuKnapsack::Engine.root.join('config', 'metadata_profiles', 'default', 'm3_profile.yaml')
+
+Rails.application.config.after_initialize do
+  Hyrax.config do |config|
+    # This project uses flexible metadata (Hyku 7); default true.
+    config.flexible = ActiveModel::Type::Boolean.new.cast(ENV.fetch('HYRAX_FLEXIBLE', 'true'))
+
+    # Prepend to ensure knapsack profile is checked before the host app's profiles.
+    config.schema_loader_config_search_paths.unshift(HykuKnapsack::Engine.root) \
+      if config.respond_to?(:schema_loader_config_search_paths)
+
+    # Set default profile path when supported (Hyrax 5/6); Hyku 7 may use schema_loader_config_search_paths only
+    config.default_m3_profile_path = HykuKnapsack::DEFAULT_M3_PROFILE_PATH if config.respond_to?(:default_m3_profile_path=)
+
+    config.register_curation_concern :mobius_work
+    config.register_curation_concern :scholarly_work
+  end
+
+  # Override Hyrax v5.0.5: the create_default_schema method to load tenant-specific profiles
+  Hyrax::FlexibleSchema.class_eval do
+    def self.create_default_schema
+      m3_profile_path = tenant_specific_profile_path
+
+      # Only create if no schema exists
+      return Hyrax::FlexibleSchema.first if Hyrax::FlexibleSchema.exists?
+
+      Hyrax::FlexibleSchema.create do |f|
+        f.profile = YAML.safe_load_file(m3_profile_path)
+      end
+    end
+
+    def self.force_create_default_schema
+      # Force creates a new flexible schema for the current tenant with validation.
+      # This method is intended for use by rake tasks that need to ensure
+      # a new schema is created, even if one already exists.
+      #
+      # Unlike create_default_schema, this validates the profile before creation
+      # to ensure it's compatible with existing data and tenant configuration.
+      #
+      # @return [Hyrax::FlexibleSchema] The newly created schema
+      # @raise [StandardError] if validation fails
+      # @see create_default_schema for the safe version used during app startup
+      m3_profile_path = tenant_specific_profile_path
+      profile_data = YAML.safe_load_file(m3_profile_path)
+
+      # Validate the profile before creating (same as UI validation)
+      validator = Hyrax::FlexibleSchemaValidatorService.new(profile: profile_data)
+      validator.validate!
+
+      raise StandardError, "Profile validation failed: #{validator.errors.join('; ')}" if validator.errors.any?
+
+      # Create the schema
+      Hyrax::FlexibleSchema.create!(profile: profile_data)
+    end
+
+    def self.tenant_specific_profile_path
+      default_path = Hyrax.config.respond_to?(:default_m3_profile_path) ? Hyrax.config.default_m3_profile_path : HykuKnapsack::DEFAULT_M3_PROFILE_PATH
+      return default_path unless defined?(Account) && Apartment::Tenant.current
+
+      account = Account.find_by(tenant: Apartment::Tenant.current)
+      return default_path unless account
+
+      TenantWorkTypeFilter.tenant_metadata_profile_path(default_path)
+    end
+  end
+end
+# rubocop:enable Metrics/BlockLength

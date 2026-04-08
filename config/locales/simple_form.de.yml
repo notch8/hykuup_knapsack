@@ -1,0 +1,9 @@
+de:
+  simple_form:
+    hints:
+      account:
+        part_of_consortia: "Wählen Sie das Konsortium aus, zu dem dieser Mandant gehört. Dadurch werden verfügbare Arbeitstypen und Metadatenprofile gesteuert."
+        part_of_consortia_edit: "Warnung: Das Ändern des Konsortiums ändert die verfügbaren Arbeitstypen und Metadatenprofile. Dies kann sich auf vorhandene Inhalte auswirken und wird nicht empfohlen."
+    labels:
+      account:
+        part_of_consortia: "Teil von Konsortien"

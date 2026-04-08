@@ -1,0 +1,1747 @@
+---
+m3_version: 1.0.beta2
+profile:
+  date_modified: '2026-03-19'
+  responsibility: https://www.stjude.org/
+  responsibility_statement: St Jude Metadata Profile
+  type: St Jude Metadata Profile
+  version: 4
+classes:
+  GenericWorkResource:
+    display_label: Generic Work
+  ImageResource:
+    display_label: Image
+  EtdResource:
+    display_label: ETD
+  AdminSetResource:
+    display_label: AdminSetResource
+  CollectionResource:
+    display_label: pcdmcollection
+  Hyrax::FileSet:
+    display_label: FileSet
+contexts:
+  flexible_context:
+    display_label: Flexible Metadata Example
+  special_context:
+    display_label: Special Context
+mappings:
+  blacklight:
+    name: Additional Blacklight Solr Mappings
+  metatags:
+    name: Metatags
+  mods_oai_pmh:
+    name: MODS OAI PMH
+  qualified_dc_pmh:
+    name: Qualified DC OAI PMH
+  simple_dc_pmh:
+    name: Simple DC OAI PMH
+properties:
+  title:
+    available_on:
+      class:
+      - AdminSetResource
+      - Hyrax::FileSet
+      - CollectionResource
+      - GenericWorkResource
+      - ImageResource
+      - EtdResource
+    cardinality:
+      minimum: 1
+    data_type: array
+    controlled_values:
+      format: http://www.w3.org/2001/XMLSchema#string
+      sources:
+      - 'null'
+    definition:
+      default: Use title as represented on document; for photographs, describe image
+        as specifically as possible; use dates to disambiguate multiple items with
+        the same or similar titles
+    display_label:
+      en: Title
+      es: Título
+      default: blacklight.search.fields.show.title_tesim
+    index_documentation: displayable, searchable
+    indexing:
+    - title_sim
+    - title_tesim
+    form:
+      required: true
+      primary: true
+      data_type: string
+    mappings:
+      metatags: twitter:title, og:title
+      mods_oai_pmh: mods:titleInfo/mods:title
+      qualified_dc_pmh: dcterms:title
+      simple_dc_pmh: dc:title
+    property_uri: http://purl.org/dc/terms/title
+    range: http://www.w3.org/2001/XMLSchema#string
+    sample_values:
+    - Minutes of the St. Jude Children's Research Hospital Board of Governors, January
+      2011
+    - James Downing with Patient
+    - 'Translating Science into Survival: Scientific Report 2024'
+    view:
+      html_dl: true
+  date_modified:
+    available_on:
+      class:
+      - AdminSetResource
+      - Hyrax::FileSet
+      - CollectionResource
+      - GenericWorkResource
+      - ImageResource
+      - EtdResource
+    cardinality:
+      minimum: 0
+      maximum: 1
+    data_type: string
+    controlled_values:
+      format: http://www.w3.org/2001/XMLSchema#dateTime
+      sources:
+      - 'null'
+    display_label:
+      default: blacklight.search.fields.show.date_modified_dtsi
+    index_documentation: displayable, searchable
+    indexing:
+    - date_modified_dtsi
+    property_uri: http://purl.org/dc/terms/modified
+    range: http://www.w3.org/2001/XMLSchema#dateTime
+    sample_values:
+    - '2025-04-01T12:00:00Z'
+    view:
+      html_dl: true
+  date_uploaded:
+    available_on:
+      class:
+      - AdminSetResource
+      - Hyrax::FileSet
+      - CollectionResource
+      - GenericWorkResource
+      - ImageResource
+      - EtdResource
+    cardinality:
+      minimum: 0
+      maximum: 1
+    data_type: string
+    controlled_values:
+      format: http://www.w3.org/2001/XMLSchema#dateTime
+      sources:
+      - 'null'
+    display_label:
+      default: blacklight.search.fields.show.date_uploaded_dtsi
+    index_documentation: displayable, searchable
+    indexing:
+    - date_uploaded_dtsi
+    property_uri: http://purl.org/dc/terms/dateSubmitted
+    range: http://www.w3.org/2001/XMLSchema#dateTime
+    sample_values:
+    - '2025-04-01T12:00:00Z'
+  depositor:
+    available_on:
+      class:
+      - AdminSetResource
+      - Hyrax::FileSet
+      - CollectionResource
+      - GenericWorkResource
+      - ImageResource
+      - EtdResource
+    cardinality:
+      minimum: 0
+      maximum: 1
+    data_type: string
+    controlled_values:
+      format: http://www.w3.org/2001/XMLSchema#string
+      sources:
+      - 'null'
+    display_label:
+      default: Depositor
+    index_documentation: searchable
+    indexing:
+    - depositor_tesim
+    - depositor_ssim
+    property_uri: http://id.loc.gov/vocabulary/relators/dpt
+    range: http://www.w3.org/2001/XMLSchema#string
+    sample_values:
+    - admin@example.org
+  based_near:
+    available_on:
+      class:
+      - GenericWorkResource
+      - ImageResource
+      - EtdResource
+    cardinality:
+      minimum: 0
+    data_type: array
+    display_label:
+      default: blacklight.search.fields.show.based_near_label
+    index_documentation: displayable, searchable
+    indexing:
+    - based_near_sim
+    - based_near_tesim
+    form:
+      primary: false
+    property_uri: http://xmlns.com/foaf/0.1/based_near
+    range: http://www.w3.org/2001/XMLSchema#string
+  contributor:
+    available_on:
+      class:
+      - Hyrax::FileSet
+      - CollectionResource
+      - GenericWorkResource
+      - ImageResource
+      - EtdResource
+    cardinality:
+      minimum: 0
+    data_type: array
+    controlled_values:
+      format: http://www.w3.org/2001/XMLSchema#string
+      sources:
+      - LCNAF
+      - VIAF
+    definition:
+      default: Content contributor not accounted for in other creator/contributor
+        fields; See "People Represented" for individuals mentioned in the item's content
+    display_label:
+      default: blacklight.search.fields.show.contributor_tesim
+    index_documentation: displayable, searchable
+    indexing:
+    - contributor_tesim
+    - contributor_sim
+    - facetable
+    form:
+      primary: true
+    property_uri: http://purl.org/dc/elements/1.1/contributor
+    range: http://www.w3.org/2001/XMLSchema#string
+    sample_values:
+    - Downing, James R. Pinkel, Donald Mauer, Alvin M., 1928-
+    - St. Jude Children's Research Hospital
+    - St. Jude Children's Research Hospital. Department of Infectious Diseases.
+    view:
+      render_as: linked
+      html_dl: true
+  creator:
+    available_on:
+      class:
+      - Hyrax::FileSet
+      - CollectionResource
+      - GenericWorkResource
+      - ImageResource
+      - EtdResource
+    cardinality:
+      minimum: 1
+    data_type: array
+    controlled_values:
+      format: http://www.w3.org/2001/XMLSchema#string
+      sources:
+      - LCNAF
+      - VIAF
+    definition:
+      default: Match to ArchivesSpace; for OH use Interviewer/ee fields as primary
+        and Creator for the authority responsible for the OH project; be specific
+        to the department level whenever possible, use most current version of department
+        name
+    display_label:
+      default: blacklight.search.fields.show.creator_tesim
+    index_documentation: displayable, searchable
+    indexing:
+    - creator_sim
+    - creator_tesim
+    - facetable
+    form:
+      primary: true
+      required: false
+    property_uri: http://purl.org/dc/elements/1.1/creator
+    range: http://www.w3.org/2001/XMLSchema#string
+    sample_values:
+    - St. Jude Children's Research Hospital
+    - Downing, James R. Pinkel, Donald Mauer, Alvin M., 1928-
+    - St. Jude Children's Research Hospital. Department of Infectious Diseases
+    view:
+      render_as: linked
+      html_dl: true
+  date:
+    available_on:
+      class:
+      - Hyrax::FileSet
+      - GenericWorkResource
+      - ImageResource
+      - EtdResource
+    cardinality:
+      minimum: 1
+    data_type: array
+    controlled_values:
+      format: http://www.w3.org/2001/XMLSchema#string
+      sources:
+      - ISO-8601
+    definition:
+      default: Machine-readable dates only, to the specificity possible; Date ranges
+        separated by space-dash-space
+    display_label:
+      default: blacklight.search.fields.show.date_created_tesim
+    index_documentation: displayable, searchable
+    indexing:
+    - date_sim
+    - date_tesim
+    - date_created_ssi
+    form:
+      primary: true
+      required: false
+    property_uri: http://purl.org/dc/terms/created
+    range: http://www.w3.org/2001/XMLSchema#string
+    sample_values:
+    - '1998-01-23'
+    - 2006-06
+    - '1976'
+    - 2010-2012
+    view:
+      render_as: linked
+      search_field: date_created_tesim
+      html_dl: true
+  description:
+    available_on:
+      class:
+      - Hyrax::FileSet
+      - CollectionResource
+      - GenericWorkResource
+      - ImageResource
+      - EtdResource
+    cardinality:
+      minimum: 0
+    data_type: array
+    controlled_values:
+      format: http://www.w3.org/2001/XMLSchema#string
+      sources:
+      - 'null'
+    definition:
+      default: Describe the contents of file; focus especially on content that are
+        not easily captured through subject headings
+    display_label:
+      default: blacklight.search.fields.show.description_tesim
+    index_documentation: displayable, searchable
+    indexing:
+    - description_sim
+    - description_tesim
+    form:
+      primary: true
+      required: false
+    property_uri: http://purl.org/dc/terms/description
+    range: http://www.w3.org/2001/XMLSchema#string
+    sample_values:
+    - This is a description.
+    view:
+      html_dl: true
+  item_id:
+    available_on:
+      class:
+      - Hyrax::FileSet
+      - GenericWorkResource
+      - ImageResource
+      - EtdResource
+    cardinality:
+      minimum: 1
+    data_type: array
+    controlled_values:
+      format: http://www.w3.org/2001/XMLSchema#string
+      sources:
+      - 'null'
+    definition:
+      default: Usually this is the file name without extension
+    display_label:
+      default: Item ID
+    index_documentation: displayable, searchable
+    indexing:
+    - identifier_sim
+    - identifier_tesim
+    form:
+      data_type: string
+      primary: true
+      required: true
+    property_uri: http://purl.org/dc/terms/identifier
+    range: http://www.w3.org/2001/XMLSchema#string
+    sample_values:
+    - SJ001_00023
+    - SJ001_00023_0345
+    view:
+      render_as: linked
+      search_field: identifier_tesim
+      html_dl: true
+  keyword:
+    available_on:
+      class:
+      - Hyrax::FileSet
+      - CollectionResource
+      - GenericWorkResource
+      - ImageResource
+      - EtdResource
+    cardinality:
+      minimum: 0
+    data_type: array
+    controlled_values:
+      format: http://www.w3.org/2001/XMLSchema#string
+      sources:
+      - 'null'
+    definition:
+      default: Use for local vocab (specific use cases only)
+    display_label:
+      default: blacklight.search.fields.show.keyword
+    index_documentation: displayable, searchable
+    indexing:
+    - keyword_sim
+    - keyword_tesim
+    - facetable
+    form:
+      primary: false
+    property_uri: http://purl.org/dc/terms/subject
+    range: http://www.w3.org/2001/XMLSchema#string
+    sample_values:
+    - Metadata
+    - Repository
+    view:
+      render_as: linked
+      html_dl: true
+  label:
+    available_on:
+      class:
+      - Hyrax::FileSet
+    display_label:
+      default: Label
+    property_uri: info:fedora/fedora-system:def/model#downloadFilename
+    range: http://www.w3.org/2001/XMLSchema#string
+  language:
+    available_on:
+      class:
+      - Hyrax::FileSet
+      - CollectionResource
+      - GenericWorkResource
+      - ImageResource
+      - EtdResource
+    cardinality:
+      minimum: 0
+    data_type: array
+    controlled_values:
+      format: http://www.w3.org/2001/XMLSchema#string
+      sources:
+      - ISO-639-2
+    definition:
+      default: Use code tables; eng for English
+    display_label:
+      default: blacklight.search.fields.show.language_tesim
+    index_documentation: displayable, searchable
+    indexing:
+    - language_sim
+    - language_tesim
+    - facetable
+    form:
+      primary: false
+    property_uri: http://purl.org/dc/terms/language
+    range: http://www.w3.org/2001/XMLSchema#string
+    sample_values:
+    - eng
+    - spa
+    view:
+      render_as: linked
+      html_dl: true
+  license:
+    available_on:
+      class:
+      - Hyrax::FileSet
+      - GenericWorkResource
+      - ImageResource
+      - EtdResource
+    cardinality:
+      minimum: 0
+      maximum: 1
+    data_type: array
+    controlled_values:
+      format: http://www.w3.org/2001/XMLSchema#string
+      sources:
+      - licenses
+    definition:
+      default: A legal document giving official permission to do something with the
+        resource
+    display_label:
+      default: blacklight.search.fields.index.license_tesim
+    index_documentation: displayable, searchable
+    indexing:
+    - license_sim
+    - license_tesim
+    form:
+      data_type: string
+      primary: false
+    property_uri: http://purl.org/dc/terms/license
+    range: http://www.w3.org/2001/XMLSchema#string
+    sample_values:
+    - http://creativecommons.org/licenses/by/3.0/us/
+    view:
+      render_as: external_link
+      html_dl: true
+  publisher:
+    available_on:
+      class:
+      - Hyrax::FileSet
+      - GenericWorkResource
+      - ImageResource
+      - EtdResource
+    cardinality:
+      minimum: 0
+    data_type: array
+    controlled_values:
+      format: http://www.w3.org/2001/XMLSchema#string
+      sources:
+      - LCNAF
+      - VIAF
+    definition:
+      default: Publisher of material that was later made available by the archives,
+        may or may not be SJ entities
+    display_label:
+      default: blacklight.search.fields.show.publisher_tesim
+    index_documentation: displayable, searchable
+    indexing:
+    - publisher_sim
+    - publisher_tesim
+    - facetable
+    form:
+      primary: false
+    property_uri: http://purl.org/dc/elements/1.1/publisher
+    range: http://www.w3.org/2001/XMLSchema#string
+    sample_values:
+    - St. Jude Children's Research Hospital
+    view:
+      render_as: linked
+      html_dl: true
+  rights_statement:
+    available_on:
+      class:
+      - GenericWorkResource
+      - ImageResource
+      - EtdResource
+    cardinality:
+      minimum: 1
+      maximum: 1
+    data_type: array
+    controlled_values:
+      format: http://www.w3.org/2001/XMLSchema#string
+      sources:
+      - rights_statements
+    definition:
+      default: Choose "educational use permitted" whenever feasible; represent as
+        URI
+    display_label:
+      default: Standardized Rights Statement
+    index_documentation: displayable, searchable
+    indexing:
+    - rights_statement_sim
+    - rights_statement_tesim
+    form:
+      primary: true
+      required: true
+      multiple: false
+    property_uri: http://purl.org/dc/terms/RightsStatement
+    range: http://www.w3.org/2001/XMLSchema#string
+    sample_values:
+    - http://rightsstatements.org/vocab/InC-EDU/1.0/
+    - http://rightsstatements.org/vocab/InC/1.0/
+    view:
+      html_dl: true
+      render_as: rights_statement
+  source_collection:
+    available_on:
+      class:
+      - Hyrax::FileSet
+      - GenericWorkResource
+      - ImageResource
+      - EtdResource
+    cardinality:
+      minimum: 1
+    data_type: array
+    controlled_values:
+      format: http://www.w3.org/2001/XMLSchema#string
+      sources:
+      - 'null'
+    definition:
+      default: SJ### or MSS### and official collection title without dates
+    display_label:
+      default: Source Collection
+    index_documentation: displayable, searchable
+    indexing:
+    - source_collection_sim
+    - source_collection_tesim
+    - facetable
+    form:
+      primary: true
+      required: true
+    property_uri: http://purl.org/dc/terms/source
+    range: http://www.w3.org/2001/XMLSchema#string
+    sample_values:
+    - SJ001 Radiology
+    view:
+      html_dl: true
+      render_as: linked
+  subject:
+    available_on:
+      class:
+      - Hyrax::FileSet
+      - CollectionResource
+      - GenericWorkResource
+      - ImageResource
+      - EtdResource
+    cardinality:
+      minimum: 0
+    data_type: array
+    controlled_values:
+      format: http://www.w3.org/2001/XMLSchema#string
+      sources:
+      - Homosaurus
+      - GSSO
+    definition:
+      default: Repeat field for different controlled vocabularies; use GSSO or Homosaurus
+        for LGBTQ+ terminology
+    index_documentation: displayable, searchable
+    display_label:
+      default: blacklight.search.fields.show.subject_tesim
+    indexing:
+    - subject_sim
+    - subject_tesim
+    - facetable
+    form:
+      primary: false
+    property_uri: http://purl.org/dc/terms/subject
+    range: http://www.w3.org/2001/XMLSchema#string
+    sample_values:
+    - transgender man with HIV
+    - AIDS activism
+    - asexual victims of bullying
+    view:
+      html_dl: true
+      render_as: linked
+  rights_notes:
+    available_on:
+      class:
+      - Hyrax::FileSet
+      - CollectionResource
+    cardinality:
+      minimum: 0
+      maximum: 1
+    data_type: array
+    controlled_values:
+      format: http://www.w3.org/2001/XMLSchema#string
+      sources:
+      - 'null'
+    definition:
+      default: Ex. Restricted; Internal use only; permissions on based on the content
+        of this field
+    display_label:
+      default: Rights Notes
+    index_documentation: displayable, searchable
+    indexing:
+    - rights_notes_sim
+    - rights_notes_tesim
+    form:
+      primary: false
+    property_uri: http://purl.org/dc/terms/accessRights
+    range: http://www.w3.org/2001/XMLSchema#string
+    sample_values:
+    - For internal St. Jude use only
+    - Restricted to members of the Department of Radiology
+    view:
+      html_dl: true
+  approximate_date:
+    available_on:
+      class:
+      - GenericWorkResource
+      - ImageResource
+    cardinality:
+      minimum: 0
+    data_type: array
+    controlled_values:
+      format: http://www.w3.org/2001/XMLSchema#string
+      sources:
+      - 'null'
+    definition:
+      default: ca., approx., other non-machine-readable dates; use machine-readable
+        dates whenever possible
+    display_label:
+      default: Approximate Date
+    index_documentation: displayable, searchable
+    indexing:
+    - approximate_date_sim
+    - approximate_date_tesim
+    form:
+      primary: false
+    property_uri: http://purl.org/dc/terms/temporal
+    range: http://www.w3.org/2001/XMLSchema#string
+    sample_values:
+    - ca. 1987
+    - before 1973
+    - between 1967 and 1969
+    view:
+      html_dl: true
+  digital_collection:
+    available_on:
+      class:
+      - GenericWorkResource
+      - ImageResource
+      - EtdResource
+    cardinality:
+      minimum: 1
+      maximum: 1
+    data_type: array
+    controlled_values:
+      format: http://www.w3.org/2001/XMLSchema#string
+      sources:
+      - 'null'
+    definition:
+      default: The name of the digital collection to which the item belongs
+    display_label:
+      default: Digital Collection
+    index_documentation: displayable, searchable
+    indexing:
+    - collection_sim
+    - collection_tesim
+    form:
+      data_type: string
+      primary: true
+      required: true
+    property_uri: http://purl.org/dc/terms/isPartOf
+    range: http://www.w3.org/2001/XMLSchema#string
+    sample_values:
+    - St. Jude Annual Reports Diagnostic Imaging Slides
+    view:
+      html_dl: true
+  copyright:
+    available_on:
+      class:
+      - GenericWorkResource
+      - ImageResource
+      - EtdResource
+    cardinality:
+      minimum: 1
+    data_type: array
+    controlled_values:
+      format: http://www.w3.org/2001/XMLSchema#string
+      sources:
+      - 'null'
+    definition:
+      default: Copyright holder, St. Jude or an individual
+    display_label:
+      default: Copyright
+    index_documentation: displayable, searchable
+    indexing:
+    - copyright_sim
+    - copyright_tesim
+    form:
+      data_type: array
+      primary: true
+      required: true
+    property_uri: http://purl.org/dc/terms/rightsHolder
+    range: http://www.w3.org/2001/XMLSchema#string
+    sample_values:
+    - Copyright St. Jude Children's Research Hospital
+    - Copyright James R. Downing
+    view:
+      html_dl: true
+  digital_publisher:
+    available_on:
+      class:
+      - GenericWorkResource
+      - ImageResource
+      - EtdResource
+    cardinality:
+      minimum: 1
+    data_type: array
+    controlled_values:
+      format: http://www.w3.org/2001/XMLSchema#string
+      sources:
+      - 'null'
+    definition:
+      default: Digital publisher
+    display_label:
+      default: Digital Publisher
+    index_documentation: displayable, searchable
+    indexing:
+    - digital_publisher_sim
+    - digital_publisher_tesim
+    form:
+      primary: true
+      required: true
+    property_uri: http://purl.org/dc/terms/mediator
+    range: http://www.w3.org/2001/XMLSchema#string
+    sample_values:
+    - St. Jude Children's Research Hospital. Archives and Special Collections
+    view:
+      html_dl: true
+  digital_specifications:
+    available_on:
+      class:
+      - GenericWorkResource
+      - ImageResource
+      - EtdResource
+    cardinality:
+      minimum: 0
+    data_type: array
+    controlled_values:
+      format: http://www.w3.org/2001/XMLSchema#string
+      sources:
+      - 'null'
+    definition:
+      default: Be as specific as you can, particularly about resolution; use EXIF
+        data for born-digital content.
+    display_label:
+      default: Digital Specifications
+    index_documentation: displayable, searchable
+    indexing:
+    - digital_specifications_sim
+    - digital_specifications_tesim
+    form:
+      primary: false
+    property_uri: http://purl.org/dc/terms/format
+    range: http://www.w3.org/2001/XMLSchema#string
+    sample_values:
+    - 'Scanner: Epson Expression 13000 XL; Archival image, 4800 dpi; Display image,
+      400 dpi'
+    - 3072 x 2048
+    view:
+      html_dl: true
+  donor:
+    available_on:
+      class:
+      - GenericWorkResource
+      - ImageResource
+    cardinality:
+      minimum: 0
+    data_type: array
+    controlled_values:
+      format: http://www.w3.org/2001/XMLSchema#string
+      sources:
+      - LCNAF
+      - VIAF
+    definition:
+      default: Collection donor
+    display_label:
+      default: Donor
+    index_documentation: displayable, searchable
+    indexing:
+    - donor_sim
+    - donor_tesim
+    form:
+      primary: false
+    property_uri: http://purl.org/dc/terms/contributor
+    range: http://www.w3.org/2001/XMLSchema#string
+    sample_values:
+    - Downing, James R. Pinkel, Donald Mauer, Alvin M., 1928-
+    - St. Jude Children's Research Hospital
+    - St. Jude Children's Research Hospital. Department of Infectious Diseases.
+    view:
+      html_dl: true
+  file_format:
+    available_on:
+      class:
+      - GenericWorkResource
+      - ImageResource
+      - EtdResource
+    cardinality:
+      minimum: 1
+      maximum: 1
+    data_type: array
+    controlled_values:
+      format: http://www.w3.org/2001/XMLSchema#string
+      sources:
+      - MIME/IANA Type
+    definition:
+      default: The file format, physical medium, or dimensions of the resource
+    display_label:
+      default: blacklight.search.fields.show.file_format_tesim
+    index_documentation: searchable
+    indexing:
+    - file_format_sim
+    - file_format_tesim
+    - facetable
+    form:
+      data_type: array
+      primary: true
+      required: true
+    property_uri: http://purl.org/dc/terms/FileFormat
+    range: http://www.w3.org/2001/XMLSchema#string
+    sample_values:
+    - application/pdf
+    - video/mp4
+    - audio/mpeg [for mp3]
+    - application/vnd.openxmlformats-officedocument.wordprocessingml.document [for
+      .docx]
+    view:
+      html_dl: true
+      render_as: linked
+  file_name:
+    available_on:
+      class:
+      - GenericWorkResource
+      - ImageResource
+    cardinality:
+      minimum: 0
+    data_type: array
+    controlled_values:
+      format: http://www.w3.org/2001/XMLSchema#string
+      sources:
+      - 'null'
+    definition:
+      default: If different than ItemID, include extension
+    display_label:
+      default: File Name
+    index_documentation: displayable, searchable
+    indexing:
+    - file_name_sim
+    - file_name_tesim
+    form:
+      primary: false
+    property_uri: http://purl.org/dc/terms/identifier
+    range: http://www.w3.org/2001/XMLSchema#string
+    sample_values:
+    - UL002_0976_347.tif
+    view:
+      html_dl: true
+  finding_aid:
+    available_on:
+      class:
+      - GenericWorkResource
+      - ImageResource
+      - EtdResource
+    cardinality:
+      minimum: 0
+    data_type: array
+    controlled_values:
+      format: http://www.w3.org/2001/XMLSchema#string
+      sources:
+      - 'null'
+    definition:
+      default: URI of ArchivesSpace record
+    display_label:
+      default: Finding Aid
+    index_documentation: displayable, searchable
+    indexing:
+    - finding_aid_tesim
+    form:
+      primary: false
+    property_uri: http://purl.org/dc/terms/isPartOf
+    range: http://www.w3.org/2001/XMLSchema#string
+    sample_values:
+    - URI of ArchivesSpace record
+    view:
+      render_as: external_link
+      html_dl: true
+  funding:
+    available_on:
+      class:
+      - GenericWorkResource
+      - ImageResource
+      - EtdResource
+    cardinality:
+      minimum: 0
+    data_type: array
+    controlled_values:
+      format: http://www.w3.org/2001/XMLSchema#string
+      sources:
+      - 'null'
+    definition:
+      default: For grant-funded projects only.
+    display_label:
+      default: Funding
+    index_documentation: displayable, searchable
+    indexing:
+    - funding_sim
+    - funding_tesim
+    form:
+      primary: false
+    property_uri: http://purl.org/dc/terms/contributor
+    range: http://www.w3.org/2001/XMLSchema#string
+    sample_values:
+    - Digitization made possible by a grant from the Central Indiana Community Foundation
+      (CICF)
+    - Research reported in this publication was supported by the National Institute
+      of General
+    - Medical Sciences of the National Institutes of Health under award number R01GM085232
+    view:
+      html_dl: true
+  genre:
+    available_on:
+      class:
+      - GenericWorkResource
+      - ImageResource
+      - EtdResource
+    cardinality:
+      minimum: 1
+    data_type: array
+    controlled_values:
+      format: http://www.w3.org/2001/XMLSchema#string
+      sources:
+      - AAT
+    definition:
+      default: Choose the most specific AAT term that fits.
+    display_label:
+      default: Genre
+    index_documentation: displayable, searchable
+    indexing:
+    - genre_sim
+    - genre_tesim
+    - facetable
+    form:
+      primary: true
+      required: true
+    property_uri: http://purl.org/dc/terms/type
+    range: http://www.w3.org/2001/XMLSchema#string
+    sample_values:
+    - Personal narratives
+    - Oral histories (literary genre)
+    - Minutes (administrative records)
+    - Laboratory notebooks
+    - Black-and-white photographs
+    - Color photographs
+    - Digital photographs
+    view:
+      render_as: linked
+      html_dl: true
+  geographic_location:
+    available_on:
+      class:
+      - ImageResource
+    cardinality:
+      minimum: 0
+    data_type: array
+    controlled_values:
+      format: http://www.w3.org/2001/XMLSchema#string
+      sources:
+      - GeoNames
+    definition:
+      default: Spatial characteristics of a resource
+    display_label:
+      default: Use only in collections for which location is important. Name, URI;
+        this is tricky to search and usually requires county, state and then browsing
+        or using the map to navigate more specific points
+    index_documentation: displayable, searchable
+    indexing:
+    - location_sim
+    - location_tesim
+    form:
+      primary: false
+    property_uri: http://purl.org/dc/terms/spatial
+    range: http://www.w3.org/2001/XMLSchema#string
+    sample_values:
+    - Memphis, https://www.geonames.org/4641239/memphis.html
+    - Saint Jude Children's Research Hospital, https://www.geonames.org/4655284/saint-jude-childrens-research-hospital.html
+    view:
+      html_dl: true
+  lcsh_subject:
+    available_on:
+      class:
+      - GenericWorkResource
+      - ImageResource
+      - EtdResource
+    cardinality:
+      minimum: 0
+    multi_value: true
+    controlled_values:
+      format: http://www.w3.org/2001/XMLSchema#string
+      sources:
+      - loc/subjects
+    display_label:
+      default: Subject (LCSH)
+    index_documentation: displayable, searchable
+    indexing:
+    - lcsh_subject_sim
+    - lcsh_subject_tesim
+    - facetable
+    form:
+      primary: false
+    property_uri: http://purl.org/dc/terms/LCSH
+    range: http://www.w3.org/2001/XMLSchema#string
+    definition:
+      default: Use for non-biomedical terms, particularly situations that describe
+        activities or events; keep subdivisions to a minimum, they aren't particularly
+        helpful in our systems.
+    sample_values:
+    - Solar eclipses
+    - Relics
+    - Marathon running
+    view:
+      html_dl: true
+      render_as: linked
+  mesh_subject:
+    available_on:
+      class:
+      - GenericWorkResource
+      - ImageResource
+      - EtdResource
+    cardinality:
+      minimum: 1
+    data_type: array
+    controlled_values:
+      format: http://www.w3.org/2001/XMLSchema#string
+      sources:
+      - mesh
+    definition:
+      default: Use for biomedical terms, particularly situations that describe diseases
+        or conditions.
+    display_label:
+      default: Subject (MeSH)
+    index_documentation: displayable, searchable
+    indexing:
+    - mesh_subject_sim
+    - mesh_subject_tesim
+    - facetable
+    form:
+      primary: true
+    property_uri: http://purl.org/dc/terms/MeSH
+    range: http://www.w3.org/2001/XMLSchema#string
+    sample_values:
+    - Chondrosarcoma
+    - Influenza A Virus, H5N1 Subtype
+    - Clinical Trial
+    view:
+      html_dl: true
+      render_as: linked
+  note:
+    available_on:
+      class:
+      - GenericWorkResource
+      - ImageResource
+      - EtdResource
+    cardinality:
+      minimum: 0
+    data_type: array
+    controlled_values:
+      format: http://www.w3.org/2001/XMLSchema#string
+      sources:
+      - 'null'
+    definition:
+      default: Use to capture annotations or make corrections to information in the
+        file.
+    display_label:
+      default: Note
+    index_documentation: displayable, searchable
+    indexing:
+    - note_sim
+    - note_tesim
+    form:
+      primary: false
+    property_uri: http://purl.org/dc/terms/description
+    range: http://www.w3.org/2001/XMLSchema#string
+    sample_values:
+    - 'On back of photo:  Class of 1997'
+    - Photo misidentified as James T. Kirk
+    view:
+      html_dl: true
+  people_represented:
+    available_on:
+      class:
+      - GenericWorkResource
+      - ImageResource
+    cardinality:
+      minimum: 1
+    data_type: array
+    controlled_values:
+      format: http://www.w3.org/2001/XMLSchema#string
+      sources:
+      - LCNAF
+      - VIAF
+    definition:
+      default: Use to separate out proper names from other subject headings; see Creator
+        and Contributor for additional examples
+    display_label:
+      default: People Represented
+    index_documentation: displayable, searchable
+    indexing:
+    - people_represented_sim
+    - people_represented_tesim
+    - facetable
+    form:
+      data_type: array
+      primary: true
+      required: false
+    property_uri: http://purl.org/dc/terms/subject
+    range: http://www.w3.org/2001/XMLSchema#string
+    sample_values:
+    - Geiger, Terrence L.
+    - Britton, Robert
+    view:
+      html_dl: true
+      render_as: linked
+  physical_description:
+    available_on:
+      class:
+      - GenericWorkResource
+      - ImageResource
+      - EtdResource
+    cardinality:
+      minimum: 0
+    data_type: array
+    controlled_values:
+      format: http://www.w3.org/2001/XMLSchema#string
+      sources:
+      - RDA
+    definition:
+      default: Contains items like number of pages, number of volumes, dimensions,
+        etc.
+    display_label:
+      default: Physical Description
+    index_documentation: displayable, searchable
+    indexing:
+    - physical_description_sim
+    - physical_description_tesim
+    form:
+      primary: false
+    property_uri: http://purl.org/dc/terms/extent
+    range: http://www.w3.org/2001/XMLSchema#string
+    sample_values:
+    - 113 pages
+    - 1 volume
+    - 2 CD-ROMs
+    view:
+      html_dl: true
+  repository:
+    available_on:
+      class:
+      - GenericWorkResource
+      - ImageResource
+      - EtdResource
+    cardinality:
+      minimum: 1
+    data_type: array
+    controlled_values:
+      format: http://www.w3.org/2001/XMLSchema#string
+      sources:
+      - LCNAF
+      - VIAF
+    definition:
+      default: Name of repository or owning institution
+    display_label:
+      default: Owning Institution
+    index_documentation: displayable, searchable
+    indexing:
+    - repository_sim
+    - repository_tesim
+    form:
+      primary: true
+      required: true
+    property_uri: http://purl.org/dc/elements/1.1/publisher
+    range: http://www.w3.org/2001/XMLSchema#string
+    sample_values:
+    - St. Jude Children's Research Hospital. Archives and Special Collections
+    view:
+      html_dl: true
+  time_period:
+    available_on:
+      class:
+      - GenericWorkResource
+      - ImageResource
+      - EtdResource
+    cardinality:
+      minimum: 1
+    data_type: array
+    controlled_values:
+      format: http://www.w3.org/2001/XMLSchema#string
+      sources:
+      - 'null'
+    definition:
+      default: Decade range, space-dash-space between dates; use whole decades only.
+    display_label:
+      default: Time Period
+    index_documentation: displayable, searchable
+    indexing:
+    - time_period_sim
+    - time_period_tesim
+    - facetable
+    form:
+      primary: true
+      required: false
+    property_uri: http://purl.org/dc/terms/temporal
+    range: http://www.w3.org/2001/XMLSchema#string
+    sample_values:
+    - 1970 - 1979
+    - 1980 - 1989
+    view:
+      html_dl: true
+      render_as: linked
+  type:
+    available_on:
+      class:
+      - GenericWorkResource
+      - ImageResource
+      - EtdResource
+    cardinality:
+      minimum: 1
+      maximum: 1
+    data_type: array
+    controlled_values:
+      format: http://www.w3.org/2001/XMLSchema#string
+      sources:
+      - DCMIType
+    definition:
+      default: Nature or genre of the resource
+    display_label:
+      default: Type
+    index_documentation: displayable, searchable
+    indexing:
+    - type_sim
+    - type_tesim
+    - facetable
+    form:
+      primary: true
+      required: true
+    property_uri: http://purl.org/dc/terms/type
+    range: http://www.w3.org/2001/XMLSchema#string
+    sample_values:
+    - StillImage
+    - MovingImage
+    - Sound
+    - Text
+    - Dataset
+    - Collection
+    view:
+      html_dl: true
+      render_as: linked
+  uniform_title:
+    available_on:
+      class:
+      - GenericWorkResource
+    cardinality:
+      minimum: 0
+    data_type: array
+    controlled_values:
+      format: http://www.w3.org/2001/XMLSchema#string
+      sources:
+      - 'null'
+    definition:
+      default: To capture consistency with title changes or otherwise inconsistent
+        titles. Use most recent version for current publications or longest used name
+        for discontinued publications.
+    display_label:
+      default: Uniform Title
+    index_documentation: displayable, searchable
+    indexing:
+    - uniform_title_sim
+    - uniform_title_tesim
+    - facetable
+    form:
+      primary: false
+    property_uri: http://purl.org/dc/terms/alternative
+    range: http://www.w3.org/2001/XMLSchema#string
+    sample_values:
+    - St. Jude Journal
+    - Promise Magazine
+    - Board Meeting Minutes
+    - Scientific Report
+    view:
+      html_dl: true
+      render_as: linked
+  advisor:
+    available_on:
+      class:
+      - EtdResource
+    cardinality:
+      minimum: 1
+    data_type: array
+    controlled_values:
+      format: http://www.w3.org/2001/XMLSchema#string
+      sources:
+      - LCNAF
+      - VIAF
+    definition:
+      default: Advisor of the degree.
+    display_label:
+      default: Advisor
+    index_documentation: displayable, searchable
+    indexing:
+    - advisor_sim
+    - advisor_tesim
+    - facetable
+    form:
+      primary: true
+      required: true
+    property_uri: http://purl.org/dc/terms/contributor
+    range: http://www.w3.org/2001/XMLSchema#string
+    sample_values:
+    - Varga, Stephen
+    view:
+      html_dl: true
+      render_as: linked
+  committee_member:
+    available_on:
+      class:
+      - EtdResource
+    cardinality:
+      minimum: 0
+    data_type: array
+    controlled_values:
+      format: http://www.w3.org/2001/XMLSchema#string
+      sources:
+      - LCNAF
+      - VIAF
+    definition:
+      default: Committee member of the degree.
+    display_label:
+      default: Committee Member
+    index_documentation: displayable, searchable
+    indexing:
+    - committee_member_sim
+    - committee_member_tesim
+    - facetable
+    form:
+      primary: false
+    property_uri: http://purl.org/dc/terms/contributor
+    range: http://www.w3.org/2001/XMLSchema#string
+    sample_values:
+    - Varga, Stephen
+    view:
+      html_dl: true
+      render_as: linked
+  degree:
+    available_on:
+      class:
+      - EtdResource
+    cardinality:
+      minimum: 1
+    data_type: array
+    controlled_values:
+      format: http://www.w3.org/2001/XMLSchema#string
+      sources:
+      - 'null'
+    definition:
+      default: Degree conferred.
+    display_label:
+      default: Degree
+    index_documentation: displayable, searchable
+    indexing:
+    - degree_sim
+    - degree_tesim
+    - facetable
+    form:
+      primary: true
+      required: true
+    property_uri: http://purl.org/dc/terms/educationLevel
+    range: http://www.w3.org/2001/XMLSchema#string
+    sample_values:
+    - Biomedical Sciences, Clinical Investigations
+    view:
+      html_dl: true
+      render_as: linked
+  discipline:
+    available_on:
+      class:
+      - EtdResource
+    cardinality:
+      minimum: 0
+    data_type: array
+    controlled_values:
+      format: http://www.w3.org/2001/XMLSchema#string
+      sources:
+      - MeSH
+    definition:
+      default: Use only if different than Degree.
+    display_label:
+      default: blacklight.search.fields.index.discipline_tesim
+    index_documentation: displayable, searchable
+    indexing:
+    - discipline_sim
+    - discipline_tesim
+    form:
+      primary: false
+    property_uri: http://purl.org/dc/terms/subject
+    range: http://www.w3.org/2001/XMLSchema#string
+    sample_values:
+    - Discipline
+    view:
+      html_dl: true
+  grantor:
+    available_on:
+      class:
+      - EtdResource
+    cardinality:
+      minimum: 1
+    data_type: array
+    controlled_values:
+      format: http://www.w3.org/2001/XMLSchema#string
+      sources:
+      - LCNAF
+      - VIAF
+    definition:
+      default: Grantor of the degree.
+    display_label:
+      default: Grantor
+    index_documentation: displayable, searchable
+    indexing:
+    - grantor_sim
+    - grantor_tesim
+    form:
+      primary: true
+      required: true
+    property_uri: http://purl.org/dc/terms/publisher
+    range: http://www.w3.org/2001/XMLSchema#string
+    sample_values:
+    - St. Jude Graduate School of Biomedical Sciences
+    view:
+      html_dl: true
+  level:
+    available_on:
+      class:
+      - EtdResource
+    cardinality:
+      minimum: 1
+    data_type: array
+    controlled_values:
+      format: http://www.w3.org/2001/XMLSchema#string
+      sources:
+      - 'null'
+    definition:
+      default: Level of degree conferred.
+    display_label:
+      default: Level
+    index_documentation: displayable, searchable
+    indexing:
+    - level_sim
+    - level_tesim
+    - facetable
+    form:
+      primary: true
+      required: true
+    property_uri: http://purl.org/dc/terms/educationLevel
+    range: http://www.w3.org/2001/XMLSchema#string
+    sample_values:
+    - MA, MS, PhD
+    view:
+      html_dl: true
+      render_as: linked
+  bulkrax_identifier:
+    available_on:
+      class:
+      - Hyrax::FileSet
+      - CollectionResource
+      - GenericWorkResource
+      - ImageResource
+      - EtdResource
+    cardinality:
+      minimum: 0
+      maximum: 1
+    data_type: string
+    controlled_values:
+      format: http://www.w3.org/2001/XMLSchema#string
+      sources:
+      - 'null'
+    definition:
+      default: 'Internal: Bulkrax identifier'
+    display_label:
+      default: Bulkrax Identifier
+    index_documentation: displayable, searchable
+    indexing:
+    - bulkrax_identifier_tesi
+    - bulkrax_identifier_ssi
+    form:
+      display: false
+      primary: false
+      required: false
+    property_uri: https://hykucommons.org/terms/bulkrax_identifier
+    range: http://www.w3.org/2001/XMLSchema#string
+    sample_values:
+    - example-bulkrax-identifier
+  show_pdf_viewer:
+    available_on:
+      class:
+      - GenericWorkResource
+      - ImageResource
+      - EtdResource
+    cardinality:
+      minimum: 0
+      maximum: 1
+    data_type: string
+    controlled_values:
+      format: http://www.w3.org/2001/XMLSchema#bool
+      sources:
+      - 'null'
+    display_label:
+      default: Show PDF Viewer
+    index_documentation: displayable, searchable
+    indexing:
+    - show_pdf_viewer_bsi
+    form:
+      display: false
+      primary: false
+      required: false
+      multiple: false
+    property_uri: http://id.loc.gov/vocabulary/identifiers/show_pdf_viewer
+    range: http://www.w3.org/2001/XMLSchema#bool
+    sample_values:
+    - '0'
+    - '1'
+  show_pdf_download_button:
+    available_on:
+      class:
+      - GenericWorkResource
+      - ImageResource
+      - EtdResource
+    cardinality:
+      minimum: 0
+      maximum: 1
+    data_type: string
+    controlled_values:
+      format: http://www.w3.org/2001/XMLSchema#bool
+      sources:
+      - 'null'
+    definition:
+      default: Show PDF Download Button
+    display_label:
+      default: Show PDF Download Button
+    index_documentation: displayable, searchable
+    indexing:
+    - show_pdf_download_button_bsi
+    form:
+      display: false
+      primary: false
+      required: false
+      multiple: false
+    property_uri: http://id.loc.gov/vocabulary/identifiers/show_pdf_download_button
+    range: http://www.w3.org/2001/XMLSchema#bool
+    sample_values:
+    - '0'
+    - '1'
+  is_child:
+    available_on:
+      class:
+      - GenericWorkResource
+      - ImageResource
+      - EtdResource
+    cardinality:
+      minimum: 0
+      maximum: 1
+    data_type: string
+    controlled_values:
+      format: http://www.w3.org/2001/XMLSchema#bool
+      sources:
+      - 'null'
+    display_label:
+      default: Is Child
+    index_documentation: displayable, searchable
+    indexing:
+    - is_child_bsi
+    form:
+      display: false
+      required: false
+      primary: false
+      multiple: false
+    property_uri: http://id.loc.gov/vocabulary/identifiers/isChild
+    range: http://www.w3.org/2001/XMLSchema#bool
+    sample_values:
+    - true
+    - false
+  split_from_pdf_id:
+    available_on:
+      class:
+      - GenericWorkResource
+      - ImageResource
+      - EtdResource
+    cardinality:
+      minimum: 0
+      maximum: 1
+    data_type: string
+    controlled_values:
+      format: http://www.w3.org/2001/XMLSchema#string
+      sources:
+      - 'null'
+    definition:
+      default: 'Internal: Split from PDF ID'
+    display_label:
+      default: Split from PDF ID
+    index_documentation: searchable
+    indexing:
+    - split_from_pdf_id_ssi
+    form:
+      display: false
+      required: false
+      primary: false
+      multiple: false
+    property_uri: http://id.loc.gov/vocabulary/identifiers/splitFromPdfId
+    range: http://www.w3.org/2001/XMLSchema#string
+    sample_values:
+    - example-split-from-pdf-id
+  rights_statement_optional:
+    name: rights_statement
+    available_on:
+      class:
+      - Hyrax::FileSet
+    cardinality:
+      minimum: 0
+    data_type: array
+    controlled_values:
+      format: http://www.w3.org/2001/XMLSchema#string
+      sources:
+      - RightsStatements.org
+    display_label:
+      default: blacklight.search.fields.index.rights_statement_tesim
+    index_documentation: displayable, searchable
+    indexing:
+    - rights_statement_sim
+    - rights_statement_tesim
+    form:
+      primary: false
+      required: false
+    property_uri: http://purl.org/dc/terms/RightsStatement
+    range: http://www.w3.org/2001/XMLSchema#string
+    sample_values:
+    - http://rightsstatements.org/vocab/InC-EDU/1.0/
+    - http://rightsstatements.org/vocab/InC/1.0/
+    view:
+      html_dl: true
+      render_as: rights_statement
+  alt_text:
+    available_on:
+      class:
+      - Hyrax::FileSet
+    cardinality:
+      minimum: 0
+      maximum: 1
+    data_type: array
+    controlled_values:
+      format: http://www.w3.org/2001/XMLSchema#string
+      sources:
+      - 'null'
+    display_label:
+      default: blacklight.search.fields.index.alt_text_tesim
+    index_documentation: displayable, searchable
+    indexing:
+    - alt_text_sim
+    - alt_text_tesim
+    form:
+      primary: true
+    property_uri: https://schema.org/description
+    range: http://www.w3.org/2001/XMLSchema#string
+    sample_values:
+    - A description of the file for accessibility purposes.
+    view:
+      html_dl: true
+  creator_hidden:
+    name: creator
+    available_on:
+      class:
+      - AdminSetResource
+    cardinality:
+      minimum: 0
+    data_type: array
+    controlled_values:
+      format: http://www.w3.org/2001/XMLSchema#string
+      sources:
+      - 'null'
+    display_label:
+      default: blacklight.search.fields.show.creator_tesim
+    index_documentation: displayable, searchable
+    indexing:
+    - creator_sim
+    - creator_tesim
+    - facetable
+    form:
+      display: false
+    property_uri: http://purl.org/dc/elements/1.1/creator
+    range: http://www.w3.org/2001/XMLSchema#string
+    sample_values:
+    - Julie Allinson
+    view:
+      render_as: linked
+      html_dl: true
+    mappings:
+      simple_dc_pmh: dc:creator
