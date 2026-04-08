@@ -1,7 +1,7 @@
 # POC deployment - to tear down:
-#   kubectl delete namespace hykuup-knapsack-zone-friends --context r2-friends
-#   Drop the PostgreSQL database: hykuup-knapsack-zone-friends
-#   Remove DNS entries for hykuup-knapsack-zone-friends.notch8.cloud if added
+#   kubectl delete namespace hykuup-knapsack-friends-zone --context r2-friends
+#   Drop the PostgreSQL database: hykuup-knapsack-friends-zone
+#   Remove DNS entries for hykuup-knapsack-friends-zone.notch8.cloud if added
 #   EFS-backed PVCs (branding, derivatives, uploads) will also persist after namespace deletion
 #     and will have to be deleted separately
 replicaCount: 2
@@ -57,10 +57,10 @@ ingress:
   enabled: true
   ingressClassName: "nginx-ingress"
   hosts:
-    - host: "hykuup-knapsack-zone-friends.notch8.cloud"
+    - host: "hykuup-knapsack-friends-zone.notch8.cloud"
       paths:
         - path: /
-    - host: "*.hykuup-knapsack-zone-friends.notch8.cloud"
+    - host: "*.hykuup-knapsack-friends-zone.notch8.cloud"
       paths:
         - path: /
   annotations: {
@@ -69,9 +69,9 @@ ingress:
   }
   tls:
     - hosts:
-        - "hykuup-knapsack-zone-friends.notch8.cloud"
-        - "*.hykuup-knapsack-zone-friends.notch8.cloud"
-      secretName: hykuup-knapsack-zone-friends-tls
+        - "hykuup-knapsack-friends-zone.notch8.cloud"
+        - "*.hykuup-knapsack-friends-zone.notch8.cloud"
+      secretName: hykuup-knapsack-friends-zone-tls
 
 extraEnvVars: &envVars
   - name: BUNDLE_LOCAL__HYKU_KNAPSACK
@@ -89,11 +89,11 @@ extraEnvVars: &envVars
   - name: DB_HOST
     value: postgres-postgresql.postgres.svc.cluster.local
   - name: DB_NAME
-    value: hykuup-knapsack-zone-friends
+    value: hykuup-knapsack-friends-zone
   - name: DB_USER
     value: postgres
   - name: FCREPO_BASE_PATH
-    value: /hykuup-knapsack-zone-friends
+    value: /hykuup-knapsack-friends-zone
   - name: FCREPO_HOST
     value: fcrepo.fcrepo.svc.cluster.local
   - name: FCREPO_PORT
@@ -103,7 +103,7 @@ extraEnvVars: &envVars
   - name: GOOGLE_ANALYTICS_ID
     value: $GOOGLE_ANALYTICS_ID
   - name: GOOGLE_OAUTH_APP_NAME
-    value: hykuup-knapsack-zone-friends
+    value: hykuup-knapsack-friends-zone
   - name: GOOGLE_OAUTH_APP_VERSION
     value: '1.0'
   - name: GOOGLE_OAUTH_PRIVATE_KEY_SECRET
@@ -113,7 +113,7 @@ extraEnvVars: &envVars
   - name: GOOGLE_OAUTH_PRIVATE_KEY_VALUE
     value: $GOOGLE_OAUTH_PRIVATE_KEY_VALUE
   - name: GOOGLE_OAUTH_CLIENT_EMAIL
-    value: hyku-demo@hykuup-knapsack-zone-friends.notch8.cloud
+    value: hyku-demo@hykuup-knapsack-friends-zone.notch8.cloud
   - name: INITIAL_ADMIN_EMAIL
     value: admin@example.com
   - name: INITIAL_ADMIN_PASSWORD
@@ -125,7 +125,7 @@ extraEnvVars: &envVars
   - name: PASSENGER_APP_ENV
     value: production
   - name: RAILS_CACHE_STORE_URL
-    value: redis://:$REDIS_PASSWORD@hykuup-knapsack-zone-friends-redis-master:6379/0
+    value: redis://:$REDIS_PASSWORD@hykuup-knapsack-friends-zone-redis-master:6379/0
   - name: RAILS_ENV
     value: production
   - name: RAILS_LOG_TO_STDOUT
@@ -135,9 +135,9 @@ extraEnvVars: &envVars
   - name: RAILS_SERVE_STATIC_FILES
     value: "true"
   - name: REDIS_HOST
-    value: hykuup-knapsack-zone-friends-redis-master
+    value: hykuup-knapsack-friends-zone-redis-master
   - name: REDIS_URL
-    value: redis://:$REDIS_PASSWORD@hykuup-knapsack-zone-friends-redis-master:6379/0
+    value: redis://:$REDIS_PASSWORD@hykuup-knapsack-friends-zone-redis-master:6379/0
   - name: HYRAX_ACTIVE_JOB_QUEUE
     value: good_job
   - name: HYRAX_ANALYTICS
@@ -157,23 +157,23 @@ extraEnvVars: &envVars
   - name: HYKU_BLOCK_VALKYRIE_REDIRECT
     value: "false"
   - name: HYKU_CONTACT_EMAIL
-    value: example@hykuup-knapsack-zone-friends.notch8.cloud
+    value: example@hykuup-knapsack-friends-zone.notch8.cloud
   - name: HYKU_CONTACT_EMAIL_TO
-    value: example@hykuup-knapsack-zone-friends.notch8.cloud
+    value: example@hykuup-knapsack-friends-zone.notch8.cloud
   - name: HYKU_FILE_ACL
     value: "true"
   - name: HYKU_ADMIN_HOST
-    value: hykuup-knapsack-zone-friends.notch8.cloud
+    value: hykuup-knapsack-friends-zone.notch8.cloud
   - name: HYKU_ADMIN_ONLY_TENANT_CREATION
     value: "false"
   - name: HYKU_ALLOW_SIGNUP
     value: "false"
   - name: HYKU_DEFAULT_HOST
-    value: "%{tenant}.hykuup-knapsack-zone-friends.notch8.cloud"
+    value: "%{tenant}.hykuup-knapsack-friends-zone.notch8.cloud"
   - name: HYKU_MULTITENANT
     value: "true"
   - name: HYKU_ROOT_HOST
-    value: hykuup-knapsack-zone-friends.notch8.cloud
+    value: hykuup-knapsack-friends-zone.notch8.cloud
   - name: HYKU_SHOW_BACKTRACE
     value: "true"
   - name: NEGATIVE_CAPTCHA_SECRET
@@ -199,11 +199,11 @@ extraEnvVars: &envVars
   - name: SOLR_ADMIN_PASSWORD
     value: $SOLR_ADMIN_PASSWORD
   - name: SOLR_COLLECTION_NAME
-    value: hykuup-knapsack-zone-friends
+    value: hykuup-knapsack-friends-zone
   - name: SOLR_COLLECTION_REPLICAS
     value: "3"
   - name: SOLR_CONFIGSET_NAME
-    value: hykuup-knapsack-zone-friends
+    value: hykuup-knapsack-friends-zone
   - name: SOLR_HOST
     value: solr.solr-poc
   - name: SOLR_PORT
@@ -213,7 +213,7 @@ extraEnvVars: &envVars
   - name: SENTRY_DSN
     value: $SENTRY_DSN
   - name: SENTRY_ENVIRONMENT
-    value: "hykuup-knapsack-zone-friends"
+    value: "hykuup-knapsack-friends-zone"
   - name: TEST_USER_EMAIL
     value: user@example.com
   - name: TEST_USER_PASSWORD
@@ -282,7 +282,7 @@ externalPostgresql:
 
 externalSolrHost: solr.solr-poc.svc.cluster.local
 externalSolrUser: admin
-externalSolrCollection: "hykuup-knapsack-zone-friends"
+externalSolrCollection: "hykuup-knapsack-friends-zone"
 externalSolrPassword: $SOLR_ADMIN_PASSWORD
 
 fits:
@@ -298,7 +298,7 @@ fits:
   subPath: /fits
 
 global:
-  hyraxName: hykuup-knapsack-zone-friends-hyrax
+  hyraxName: hykuup-knapsack-friends-zone-hyrax
 
 nginx:
   enabled: false
