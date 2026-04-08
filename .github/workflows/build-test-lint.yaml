@@ -9,6 +9,17 @@ on:
     branches:
       - main
   workflow_dispatch:
+    inputs:
+      debug_step:
+        required: false
+        description: 'Pause the selected step to debug using tmate'
+        type: choice
+        default: ''
+        options:
+          - ''
+          - build
+          - test
+          - lint
 
 jobs:
   build:
