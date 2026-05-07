@@ -249,11 +249,6 @@ worker:
     requests:
       memory: "4Gi"
       cpu: "100m"
-  # podSecurityContext:
-  #   runAsUser: 1001
-  #   runAsGroup: 101
-  #   fsGroup: 101
-  #   fsGroupChangePolicy: "OnRootMismatch"
   extraVolumeMounts: *volMounts
   extraEnvVars: *envVars
   podSecurityContext: *podSecValues
