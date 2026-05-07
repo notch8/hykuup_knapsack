@@ -53,13 +53,7 @@ ingress:
     - host: '*.hykuup.com'
       paths:
         - path: /
-    - host: '*.digitalmobius.org'
-      paths:
-        - path: /
     - host: mobius-origin.notch8.cloud
-      paths:
-        - path: /
-    - host: repo.samvera.org
       paths:
         - path: /
   annotations: {
