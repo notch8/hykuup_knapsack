@@ -53,6 +53,12 @@ ingress:
     - host: '*.hykuup.com'
       paths:
         - path: /
+    - host: 'digitalmobius.org'
+      paths:
+        - path: /
+    - host: '*.digitalmobius.org'
+      paths:
+        - path: /
     - host: mobius-origin.notch8.cloud
       paths:
         - path: /
@@ -70,9 +76,6 @@ ingress:
     - secretName: mobius-origin-tls
       hosts:
         - mobius-origin.notch8.cloud
-    - secretName: samvera-repo-tls
-      hosts:
-        - repo.samvera.org
 
 extraEnvVars: &envVars
   - name: BUNDLE_LOCAL__HYKU_KNAPSACK
