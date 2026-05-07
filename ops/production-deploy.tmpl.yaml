@@ -56,6 +56,9 @@ ingress:
     - host: mobius-origin.notch8.cloud
       paths:
         - path: /
+    - host: repo.samvera.org
+      paths:
+        - path: /
   annotations: {
     nginx.org/client-max-body-size: "0",
     cert-manager.io/cluster-issuer: letsencrypt-production-dns
@@ -67,6 +70,9 @@ ingress:
     - secretName: mobius-origin-tls
       hosts:
         - mobius-origin.notch8.cloud
+    - secretName: samvera-repo-tls
+      hosts:
+        - repo.samvera.org
 
 extraEnvVars: &envVars
   - name: BUNDLE_LOCAL__HYKU_KNAPSACK
