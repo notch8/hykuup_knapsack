@@ -48,19 +48,25 @@ extraVolumeMounts: &volMounts
 
 ingress:
   enabled: true
+  ingressClassName: "nginx-ingress"
   hosts:
     - host: '*.hykuup.com'
       paths:
         - path: /
+    - host: mobius-origin.notch8.cloud
+      paths:
+        - path: /
   annotations: {
-    kubernetes.io/ingress.class: "nginx",
-    nginx.ingress.kubernetes.io/proxy-body-size: "0",
+    nginx.org/client-max-body-size: "0",
     cert-manager.io/cluster-issuer: letsencrypt-production-dns
   }
   tls:
     - secretName: wildcard-tls-secret
       hosts:
         - '*.hykuup.com'
+    - secretName: mobius-origin-tls
+      hosts:
+        - mobius-origin.notch8.cloud
 
 extraEnvVars: &envVars
   - name: BUNDLE_LOCAL__HYKU_KNAPSACK
@@ -243,11 +249,6 @@ worker:
     requests:
       memory: "4Gi"
       cpu: "100m"
-  podSecurityContext:
-    runAsUser: 1001
-    runAsGroup: 101
-    fsGroup: 101
-    fsGroupChangePolicy: "OnRootMismatch"
   extraVolumeMounts: *volMounts
   extraEnvVars: *envVars
   podSecurityContext: *podSecValues
