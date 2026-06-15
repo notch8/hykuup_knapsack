@@ -58,6 +58,7 @@ ingress:
         - path: /
   annotations: {
     nginx.org/client-max-body-size: "0",
+    nginx.org/proxy-connect-timeout: "120s",
     cert-manager.io/cluster-issuer: letsencrypt-production-dns
   }
   tls:
