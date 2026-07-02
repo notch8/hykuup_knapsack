@@ -10,9 +10,7 @@ on:
         type: choice
         options:
           - friends
-          - friends-zone
           - staging
-          - argo
           - production
       debug_enabled:
         type: boolean
