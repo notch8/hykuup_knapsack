@@ -390,7 +390,7 @@ nginx:
         }
 
         # serve static (compiled) assets / branding images directly if they exist
-        location ~ ^/(assets|packs|fonts|images|javascripts|stylesheets|swfs|system|uv)/ {
+        location ~ ^/(assets|packs|fonts|images|javascripts|stylesheets|swfs|system|uv|pdf\.js)/ {
           try_files ${DOLLAR}uri @rails;
 
           gzip_static on; # to serve pre-gzipped version
