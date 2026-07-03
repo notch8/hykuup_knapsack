@@ -304,12 +304,32 @@ nginx:
     - name: "uploads"
       persistentVolumeClaim:
         claimName: "{{ .Values.global.hyraxHostName }}-uploads"
+    - name: "branding"
+      persistentVolumeClaim:
+        claimName: "{{ .Values.global.hyraxHostName }}-branding"
   extraVolumeMounts:
     - name: uploads
       mountPath: /app/samvera/hyrax-webapp/public/system
       subPath: public-system
-  # Serves /system (Site branding images: logo/banner/favicon) directly from
-  # the shared EFS PVC so these requests never tie up a Puma worker.
+    - name: branding
+      mountPath: /app/samvera/hyrax-webapp/public/branding
+    # public/assets, public/pdf.js, public/uv are baked into the Rails image
+    # at build time, not persisted anywhere - these subPaths are empty until
+    # a deploy-time copy step (tracked separately) populates them. Until then
+    # nginx finds nothing here and falls through to @rails via try_files,
+    # same as today's un-mounted behavior.
+    - name: uploads
+      mountPath: /app/samvera/hyrax-webapp/public/assets
+      subPath: public-assets
+    - name: uploads
+      mountPath: /app/samvera/hyrax-webapp/public/pdf.js
+      subPath: public-pdfjs
+    - name: uploads
+      mountPath: /app/samvera/hyrax-webapp/public/uv
+      subPath: public-uv
+  # Serves /system (Site branding images: logo/banner/favicon) and /branding
+  # (per-tenant branding assets) directly from shared EFS PVCs so these
+  # requests never tie up a Puma worker.
   # NOTE: deliberately excludes /uploads/, unlike /system/ that directory may
   # hold access-controlled content Rails is supposed to gate - matches the
   # convention already used for other notch8 Hyrax apps' nginx server blocks.
@@ -390,7 +410,7 @@ nginx:
         }
 
         # serve static (compiled) assets / branding images directly if they exist
-        location ~ ^/(assets|packs|fonts|images|javascripts|stylesheets|swfs|system|uv|pdf\.js)/ {
+        location ~ ^/(assets|branding|packs|fonts|images|javascripts|stylesheets|swfs|system|uv|pdf\.js)/ {
           try_files ${DOLLAR}uri @rails;
 
           gzip_static on; # to serve pre-gzipped version
