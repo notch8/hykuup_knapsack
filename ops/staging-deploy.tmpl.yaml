@@ -1,5 +1,8 @@
 replicaCount: 2
 
+imagePullSecrets:
+  - name: github
+
 resources:
   limits:
     memory: "4Gi"
@@ -19,10 +22,6 @@ derivativesVolume:
   storageClass: efs-sc
 uploadsVolume:
   storageClass: efs-sc
-  size: 200Gi
-
-imagePullSecrets:
- - name: github
 
 extraVolumeMounts: &volMounts
   - name: uploads

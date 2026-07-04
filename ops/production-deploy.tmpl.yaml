@@ -367,6 +367,8 @@ externalSolrHost: solr.solr.svc.cluster.local
 externalSolrUser: admin
 externalSolrCollection: "hykuup-hyku"
 
+global:
+  hyraxHostName: hykuup-knapsack-production-hyrax
 
 nginx:
   enabled: true
