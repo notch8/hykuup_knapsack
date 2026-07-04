@@ -45,71 +45,6 @@ extraVolumeMounts: &volMounts
   - name: uploads
     mountPath: /app/samvera/hyrax-webapp/log/rack_attack
     subPath: rack-attack
-  - name: uploads
-    mountPath: /app/samvera/hyrax-webapp/public/assets
-    subPath: public-assets
-  - name: uploads
-    mountPath: /app/samvera/hyrax-webapp/public/pdf.js
-    subPath: public-pdfjs
-  - name: uploads
-    mountPath: /app/samvera/hyrax-webapp/public/uv
-    subPath: public-uv
-
-# Populates the `uploads` PVC subPaths mounted above (public-assets/public-pdfjs/
-# public-uv) from this deploy's own image, since public/assets, public/pdf.js,
-# and public/uv are baked in at build time and otherwise exist nowhere but the
-# Rails container's own filesystem. Runs on every web pod start (not just
-# deploys, matching the existing load-solr-config/db-setup initContainer
-# pattern in this chart). Mounts the destination at /mnt/shared-assets/* -
-# deliberately NOT at the same path as the source - so the copy's own
-# destination mount can never shadow the baked-in files it's reading from.
-# rsync writes via temp-file-then-rename, so two replicas copying identical
-# fingerprinted content concurrently during a rolling deploy can never expose
-# a partially-written file to nginx or Rails.
-extraInitContainers:
-  - name: sync-static-assets
-    image: "ghcr.io/$REPO_LOWER/web:$TAG"
-    imagePullPolicy: IfNotPresent
-    command:
-      - sh
-      - -c
-      - |
-        set -e
-        # public/assets is fingerprinted per-deploy and grows without bound if
-        # never pruned. --no-times forces rsync to refresh the destination
-        # file's mtime every time a pod start still finds it in the current
-        # image, regardless of whether its content changed - that gives the
-        # prune below a reliable "still live in some current pod" signal
-        # rather than assuming Sprockets always produces a fresh build-time
-        # mtime (true today, but not guaranteed if CI ever caches
-        # tmp/cache/assets across image builds).
-        rsync -a --no-times --no-owner --no-group /app/samvera/hyrax-webapp/public/assets/ /mnt/shared-assets/assets/
-        # pdf.js and uv are vendored viewer libraries with fixed (non-hashed)
-        # filenames that change only when the underlying dependency bumps, not
-        # on every deploy - copy additively, never delete. Mirroring these
-        # with --delete risks yanking a file out from under an old replica's
-        # already-loaded page mid-rolling-deploy (pdf.js hard-fails on a
-        # main/worker script version mismatch); since they rarely change, the
-        # accumulation problem public/assets has doesn't apply here.
-        rsync -a --no-owner --no-group /app/samvera/hyrax-webapp/public/pdf.js/ /mnt/shared-assets/pdf.js/
-        rsync -a --no-owner --no-group /app/samvera/hyrax-webapp/public/uv/ /mnt/shared-assets/uv/
-        # Keep 7 days of fingerprinted assets: comfortably outlives both a
-        # rolling deploy and any realistic open browser tab, while bounding
-        # EFS growth to roughly a week's worth of unique deploys. `|| true`
-        # tolerates the other replica's initContainer already deleting the
-        # same file.
-        find /mnt/shared-assets/assets -type f -mtime +7 -delete || true
-        echo "static asset sync complete"
-    volumeMounts:
-      - name: uploads
-        mountPath: /mnt/shared-assets/assets
-        subPath: public-assets
-      - name: uploads
-        mountPath: /mnt/shared-assets/pdf.js
-        subPath: public-pdfjs
-      - name: uploads
-        mountPath: /mnt/shared-assets/uv
-        subPath: public-uv
 
 ingress:
   enabled: true
@@ -361,9 +296,15 @@ nginx:
   service:
     type: ClusterIP
   image:
-    registry: registry.gitlab.com
-    repository: notch8/scripts/bitnami-nginx
-    tag: 1.21.5-debian-10-r4
+    # Built from the `hyku-nginx` Dockerfile stage, which bakes public/assets,
+    # public/pdf.js, and public/uv in from the `hyku-web` stage of the exact
+    # same commit - no shared volume/copy step needed for these anymore.
+    # Still based on registry.gitlab.com/notch8/scripts/bitnami-nginx (see
+    # Dockerfile) since the server block below references that image's
+    # bots.d/{ddos,blockbots}.conf includes.
+    registry: ghcr.io
+    repository: "$REPO_LOWER/nginx"
+    tag: "$TAG"
   extraVolumes:
     - name: "uploads"
       persistentVolumeClaim:
@@ -377,20 +318,9 @@ nginx:
       subPath: public-system
     - name: branding
       mountPath: /app/samvera/hyrax-webapp/public/branding
-    # public/assets, public/pdf.js, public/uv are baked into the Rails image
-    # at build time, not persisted anywhere - these subPaths are empty until
-    # a deploy-time copy step (tracked separately) populates them. Until then
-    # nginx finds nothing here and falls through to @rails via try_files,
-    # same as today's un-mounted behavior.
-    - name: uploads
-      mountPath: /app/samvera/hyrax-webapp/public/assets
-      subPath: public-assets
-    - name: uploads
-      mountPath: /app/samvera/hyrax-webapp/public/pdf.js
-      subPath: public-pdfjs
-    - name: uploads
-      mountPath: /app/samvera/hyrax-webapp/public/uv
-      subPath: public-uv
+  # public/assets, public/pdf.js, and public/uv need no volume mount at all -
+  # they're baked directly into this pod's own nginx image (see nginx.image
+  # above), always matching the exact commit currently deployed.
   # Serves /system (Site branding images: logo/banner/favicon) and /branding
   # (per-tenant branding assets) directly from shared EFS PVCs so these
   # requests never tie up a Puma worker.
