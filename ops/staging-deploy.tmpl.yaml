@@ -22,6 +22,7 @@ derivativesVolume:
   storageClass: efs-sc
 uploadsVolume:
   storageClass: efs-sc
+  size: 200Gi
 
 extraVolumeMounts: &volMounts
   - name: uploads

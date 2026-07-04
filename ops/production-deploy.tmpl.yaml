@@ -1,4 +1,6 @@
-replicaCount: 2
+# TEMPORARILY increasing to 4 because of bot swarm on July 4, 2026
+# Set back to 2 when bots have chilled out again
+replicaCount: 4
 
 imagePullSecrets:
   - name: github
