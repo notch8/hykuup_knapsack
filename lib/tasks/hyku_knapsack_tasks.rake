@@ -22,36 +22,51 @@ def human_size(bytes)
   format('%.2f %s', size, units[unit])
 end
 
+# Fetch one page of FileSet docs (id + file_size_lts only) via cursorMark.
+def file_set_page(cursor)
+  ActiveFedora::SolrService.get(
+    'has_model_ssim:FileSet OR has_model_ssim:"Hyrax::FileSet"',
+    rows: 1000,
+    fl: 'file_size_lts',
+    sort: 'id asc',
+    cursorMark: cursor
+  )
+end
+
+# Sum file_size_lts (bytes) and count docs that carry a size for a page of docs.
+def sum_page(docs)
+  bytes = 0
+  files = 0
+  docs.each do |doc|
+    size = doc['file_size_lts']
+    size = size.first if size.is_a?(Array)
+    next if size.nil?
+
+    bytes += size.to_i
+    files += 1
+  end
+  [bytes, files]
+end
+
 # Sum primary-file storage (bytes) and file count for the CURRENT tenant.
 # file_size_lts is stored-but-not-indexed in Solr, so it can't be summed via stats;
 # we page the FileSet docs (id + file_size_lts only) with cursorMark and sum in Ruby.
 def tenant_file_storage
-  bytes = 0
-  files = 0
+  total_bytes = 0
+  total_files = 0
   cursor = '*'
   loop do
-    resp = ActiveFedora::SolrService.get(
-      'has_model_ssim:FileSet OR has_model_ssim:"Hyrax::FileSet"',
-      rows: 1000,
-      fl: 'file_size_lts',
-      sort: 'id asc',
-      cursorMark: cursor
-    )
+    resp = file_set_page(cursor)
     docs = resp.dig('response', 'docs') || []
-    docs.each do |doc|
-      size = doc['file_size_lts']
-      size = size.first if size.is_a?(Array)
-      next if size.nil?
-
-      bytes += size.to_i
-      files += 1
-    end
+    bytes, files = sum_page(docs)
+    total_bytes += bytes
+    total_files += files
     next_cursor = resp['nextCursorMark']
     break if docs.empty? || next_cursor.nil? || next_cursor == cursor
 
     cursor = next_cursor
   end
-  [bytes, files]
+  [total_bytes, total_files]
 end
 
 namespace :hykuup do
@@ -158,7 +173,7 @@ namespace :hykuup do
         works = ActiveFedora::SolrService.count("has_model_ssim:(#{work_models})")
         bytes, files = tenant_file_storage
 
-        rows << { cname: account.cname, works: works, files: files, bytes: bytes }
+        rows << { cname: account.cname, works:, files:, bytes: }
         warn "processed #{account.cname} (#{works} works, #{human_size(bytes)})"
       end
 
@@ -175,13 +190,17 @@ namespace :hykuup do
         scope = consortium.present? ? "#{consortium.upcase} CONSORTIUM" : 'ALL TENANTS'
         puts fmt.header("USAGE REPORT: #{scope}", "📊")
         w = ([30] + rows.map { |r| r[:cname].length }).max
-        puts format("%-#{w}s  %8s  %8s  %14s", 'TENANT', 'WORKS', 'FILES', 'STORAGE')
+        # Format strings are held in variables so the dynamic width (#{w}) does not confuse
+        # RuboCop's Lint/FormatParameterMismatch, which only analyzes literal format strings.
+        head_fmt = "%-#{w}s  %8s  %8s  %14s"
+        row_fmt = "%-#{w}s  %8d  %8d  %14s"
+        puts format(head_fmt, 'TENANT', 'WORKS', 'FILES', 'STORAGE')
         puts fmt.thin_separator
         rows.each do |r|
-          puts format("%-#{w}s  %8d  %8d  %14s", r[:cname], r[:works], r[:files], human_size(r[:bytes]))
+          puts format(row_fmt, r[:cname], r[:works], r[:files], human_size(r[:bytes]))
         end
         puts fmt.thin_separator
-        puts format("%-#{w}s  %8d  %8d  %14s", "TOTAL (#{rows.size} tenants)", total_works, total_files, human_size(total_bytes))
+        puts format(row_fmt, "TOTAL (#{rows.size} tenants)", total_works, total_files, human_size(total_bytes))
       end
     end
   end
