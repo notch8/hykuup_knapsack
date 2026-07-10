@@ -27,7 +27,7 @@ def file_set_page(cursor)
   ActiveFedora::SolrService.get(
     'has_model_ssim:FileSet OR has_model_ssim:"Hyrax::FileSet"',
     rows: 1000,
-    fl: 'file_size_lts',
+    fl: 'id,file_size_lts',
     sort: 'id asc',
     cursorMark: cursor
   )
