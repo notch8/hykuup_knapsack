@@ -1,14 +1,14 @@
-replicaCount: 2
+replicaCount: 4
 
 imagePullSecrets:
   - name: github
 
 resources:
   limits:
-    memory: "6Gi"
+    memory: "7Gi"
     cpu: "1500m"
   requests:
-    memory: "5Gi"
+    memory: "6Gi"
     cpu: "1250m"
 
 livenessProbe:
@@ -173,7 +173,7 @@ extraEnvVars: &envVars
   - name: RAILS_LOG_TO_STDOUT
     value: "true"
   - name: RAILS_MAX_THREADS
-    value: "5"
+    value: "7"
   - name: RAILS_SERVE_STATIC_FILES
     value: "true"
   - name: REDIS_HOST
