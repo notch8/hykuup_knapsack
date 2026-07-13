@@ -1,8 +1,18 @@
 # frozen_string_literal: true
 
+require 'hyku_knapsack/monitoring_middleware'
+
 module HykuKnapsack
   class Engine < ::Rails::Engine
     isolate_namespace HykuKnapsack
+
+    # Serve monitoring endpoints (/monitoring/puma_stats, /monitoring/deps) for
+    # external uptime checks. Inserted at position 0 so they stay up (and cheap)
+    # even when the database or Redis is not: they bypass Rack::Attack,
+    # sessions, and tenant middleware.
+    initializer 'hyku_knapsack.monitoring_middleware' do |app|
+      app.middleware.insert_before 0, HykuKnapsack::MonitoringMiddleware
+    end
 
     # Load knapsack initializers from config/initializers/ AFTER the host app's
     # initializers run (e.g. after hyku's 1flexible.rb), so knapsack overrides win.
