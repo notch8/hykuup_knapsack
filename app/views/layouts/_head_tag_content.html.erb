@@ -46,8 +46,8 @@ signed in %>
 
 <%# OVERRIDE begin: preload the IIIF viewer doc as early as possible, before
     the render-blocking stylesheet/script below, on pages that will render it %>
-<% if defined?(presenter) && presenter.respond_to?(:iiif_viewer?) && presenter.iiif_viewer? %>
-  <link rel="preload" href="<%= iiif_viewer_base_url(presenter.iiif_viewer) %>" as="document" />
+<% if @presenter.respond_to?(:iiif_viewer?) && @presenter.iiif_viewer? %>
+  <link rel="preload" href="<%= iiif_viewer_base_url(@presenter.iiif_viewer) %>" as="document" />
 <% end %>
 <%# OVERRIDE end %>
 
