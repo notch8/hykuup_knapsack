@@ -18,7 +18,7 @@ RSpec.describe HykuKnapsack::MonitoringMiddleware do
   end
 
   def request(path: described_class::PUMA_STATS_PATH, method: 'GET', query: '', headers: {})
-    env = Rack::MockRequest.env_for("#{path}#{query.empty? ? '' : "?#{query}"}", method: method)
+    env = Rack::MockRequest.env_for("#{path}#{query.empty? ? '' : "?#{query}"}", method:)
     headers.each { |key, value| env[key] = value }
     middleware.call(env)
   end
@@ -45,7 +45,7 @@ RSpec.describe HykuKnapsack::MonitoringMiddleware do
 
     context 'with a non-GET request' do
       it 'returns 405' do
-        status, _, = response = request(method: 'POST')
+        status, = response = request(method: 'POST')
         expect(status).to eq(405)
         expect(body_json(response)).to eq('error' => 'method not allowed')
       end
@@ -68,7 +68,7 @@ RSpec.describe HykuKnapsack::MonitoringMiddleware do
     context 'when Puma stats are unavailable' do
       it 'returns 503 when the stats object is not registered' do
         allow(Puma).to receive(:stats_hash).and_raise(NoMethodError)
-        status, _, = response = request
+        status, = response = request
         expect(status).to eq(503)
         expect(body_json(response)).to eq('error' => 'puma stats unavailable')
       end
@@ -84,7 +84,7 @@ RSpec.describe HykuKnapsack::MonitoringMiddleware do
       before { stub_env('MONITORING_TOKEN' => 'sekret') }
 
       it 'returns 401 without a token' do
-        status, _, = response = request
+        status, = response = request
         expect(status).to eq(401)
         expect(body_json(response)).to eq('error' => 'unauthorized')
       end

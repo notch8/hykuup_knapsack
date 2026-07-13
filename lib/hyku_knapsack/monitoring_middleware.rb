@@ -51,7 +51,7 @@ module HykuKnapsack
 
     def authorized?(env)
       expected = ENV['MONITORING_TOKEN']
-      return true if expected.nil? || expected.empty?
+      return true if expected.blank?
 
       provided = bearer_token(env) || Rack::Utils.parse_query(env['QUERY_STRING'].to_s)['token']
       return false unless provided.is_a?(String) && provided.bytesize == expected.bytesize
