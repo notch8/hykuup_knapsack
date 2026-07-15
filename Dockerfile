@@ -27,3 +27,12 @@ CMD ./bin/web
 
 FROM hyku-web AS hyku-worker
 CMD ./bin/worker
+
+FROM registry.gitlab.com/notch8/scripts/bitnami-nginx:1.21.5-debian-10-r4 AS hyku-nginx
+# Bake this exact commit's compiled assets/vendored viewer libs into the nginx
+# image itself, so nginx and Rails always agree on what a deploy's asset URLs
+# resolve to - no shared volume, no deploy-time copy step, no accumulation to
+# prune (old versions just age out of the image registry like any other tag).
+COPY --from=hyku-web /app/samvera/hyrax-webapp/public/assets /app/samvera/hyrax-webapp/public/assets
+COPY --from=hyku-web /app/samvera/hyrax-webapp/public/pdf.js /app/samvera/hyrax-webapp/public/pdf.js
+COPY --from=hyku-web /app/samvera/hyrax-webapp/public/uv /app/samvera/hyrax-webapp/public/uv
