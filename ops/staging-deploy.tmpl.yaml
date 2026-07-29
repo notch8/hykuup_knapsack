@@ -268,7 +268,7 @@ redis:
   architecture: standalone
   auth:
     password: $REDIS_PASSWORD
-  
+
 solr:
   enabled: false
 
