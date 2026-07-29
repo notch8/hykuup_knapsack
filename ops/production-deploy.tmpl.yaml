@@ -269,12 +269,27 @@ redis:
     tag: 7.0.2-debian-11-r7
   architecture: standalone
   master:
+    # maxmemory kept below the container limit so Redis evicts stale cache
+    # entries under its own eviction policy instead of relying solely on the
+    # container limit + kernel OOM killer.
+    # volatile-lru: ~98.5% of current keys already carry a TTL (long-dated
+    # Rails.cache entries), so this evicts from that pool under pressure
+    # without touching the small fraction of keys with no expiry at all.
+    configuration: |-
+      maxmemory 2gb
+      maxmemory-policy volatile-lru
+    # TODO: shrink limit/request to 3072Mi/2560Mi (headroom above maxmemory,
+    # rather than an independent ceiling) once a deploy with maxmemory has
+    # been running healthily in production for a while. Left matching the
+    # current live 4Gi/2Gi for now so this PR only adds the eviction policy
+    # on the next deploy, without also surprise-shrinking an already-running
+    # container's memory ceiling in the same step.
     resources:
       limits:
-        memory: "2048Mi"
+        memory: "4096Mi"
         cpu: "100m"
       requests:
-        memory: "1024Mi"
+        memory: "2048Mi"
         cpu: "20m"
     persistence:
       enabled: true
