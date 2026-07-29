@@ -252,6 +252,12 @@ redis:
     tag: 7.0.2-debian-11-r7
   enabled: true
   master:
+    # Testing the maxmemory/eviction fix from the 2026-07-29 production redis
+    # OOM incident here before rolling it out further. 384mb leaves headroom
+    # under the 512Mi container limit.
+    configuration: |-
+      maxmemory 384mb
+      maxmemory-policy volatile-lru
     resources:
       limits:
         memory: "512Mi"
@@ -262,6 +268,7 @@ redis:
   architecture: standalone
   auth:
     password: $REDIS_PASSWORD
+
 solr:
   enabled: false
 

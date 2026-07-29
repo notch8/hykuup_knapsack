@@ -155,6 +155,7 @@ module Bulkrax
       CSV.foreach(csv_file_paths.first, headers: true) do |csv_row|
         return true if csv_row['ss_pid'] == row['ss_pid']
       end
+      false
     end
   end
 end
