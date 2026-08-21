@@ -59,6 +59,7 @@ ingress:
         - path: /
   annotations: {
     nginx.org/client-max-body-size: "0",
+    nginx.org/websocket-services: "hykuup-knapsack-staging-nginx",
     cert-manager.io/cluster-issuer: letsencrypt-production-dns
   }
   tls:
@@ -355,6 +356,12 @@ nginx:
                       'referer="${DOLLAR}http_referer" agent="${DOLLAR}http_user_agent" request_time=${DOLLAR}request_time upstream_response_time=${DOLLAR}upstream_response_time upstream_response_length=${DOLLAR}upstream_response_length';
 
     error_log  /opt/bitnami/nginx/logs/error.log warn;
+
+    # Lets ActionCable's websocket handshake upgrade instead of falling through to a plain HTTP request Rails 404s.
+    map ${DOLLAR}http_upgrade ${DOLLAR}connection_upgrade {
+        default upgrade;
+        ''      '';
+    }
 
     # Cloudflare ips see for refresh
     # https://support.cloudflare.com/hc/en-us/articles/200170786-Restoring-original-visitor-IPs-logging-visitor-IP-addresses
