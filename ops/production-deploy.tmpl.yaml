@@ -1,4 +1,6 @@
-replicaCount: 2
+# 4 since the 2026-07-04 bot swarm, set on an unmerged branch deployed straight to
+# production. Drop to 2 once someone confirms the bot traffic is gone.
+replicaCount: 4
 
 imagePullSecrets:
   - name: github
