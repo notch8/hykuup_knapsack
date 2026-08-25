@@ -168,6 +168,10 @@ extraEnvVars: &envVars
     value: "true"
   - name: HYKU_ROOT_HOST
     value: hykuup-knapsack-staging.notch8.cloud
+  # Shows the controlled vocabularies dashboard link. Upstream withholds it in
+  # production by default; HykuUp opts in. Needs `rails populate_qa` after deploy.
+  - name: HYKU_VOCABULARY_SIDEBAR_ENABLED
+    value: "true"
   - name: HYKU_SHOW_BACKTRACE
     value: "true"
   - name: NEGATIVE_CAPTCHA_SECRET

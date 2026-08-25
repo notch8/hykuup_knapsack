@@ -156,6 +156,10 @@ extraEnvVars: &envVars
     value: "true"
   - name: HYKU_ROOT_HOST
     value: hykuup.com
+  # Shows the controlled vocabularies dashboard link. Upstream withholds it in
+  # production by default; HykuUp opts in. Needs `rails populate_qa` after deploy.
+  - name: HYKU_VOCABULARY_SIDEBAR_ENABLED
+    value: "true"
   - name: INITIAL_ADMIN_EMAIL
     value: $INITIAL_ADMIN_EMAIL
   - name: INITIAL_ADMIN_PASSWORD
