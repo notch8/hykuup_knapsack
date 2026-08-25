@@ -37,11 +37,13 @@ module Proprietor
     # Defines the permitted nested attributes for an account and its associations
     # @return [Hash]
     def permitted_nested_params
+      # fcrepo_endpoint_attributes is deliberately absent: edit_account_params adds it
+      # only when wings is enabled, and listing it here would defeat that guard.
       {
         admin_emails: [],
+        superadmin_emails: [],
         full_account_cross_searches_attributes: [:id, :_destroy, :full_account_id, { full_account_attributes: [:id] }],
         solr_endpoint_attributes: %i[id url],
-        fcrepo_endpoint_attributes: %i[id url base_path],
         data_cite_endpoint_attributes: %i[mode prefix username password],
         domain_names_attributes: %i[id tenant cname is_active _destroy]
       }
