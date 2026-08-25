@@ -43,8 +43,8 @@ RSpec.describe Hyrax::BlacklightOverride, type: :helper do
   let(:field_name) { 'title_tesim' }
   let(:document) { instance_double(SolrDocument, to_h: {}) }
 
-  def index_fields(_document)
-    CatalogController.blacklight_config.index_fields
+  def blacklight_config
+    CatalogController.blacklight_config
   end
 
   context "when locale is :en" do
