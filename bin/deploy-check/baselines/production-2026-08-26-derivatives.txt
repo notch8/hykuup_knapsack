@@ -1,0 +1,51 @@
+I, [2026-08-26T22:38:54.743430 #29981]  INFO -- : ActiveFedora: loading fedora config from /app/samvera/hyrax-webapp/config/fedora.yml
+I, [2026-08-26T22:38:54.744898 #29981]  INFO -- : ActiveFedora: loading solr config from /app/samvera/hyrax-webapp/config/solr.yml
+W, [2026-08-26T22:38:55.612233 #29981]  WARN -- : Same predicate (http://purl.org/dc/terms/accessRights) used for properties additional_information and access_right
+W, [2026-08-26T22:38:55.615586 #29981]  WARN -- : Same predicate (http://purl.org/dc/terms/bibliographicCitation) used for properties bibliographic_citation and bibliographic_citation
+W, [2026-08-26T22:38:55.645369 #29981]  WARN -- : Same predicate (http://purl.org/dc/terms/accessRights) used for properties additional_information and access_right
+W, [2026-08-26T22:38:55.648904 #29981]  WARN -- : Same predicate (http://purl.org/dc/terms/bibliographicCitation) used for properties bibliographic_citation and bibliographic_citation
+I, [2026-08-26T22:39:07.484319 #29981]  INFO -- : Hyrax::Engine.after_initialize - persisting registered roles!
+W, [2026-08-26T22:39:10.801245 #29981]  WARN -- : Scoped order is ignored, it's forced to be batch order.
+W, [2026-08-26T22:39:13.773003 #29981]  WARN -- : Fedora URL (http://127.0.0.1:99999/nil_fcrepo_endpoint) does not end with /rest. This could be a problem. Check your fedora.yml config
+=== A/V derivative playability ===
+  mp3:present            103
+  mp4:missing            2
+  mp4:moov_last          51
+  ogg:present            103
+  thumbnail:missing      2
+  thumbnail:present      51
+
+=== PROBLEMS (55) ===
+  FAIL samvera video fe4302a2-7667-47a7-8822-93fa6bf400f7 mp4: moov_last
+  FAIL samvera video ad3c52da-5fe7-400f-8432-dec07a5b8760 mp4: moov_last
+  FAIL samvera video 9d730a31-481b-44ea-8fd5-6efd187df09e mp4: moov_last
+  FAIL samvera video 5811e661-e481-4cd4-8c8d-112d581c9554 mp4: moov_last
+  FAIL samvera video 5f65c55f-6b4e-4366-8b97-c2d6d7a70f19 mp4: moov_last
+  FAIL samvera video 79abac81-8049-4f8c-bb89-cc345e5e0703 mp4: moov_last
+  FAIL samvera video aa41b809-12fe-4f41-bc87-7bd22ff145e2 mp4: moov_last
+  FAIL samvera video 387e4b5a-976b-4166-be38-b35fdd94c066 mp4: moov_last
+  FAIL samvera video adf8a0a2-d850-4244-bacc-72c0e45d0a0a mp4: moov_last
+  FAIL samvera video 2930c1e0-e088-47da-a32e-a1a0f2e8a399 mp4: moov_last
+  FAIL samvera video bda2a853-51f3-4ee7-acff-c64e41c26657 mp4: moov_last
+  FAIL kevin-demo video 8e5ef3c1-405f-47b6-a16c-f12e4f225b66 mp4: moov_last
+  FAIL kevin-demo video 11b3ca46-bcd9-4a8a-bbf5-1635ab71b488 mp4: moov_last
+  FAIL covenant video 8e5ef3c1-405f-47b6-a16c-f12e4f225b66 mp4: moov_last
+  FAIL crowder video 259590bb-6f99-4328-bb12-d1cf3bc2d556 mp4: moov_last
+  FAIL crowder video 34b67a6c-45a2-4b05-a22f-82bf75fedf85 mp4: moov_last
+  FAIL crowder video 51f4ac35-1cd8-4d43-9900-e753803d4c1a mp4: moov_last
+  FAIL crowder video 7ac20df3-03a1-4390-b0dd-f3d040bb4c7a mp4: moov_last
+  FAIL crowder video a73b7532-de24-4471-8140-bf7255f0cf3b mp4: moov_last
+  FAIL crowder video e35a50e9-71a1-42be-bcf6-f88b16eb3318 thumbnail: missing
+  FAIL crowder video e35a50e9-71a1-42be-bcf6-f88b16eb3318 mp4: missing
+  FAIL crowder video 8ad599e1-e896-4d2d-882c-7df7b23499b8 mp4: moov_last
+  FAIL crowder video 9e4ee7a8-472d-49c3-aa1a-0b10411e4eae mp4: moov_last
+  FAIL crowder video fbaf37ab-f670-428f-8571-ce991d007195 mp4: moov_last
+  FAIL nwmsu video 8e5ef3c1-405f-47b6-a16c-f12e4f225b66 mp4: moov_last
+  FAIL stlcc video af53e089-57c0-432e-bf21-c89ae92c7556 mp4: moov_last
+  FAIL moval video 8e5ef3c1-405f-47b6-a16c-f12e4f225b66 mp4: moov_last
+  FAIL kenrick video 8e5ef3c1-405f-47b6-a16c-f12e4f225b66 mp4: moov_last
+  FAIL jewell video bd39e549-58bb-4fb3-a634-47ceefb9a133 mp4: moov_last
+  FAIL demo video 8e5ef3c1-405f-47b6-a16c-f12e4f225b66 mp4: moov_last
+  ...and 25 more
+
+moov_last means Safari cannot start playback while Chrome can. Fix upstream with `-movflags +faststart` on the mp4 derivative encode, then regenerate.
