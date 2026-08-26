@@ -14,19 +14,25 @@ deploy log. `snapshot.rb` captures the state that matters per tenant, and
 
 ```bash
 CTX=r2-besties; NS=hykuup-knapsack-production
-POD=$(kubectl --context $CTX -n $NS get pods --no-headers | awk '/-hyrax-[0-9a-f]/{print $1; exit}')
+# Excludes components rather than matching a name: the web deployment is named
+# `-hyrax-` on some environments and bare on others.
+POD() { kubectl --context $CTX -n $NS get pods --no-headers | grep -E '\sRunning\s' \
+  | grep -vE 'worker|nginx|solr|fcrepo|postgres|redis|memcach|acme|fits|sidekiq|cron' \
+  | awk '{print $1; exit}'; }
 
 # Before the deploy
-kubectl --context $CTX -n $NS exec -i $POD -- bundle exec rails runner - \
-  < bin/deploy-check/snapshot.rb > before.json
+kubectl --context $CTX -n $NS exec -i $(POD) -- bundle exec rails runner - \
+  < bin/deploy-check/snapshot.rb | sed -n '/^{/,$p' > before.json
 
-# After (pod name changes - re-resolve it first)
-POD=$(kubectl --context $CTX -n $NS get pods --no-headers | awk '/-hyrax-[0-9a-f]/{print $1; exit}')
-kubectl --context $CTX -n $NS exec -i $POD -- bundle exec rails runner - \
-  < bin/deploy-check/snapshot.rb > after.json
+# After (the deploy replaces the pod, so POD is re-resolved)
+kubectl --context $CTX -n $NS exec -i $(POD) -- bundle exec rails runner - \
+  < bin/deploy-check/snapshot.rb | sed -n '/^{/,$p' > after.json
 
 bin/deploy-check/compare.rb before.json after.json
 ```
+
+The `sed` strips Rails boot warnings that precede the JSON — without it the file
+will not parse.
 
 `snapshot.rb` is strictly read-only. Non-zero exit means something in the
 must-not-change set moved.

@@ -32,7 +32,11 @@ Set the context and namespace for the environment you are deploying:
 
 ```bash
 CTX=<kubectl-context>; NS=<namespace>
-POD() { kubectl --context $CTX -n $NS get pods --no-headers | awk '/-hyrax-[0-9a-f]/{print $1; exit}'; }
+# Excludes components rather than matching a name: the web deployment is named
+# `-hyrax-` on some environments and bare on others.
+POD() { kubectl --context $CTX -n $NS get pods --no-headers | grep -E '\sRunning\s' \
+  | grep -vE 'worker|nginx|solr|fcrepo|postgres|redis|memcach|acme|fits|sidekiq|cron' \
+  | awk '{print $1; exit}'; }
 ```
 
 **1. Before the deploy**
