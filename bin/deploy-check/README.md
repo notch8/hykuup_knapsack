@@ -2,7 +2,7 @@
 
 A HykuUp deploy can change tenant behaviour without anything appearing in the
 deploy log. `snapshot.rb` captures the state that matters per tenant, and
-`compare.py` diffs a before and after capture.
+`compare.rb` diffs a before and after capture.
 
 **Capture the baseline before the deploy.** It cannot be reconstructed afterwards.
 
@@ -25,7 +25,7 @@ POD=$(kubectl --context $CTX -n $NS get pods --no-headers | awk '/-hyrax-[0-9a-f
 kubectl --context $CTX -n $NS exec -i $POD -- bundle exec rails runner - \
   < bin/deploy-check/snapshot.rb > after.json
 
-python3 bin/deploy-check/compare.py before.json after.json
+bin/deploy-check/compare.rb before.json after.json
 ```
 
 `snapshot.rb` is strictly read-only. Non-zero exit means something in the
@@ -67,6 +67,11 @@ update its work types. Both have to be set. The snapshot records
 
 ## Baselines
 
-`baselines/` holds captures taken immediately before a production deploy.
+`baselines/` holds the capture taken immediately before a production deploy, kept
+only until that deploy is verified. A baseline's value is comparative, so once the
+post-deploy diff is clean the old file is dead weight - prune it rather than
+accumulating one per deploy.
+
 `production-2026-08-25-pre-v7.2.0.json` is the state on Hyrax 5.2.0 / Puma 5.6.9
-before the Hyku main bump, across all 37 tenants.
+before the Hyku main bump, across all 37 tenants. Delete it once v7.2.0 is
+verified in production.
