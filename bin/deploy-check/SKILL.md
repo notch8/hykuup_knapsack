@@ -9,7 +9,7 @@ Copy this file to `.claude/skills/deploy-regression-check/SKILL.md` in your repo
 invoke it as `/deploy-regression-check`, or just follow the steps below.
 
 A knapsack deploy can change tenant behaviour without anything appearing in the
-deploy log — 30-odd tenants is too many to eyeball. `snapshot.rb` records the state
+deploy log, and 30-odd tenants is too many to eyeball. `snapshot.rb` records the state
 that matters per tenant; `compare.rb` diffs a before and after capture and exits
 non-zero if anything in the must-not-change set moved.
 
@@ -20,8 +20,8 @@ afterwards.
 
 `snapshot.rb`, `compare.rb` and `sequence_check.rb` work on any Hyku Knapsack.
 Knapsack-specific classes are guarded, so a repo without them simply records fewer
-keys rather than failing. `consortium_check.rb` is HykuUp-specific — it depends on
-`TenantWorkTypeFilter` and `Consortium` — and can be ignored elsewhere.
+keys rather than failing. `consortium_check.rb` is HykuUp-specific: it depends on
+`TenantWorkTypeFilter` and `Consortium`, and can be ignored elsewhere.
 
 Scripts are piped over stdin, so they run from your local checkout and never need
 to be in the deployed image.
@@ -50,12 +50,12 @@ kubectl --context $CTX -n $NS exec -i $(POD) -- bundle exec rails runner - \
   < bin/deploy-check/sequence_check.rb
 ```
 
-The `sed` strips Rails boot warnings that precede the JSON — without it the file
+The `sed` strips Rails boot warnings that precede the JSON; without it the file
 will not parse.
 
 **2. Deploy.**
 
-**3. After the deploy** — re-resolve the pod, since the deploy replaced it:
+**3. After the deploy**, re-resolve the pod, since the deploy replaced it:
 
 ```bash
 kubectl --context $CTX -n $NS exec -i $(POD) -- bundle exec rails runner - \
@@ -66,9 +66,9 @@ bin/deploy-check/compare.rb before.json after.json
 
 ## Reading the output
 
-Fails the check — a deploy should never change these on its own:
+Fails the check. A deploy should never change these on its own:
 
-- `available_works` — a tenant's depositors gaining or losing work types
+- `available_works`: a tenant's depositors gaining or losing work types
 - `themes`, `schema_classes`
 - an existing feature flag whose **value** changed
 - a tenant disappearing, newly erroring, or a sample work losing its thumbnail
@@ -82,23 +82,40 @@ that is not a regression), and any key the previous version could not report.
 Identical findings across many tenants collapse to one line with a count, so a
 fleet-wide change reads as one finding rather than thirty.
 
-A non-zero exit means look closer, not necessarily that something broke — an
+A non-zero exit means look closer, not necessarily that something broke; an
 intended change like flipping a config flag will also fail the check, which is
 correct. Read the three-or-so distinct lines and decide.
 
-## Also worth checking by hand
+**4. Browser pass on a few tenants**
 
-The snapshot cannot see these:
+The snapshot reads the database and Solr; it never renders a page. A partial that
+raises, a viewer that fails to initialise, a stylesheet that 404s and a card that
+renders blank are all invisible to it. Drive a browser with the Playwright MCP
+server before and after, on the same short list both times:
+
+> Using Playwright, log in as an admin on <tenant URL> and visit the homepage, a
+> work show page, the deposit form and the dashboard. Screenshot each and note
+> anything that renders empty or errors. Save them so we can repeat this exact
+> list after the deploy and compare.
+
+Pick three or four tenants, not the fleet: one plain, one with a custom theme, and
+whichever has the configuration you are least sure about. This is judgement rather
+than a gate, so it produces screenshots and an opinion, not an exit code. It covers
+what `compare.rb` structurally cannot.
+
+## Also worth checking by hand
 
 - **Static assets.** Fetch the homepage, extract the fingerprinted
   `/assets/application-*.css`, and confirm it returns 200. If the nginx image bakes
   assets at build time, a bad build shows up as an unstyled site, not an error.
+  The browser pass shows this on the pages you visit; this covers the rest.
 - **Migration duration**, against whatever `--timeout` `bin/helm_deploy` uses.
-- **Behaviour under load.**
+- **Behaviour under load.** The snapshot is one quiet request and the browser pass
+  is one session.
 
 ## Why `available_works` is the one to watch
 
 `Site#available_works` is a persisted column seeded only when the Site row is
 created (`Site.instance` uses `first_or_create`). Nothing recomputes it at boot or
-during migration, so a deploy alone cannot change it — which is exactly why a change
+during migration, so a deploy alone cannot change it, which is exactly why a change
 there means something wrote to it, and is worth failing on.

@@ -31,7 +31,7 @@ kubectl --context $CTX -n $NS exec -i $(POD) -- bundle exec rails runner - \
 bin/deploy-check/compare.rb before.json after.json
 ```
 
-The `sed` strips Rails boot warnings that precede the JSON — without it the file
+The `sed` strips Rails boot warnings that precede the JSON; without it the file
 will not parse.
 
 `snapshot.rb` is strictly read-only. Non-zero exit means something in the
@@ -41,8 +41,8 @@ must-not-change set moved.
 
 A deploy should never change these on its own:
 
-- `available_works` — a tenant's depositors gaining or losing work types
-- `consortia`, `profile_path` — consortium membership, or which m3 profile resolves
+- `available_works`: a tenant's depositors gaining or losing work types
+- `consortia`, `profile_path`: consortium membership, or which m3 profile resolves
 - `themes`, `schema_classes`, `features`
 - a tenant disappearing, newly erroring, or a sample work losing its thumbnail
 - global registered work types, derivative labels, viewer and manifest config
@@ -54,14 +54,14 @@ and Puma versions, and any key the previous version could not report at all.
 
 `Site#available_works` is a persisted column seeded only when the Site row is
 created (`Site.instance` uses `first_or_create`). Nothing recomputes it at boot
-or during migration, so a deploy alone cannot change it — which is exactly why a
+or during migration, so a deploy alone cannot change it, which is exactly why a
 change there means something wrote to it.
 
 The corollary: assigning `part_of_consortia` to an existing tenant does **not**
 update its work types. Both have to be set. The snapshot records
 `available_works` and `allowed_by_consortium` separately so the gap is visible.
 
-## Not covered — check these by hand
+## Not covered, check these by hand
 
 - **Static assets.** Fetch the homepage and confirm the fingerprinted
   `/assets/application-*.css` and `.js` return 200. The nginx image bakes assets
