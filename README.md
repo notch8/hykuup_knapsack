@@ -38,7 +38,9 @@ include making contributing back to the Hyku project easier and making upgrades 
 
 ### Version strategy
 
-Hyku Knapsack versions are aligned with [Hyku](https://github.com/samvera/hyku) versions: **Knapsack 6** works with the **Hyku 6** series, **Knapsack 7** with the **Hyku 7** series (which introduces breaking changes), and so on. That way you can tell at a glance which Knapsack release to use for a given Hyku version. Pick the Knapsack major version that matches your Hyku major version.
+This repository is HykuUp's deployment of Hyku, and it is versioned on **HykuUp's own line** — `v1.0-prod-baseline`, then `v1.1.0`, and so on. The version says nothing about which Hyku series is pinned, so every release states the Hyku and Hyrax versions it ships in the release body. `lib/hyku_knapsack/version.rb` carries the same number as the release tag.
+
+Upstream [samvera-labs/hyku_knapsack](https://github.com/samvera-labs/hyku_knapsack) uses a different rule, where the Knapsack major matches the Hyku major (Knapsack 7 for the Hyku 7 series). That rule is not followed here: HykuUp has never had a 6 or a 7, and borrowing Hyku's number would imply releases that do not exist.
 
 ### Precedence
 
