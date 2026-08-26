@@ -34,16 +34,21 @@ snapshot = {
 }
 # rubocop:disable Metrics/BlockLength
 Account.order(:name).find_each do |account|
-  entry = { 'consortia' => account.part_of_consortia }
+  # part_of_consortia is a HykuUp addition; other knapsacks will not have the column.
+  entry = { 'consortia' => (account.part_of_consortia if account.respond_to?(:part_of_consortia)) }
   begin
     Apartment::Tenant.switch(account.tenant) do
       Site.reset! if Site.respond_to?(:reset!)
       site = Site.instance
 
       entry['available_works'] = Array(site.available_works).sort
-      entry['allowed_by_consortium'] = safe { Array(TenantWorkTypeFilter.allowed_work_types).sort }
-      entry['profile_path'] = safe do
-        TenantWorkTypeFilter.tenant_metadata_profile_path('DEFAULT').to_s.split('/').last(2).join('/')
+      # TenantWorkTypeFilter is a HykuUp addition; a knapsack without it simply has
+      # no consortium-derived work type list or per-consortium profile to record.
+      if defined?(TenantWorkTypeFilter)
+        entry['allowed_by_consortium'] = safe { Array(TenantWorkTypeFilter.allowed_work_types).sort }
+        entry['profile_path'] = safe do
+          TenantWorkTypeFilter.tenant_metadata_profile_path('DEFAULT').to_s.split('/').last(2).join('/')
+        end
       end
       entry['themes'] = {
         'home' => site.home_theme, 'show' => site.show_theme, 'search' => site.search_theme
@@ -81,8 +86,16 @@ Account.order(:name).find_each do |account|
             'has_thumbnail' => Array(d['thumbnail_path_ss']).first.present? }
         end
       end
+      # migration_context moved from the connection to the pool in newer Rails, so
+      # try both rather than recording an error on whichever side of that we land.
       entry['pending_migrations'] = safe do
-        ActiveRecord::Base.connection.migration_context.needs_migration?
+        pool = ActiveRecord::Base.connection_pool
+        ctx = if pool.respond_to?(:migration_context)
+                pool.migration_context
+              elsif ActiveRecord::Base.connection.respond_to?(:migration_context)
+                ActiveRecord::Base.connection.migration_context
+              end
+        ctx&.needs_migration?
       end
     end
   rescue StandardError => e
