@@ -65,6 +65,30 @@ update its work types. Both have to be set. The snapshot records
   `qa_local_authority_entries`; `bin/helm_deploy` runs with `--atomic --timeout 15m0s`.
 - **Behaviour under load.**
 
+## Consortium check
+
+`consortium_check.rb` groups tenants by consortium instead of listing them
+individually, which is the question that matters when a deploy touches work type
+or metadata profile resolution: not "did this tenant change" but "is every Mobius
+tenant still coherent".
+
+```bash
+kubectl --context $CTX -n $NS exec -i $POD -- bundle exec rails runner - \
+  < bin/deploy-check/consortium_check.rb
+```
+
+It fails when a consortium tenant resolves a profile other than its own
+consortium's, or when a tenant offers a work type that has no class in its
+metadata profile.
+
+That second case is not cosmetic. A work type in `available_works` with no class
+in the tenant's flexible schema never receives the metadata mixin, so building
+its form raises `NoMethodError: undefined method 'depositor'` and the depositor
+gets a 500. As of 2026-08-26 that affects nine production tenants, all of them
+`consortia=nil` or `stjude` offering `MobiusWork`/`ScholarlyWork`. Pre-existing,
+and a deploy cannot change it, since nothing recomputes `available_works` - which
+is why the pre-deploy capture is worth keeping until someone fixes the config.
+
 ## Baselines
 
 `baselines/` holds the capture taken immediately before a production deploy, kept
