@@ -1,16 +1,20 @@
 # frozen_string_literal: true
 
-# OVERRIDE Hyku v6.2.0: Use tenant-specific work types based on consortium membership
+# OVERRIDE Hyku main (7a8d6155): Use tenant-specific work types based on consortium membership
 module SiteDecorator
   extend ActiveSupport::Concern
 
   class_methods do
-    # OVERRIDE: Use tenant-specific available works based on consortium membership
+    # Not super: its first_or_create block seeds available_works from the global
+    # registry. Same :site_instance key upstream uses, so Site.reset! still clears this.
     # @return [Site] Site instance with tenant-specific work types
     def instance
-      return NilSite.instance if Account.global_tenant?
-      first_or_create do |site|
-        site.available_works = tenant_available_works
+      RequestStore.fetch(:site_instance) do
+        return NilSite.instance if Account.global_tenant?
+
+        first_or_create do |site|
+          site.available_works = tenant_available_works
+        end
       end
     end
 

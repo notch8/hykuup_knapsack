@@ -20,6 +20,11 @@ Rails.application.config.after_initialize do
 
     config.register_curation_concern :mobius_work
     config.register_curation_concern :scholarly_work
+
+    # Depends on the ingress carrying nginx.org/websocket-services and the
+    # connection_upgrade map from #702; without those the handshake falls through
+    # to a plain request Rails 404s, and the retries eat Puma threads.
+    config.realtime_notifications = true
   end
 
   # Override Hyrax v5.0.5: the create_default_schema method to load tenant-specific profiles

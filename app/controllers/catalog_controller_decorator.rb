@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
-# OVERRIDE: Hyku 6.1 to support linked identifiers which contain a colon
+# OVERRIDE: Hyku main (7a8d6155) to support linked identifiers which contain a colon.
+# Upstream indexes identifier_tesim against field_name: 'identifier', which breaks the link.
 module CatalogControllerDecorator
   extend ActiveSupport::Concern
 

@@ -15,7 +15,7 @@
 # Redis::Store::Factory's URL parsing, which does split the
 # "/session" path segment into a real namespace, restoring "session:*" keys.
 #
-# Remove when: fixed upstream in samvera/hyku.
+# Remove when: fixed upstream in samvera/hyku. Still passing `url:` as of 7a8d6155.
 redis_url = ENV.fetch('REDIS_URL', false)
 if redis_url
   session_url = "#{redis_url}/session"

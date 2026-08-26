@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# OVERRIDE Hyku v6.2.0: Add consortium membership functionality for tenant-specific configuration
+# OVERRIDE Hyku main (7a8d6155): Add consortium membership functionality for tenant-specific configuration
 module AccountDecorator
   extend ActiveSupport::Concern
 

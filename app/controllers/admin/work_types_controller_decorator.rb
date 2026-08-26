@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# OVERRIDE Hyku v6.2.0: Hide work types completely based on tenant instead of graying them out
+# OVERRIDE Hyku main (7a8d6155): Hide work types completely based on tenant instead of graying them out
 module Admin
   module WorkTypesControllerDecorator
     extend ActiveSupport::Concern
