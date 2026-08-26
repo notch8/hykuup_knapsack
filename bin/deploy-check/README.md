@@ -89,6 +89,33 @@ gets a 500. As of 2026-08-26 that affects nine production tenants, all of them
 and a deploy cannot change it, since nothing recomputes `available_works` - which
 is why the pre-deploy capture is worth keeping until someone fixes the config.
 
+## Sequence check
+
+`sequence_check.rb` reports any tenant whose `id` sequence has fallen behind
+`max(id)`. When that happens the next insert reuses an existing id and Postgres
+raises `PG::UniqueViolation` on the primary key - which surfaces as a failed
+metadata profile import or vocabulary create, with nothing obviously wrong in the
+logs. It reads `last_value` rather than calling `nextval`, so it consumes nothing.
+
+```bash
+kubectl --context $CTX -n $NS exec -i $POD -- bundle exec rails runner - \
+  < bin/deploy-check/sequence_check.rb
+```
+
+Worth running before a deploy that will insert into these tables, since a desync
+is easy to mistake for deploy fallout. As of 2026-08-26 every HykuUp tenant in
+staging and production is clear, with sequences comfortably ahead of max(id).
+
+To repair a tenant that is behind:
+
+```ruby
+%w[hyrax_flexible_schemas qa_local_authorities qa_local_authority_entries].each do |t|
+  ActiveRecord::Base.connection.execute(
+    "SELECT setval(pg_get_serial_sequence('#{t}','id'), (SELECT COALESCE(MAX(id),1) FROM #{t}))"
+  )
+end
+```
+
 ## Baselines
 
 `baselines/` holds the capture taken immediately before a production deploy, kept
