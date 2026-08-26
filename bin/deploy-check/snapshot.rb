@@ -16,6 +16,21 @@ ensure
   nil
 end
 
+# This Solr config returns 0 for `a OR b` even where each side alone matches, so
+# every count is a single-clause query summed in Ruby. Colons in a model name have
+# to be escaped or the term is read as a field.
+def solr_count(model)
+  Hyrax::SolrService.post(q: "has_model_ssim:#{model.gsub(':') { '\\:' }}", rows: 0)
+                    .dig('response', 'numFound').to_i
+end
+
+# Counting "everything that is not a FileSet or Collection" also counts
+# FileMetadata, ACLs and containers, which inflates the total by an order of
+# magnitude. Only registered work types are works.
+WORK_MODELS = lambda do
+  Hyrax.config.registered_curation_concern_types.flat_map { |m| [m, "#{m}Resource"] }
+end
+
 snapshot = {
   'global' => {
     'account_count' => safe { Account.count },
@@ -65,10 +80,8 @@ Account.order(:name).find_each do |account|
       end
       entry['counts'] = safe do
         {
-          'works' => Hyrax::SolrService.post(q: 'has_model_ssim:* AND -has_model_ssim:FileSet AND -has_model_ssim:*Collection*', rows: 0)
-                                       .dig('response', 'numFound'),
-          'filesets' => Hyrax::SolrService.post(q: 'has_model_ssim:FileSet OR has_model_ssim:"Hyrax::FileSet"', rows: 0)
-                                          .dig('response', 'numFound'),
+          'works' => WORK_MODELS.call.sum { |m| solr_count(m) },
+          'filesets' => solr_count('FileSet') + solr_count('Hyrax::FileSet'),
           'users' => User.count
         }
       end
@@ -78,9 +91,14 @@ Account.order(:name).find_each do |account|
       # A sample public work per tenant, so a post-deploy run can re-fetch the
       # same ids and confirm they still render with the same derivatives.
       entry['sample_works'] = safe do
-        Hyrax::SolrService.post(q: 'visibility_ssi:open AND -has_model_ssim:FileSet', rows: 3,
+        models = WORK_MODELS.call
+        # Over-fetch and filter in Ruby: the query cannot OR the work models together,
+        # and without that filter the first rows back are ACLs and file metadata.
+        Hyrax::SolrService.post(q: 'visibility_ssi:open AND -has_model_ssim:FileSet', rows: 50,
                                 fl: 'id,has_model_ssim,thumbnail_path_ss', sort: 'system_create_dtsi asc')
                           .dig('response', 'docs').to_a
+                          .select { |d| Array(d['has_model_ssim']).any? { |m| models.include?(m) } }
+                          .first(3)
                           .map do |d|
           { 'id' => d['id'], 'model' => Array(d['has_model_ssim']).first,
             'has_thumbnail' => Array(d['thumbnail_path_ss']).first.present? }

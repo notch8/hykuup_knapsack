@@ -82,8 +82,8 @@
         "rights_statements": 12
       },
       "counts": {
-        "works": 16613,
-        "filesets": 0,
+        "works": 759,
+        "filesets": 813,
         "users": 138
       },
       "features": {
@@ -121,22 +121,22 @@
       },
       "sample_works": [
         {
-          "id": "d083760c-2e0c-43f5-a584-7dcb95f90390",
-          "model": "CollectionResource",
+          "id": "5c155a4a-0d1a-48fc-8b4f-5eef99975a0b",
+          "model": "ImageResource",
           "has_thumbnail": true
         },
         {
-          "id": "c4cda225-e32e-47ff-b775-51ed7e87431c",
-          "model": "CollectionResource",
+          "id": "1596dfa9-b436-4446-a7f2-f65cc702eefd",
+          "model": "ImageResource",
           "has_thumbnail": true
         },
         {
-          "id": "d4f44f37-1e91-499c-a803-f6b017a5d10a",
-          "model": "CollectionResource",
+          "id": "db829c0e-0cd8-4eef-b1dc-c64f7d829d91",
+          "model": "ImageResource",
           "has_thumbnail": true
         }
       ],
-      "pending_migrations": "ERROR: NoMethodError: undefined method `migration_context' for an instance of ActiveRecord::Connection"
+      "pending_migrations": false
     },
     "kevin-demo": {
       "consortia": null,
@@ -180,8 +180,8 @@
         "rights_statements": 12
       },
       "counts": {
-        "works": 995,
-        "filesets": 0,
+        "works": 30,
+        "filesets": 202,
         "users": 138
       },
       "features": {
@@ -219,22 +219,22 @@
       },
       "sample_works": [
         {
-          "id": "87f8f787-9577-4015-ab19-fefea26637f3",
-          "model": "CollectionResource",
-          "has_thumbnail": true
-        },
-        {
           "id": "18118522-4970-475f-9f25-14723010ae91",
           "model": "GenericWorkResource",
           "has_thumbnail": true
         },
         {
-          "id": "757e18e8-8c82-42cd-bb7a-04cce60b932a",
-          "model": "Hyrax::FileSet",
+          "id": "822c7b84-8f06-46c6-92f3-33a5a4c2543f",
+          "model": "GenericWorkResource",
+          "has_thumbnail": true
+        },
+        {
+          "id": "3746188e-d78d-4894-b56d-c71ccda65772",
+          "model": "GenericWorkResource",
           "has_thumbnail": true
         }
       ],
-      "pending_migrations": "ERROR: NoMethodError: undefined method `migration_context' for an instance of ActiveRecord::Connection"
+      "pending_migrations": false
     },
     "bridgewater-demo": {
       "consortia": null,
@@ -277,8 +277,8 @@
         "rights_statements": 12
       },
       "counts": {
-        "works": 96,
-        "filesets": 0,
+        "works": 4,
+        "filesets": 5,
         "users": 138
       },
       "features": {
@@ -316,22 +316,22 @@
       },
       "sample_works": [
         {
-          "id": "7f11bf91-84b3-4262-9aeb-c40cf0e9320c",
-          "model": "CollectionResource",
-          "has_thumbnail": true
-        },
-        {
           "id": "d95c26e0-0ca5-42a9-9d94-f315592d993b",
           "model": "ImageResource",
           "has_thumbnail": true
         },
         {
-          "id": "7518e598-b5c9-4aa2-b6a5-e5230499a1fd",
-          "model": "Hyrax::FileSet",
+          "id": "3a1b474f-d9ed-4261-8bc2-7bfa857b7549",
+          "model": "ImageResource",
+          "has_thumbnail": true
+        },
+        {
+          "id": "a3cc7301-c2e1-4aa9-8444-91b08d3cf97a",
+          "model": "ImageResource",
           "has_thumbnail": true
         }
       ],
-      "pending_migrations": "ERROR: NoMethodError: undefined method `migration_context' for an instance of ActiveRecord::Connection"
+      "pending_migrations": false
     },
     "covenant": {
       "consortia": "mobius",
@@ -375,8 +375,8 @@
         "rights_statements": 12
       },
       "counts": {
-        "works": 1421,
-        "filesets": 0,
+        "works": 359,
+        "filesets": 392,
         "users": 138
       },
       "features": {
@@ -414,22 +414,22 @@
       },
       "sample_works": [
         {
-          "id": "8e5ef3c1-405f-47b6-a16c-f12e4f225b66",
-          "model": "Hyrax::FileSet",
+          "id": "3cd3048e-fde5-4617-8773-cd92edf65460",
+          "model": "MobiusWork",
           "has_thumbnail": true
         },
         {
-          "id": "f903479b-bd90-44cc-b2cc-732b20f65b56",
-          "model": "Collection",
+          "id": "ca4d9a76-aa64-4390-bf5f-d4e5ca07f69e",
+          "model": "MobiusWork",
           "has_thumbnail": true
         },
         {
-          "id": "760ee6e6-6cd7-4247-adbc-5642800e232d",
-          "model": "Collection",
+          "id": "40b64303-e0bc-41c8-b805-7a9d81f058dc",
+          "model": "MobiusWork",
           "has_thumbnail": true
         }
       ],
-      "pending_migrations": "ERROR: NoMethodError: undefined method `migration_context' for an instance of ActiveRecord::Connection"
+      "pending_migrations": false
     },
     "crowder": {
       "consortia": "mobius",
@@ -473,8 +473,8 @@
         "rights_statements": 12
       },
       "counts": {
-        "works": 1085,
-        "filesets": 0,
+        "works": 353,
+        "filesets": 353,
         "users": 138
       },
       "features": {
@@ -512,22 +512,22 @@
       },
       "sample_works": [
         {
-          "id": "2e956c21-6f00-49f8-bedf-ee6f177d8352",
-          "model": "Collection",
+          "id": "6cabe75c-74ac-42a1-a38f-a0bf693ffb2c",
+          "model": "MobiusWork",
           "has_thumbnail": true
         },
         {
-          "id": "35c8dfbc-eb55-4e5e-b364-b22593c17422",
-          "model": "Collection",
+          "id": "453381aa-de3e-48f4-9c44-0e6a8ca83232",
+          "model": "MobiusWork",
           "has_thumbnail": true
         },
         {
-          "id": "c6fd3d11-8dad-4ef3-8ab1-ad0c082166e2",
-          "model": "Collection",
+          "id": "283790b6-fd46-4d71-b720-65ca9601c157",
+          "model": "MobiusWork",
           "has_thumbnail": true
         }
       ],
-      "pending_migrations": "ERROR: NoMethodError: undefined method `migration_context' for an instance of ActiveRecord::Connection"
+      "pending_migrations": false
     },
     "mbts": {
       "consortia": "mobius",
@@ -573,8 +573,8 @@
         "rights_statements": 12
       },
       "counts": {
-        "works": 5901,
-        "filesets": 0,
+        "works": 1842,
+        "filesets": 1919,
         "users": 138
       },
       "features": {
@@ -612,22 +612,22 @@
       },
       "sample_works": [
         {
-          "id": "30b0898c-66a7-4e61-8ddc-e8d5ff7c741e",
-          "model": "Collection",
+          "id": "05e22be9-abaa-453c-b9f5-1e867cd8cfd0",
+          "model": "MobiusWork",
           "has_thumbnail": true
         },
         {
-          "id": "4717e2ef-b7f2-47fd-87cf-c508a9dc59e8",
-          "model": "Collection",
+          "id": "17bfd3e7-b027-4ba5-8bfb-980d1afdbd49",
+          "model": "MobiusWork",
           "has_thumbnail": true
         },
         {
-          "id": "3a5d0092-249c-4a62-bb5e-9704e7a073df",
-          "model": "Collection",
+          "id": "7411a8cf-2278-4280-a96e-f8c10b936e20",
+          "model": "MobiusWork",
           "has_thumbnail": true
         }
       ],
-      "pending_migrations": "ERROR: NoMethodError: undefined method `migration_context' for an instance of ActiveRecord::Connection"
+      "pending_migrations": false
     },
     "mssu": {
       "consortia": "mobius",
@@ -671,8 +671,8 @@
         "rights_statements": 12
       },
       "counts": {
-        "works": 12810,
-        "filesets": 0,
+        "works": 4247,
+        "filesets": 4247,
         "users": 138
       },
       "features": {
@@ -710,11 +710,6 @@
       },
       "sample_works": [
         {
-          "id": "2a3c72be-83d8-4d83-9387-2d1f491754dd",
-          "model": "Collection",
-          "has_thumbnail": true
-        },
-        {
           "id": "63fe5c54-8a69-422f-9833-db32fb62fb58",
           "model": "MobiusWork",
           "has_thumbnail": true
@@ -723,9 +718,14 @@
           "id": "d3c56e31-e099-48d8-b98a-bf78a7f393e4",
           "model": "MobiusWork",
           "has_thumbnail": true
+        },
+        {
+          "id": "2a959f9b-4d40-4987-9a58-49a159f6da71",
+          "model": "MobiusWork",
+          "has_thumbnail": true
         }
       ],
-      "pending_migrations": "ERROR: NoMethodError: undefined method `migration_context' for an instance of ActiveRecord::Connection"
+      "pending_migrations": false
     },
     "nwmsu": {
       "consortia": "mobius",
@@ -769,8 +769,8 @@
         "rights_statements": 12
       },
       "counts": {
-        "works": 1188,
-        "filesets": 0,
+        "works": 386,
+        "filesets": 390,
         "users": 138
       },
       "features": {
@@ -808,22 +808,22 @@
       },
       "sample_works": [
         {
-          "id": "8e5ef3c1-405f-47b6-a16c-f12e4f225b66",
-          "model": "Hyrax::FileSet",
+          "id": "be569499-a039-41ea-953b-4387dba0777b",
+          "model": "MobiusWork",
           "has_thumbnail": true
         },
         {
-          "id": "1e71fcb9-14ff-44b7-9f5d-ee8492ae41bf",
-          "model": "Hyrax::FileSet",
+          "id": "1e50bf74-fa99-497c-bddc-bce13f599f07",
+          "model": "MobiusWork",
           "has_thumbnail": true
         },
         {
-          "id": "9dcde5a5-2f5f-4d36-9b53-024d52b3b89b",
-          "model": "Collection",
+          "id": "f06cac98-c91d-4a2a-b7a0-232f54bb801d",
+          "model": "MobiusWork",
           "has_thumbnail": true
         }
       ],
-      "pending_migrations": "ERROR: NoMethodError: undefined method `migration_context' for an instance of ActiveRecord::Connection"
+      "pending_migrations": false
     },
     "stlcc": {
       "consortia": "mobius",
@@ -867,8 +867,8 @@
         "rights_statements": 12
       },
       "counts": {
-        "works": 492,
-        "filesets": 0,
+        "works": 138,
+        "filesets": 147,
         "users": 138
       },
       "features": {
@@ -906,22 +906,22 @@
       },
       "sample_works": [
         {
-          "id": "7fb0c8de-48ed-4f23-9975-fc787c61d98e",
-          "model": "Collection",
+          "id": "d8c8c02e-20b2-462e-95d8-7c8ad36690f1",
+          "model": "MobiusWork",
           "has_thumbnail": true
         },
         {
-          "id": "435e1f5e-bf28-4390-b1c7-88b50b992b6d",
-          "model": "Collection",
+          "id": "daf2bcff-ef4e-489a-bbc4-128d9fa187f2",
+          "model": "MobiusWork",
           "has_thumbnail": true
         },
         {
-          "id": "b0fe0c68-f679-4629-b776-8b1b1699ac58",
-          "model": "Collection",
+          "id": "3b2e5a94-635b-4855-a95c-575cbf8508df",
+          "model": "MobiusWork",
           "has_thumbnail": true
         }
       ],
-      "pending_migrations": "ERROR: NoMethodError: undefined method `migration_context' for an instance of ActiveRecord::Connection"
+      "pending_migrations": false
     },
     "truman": {
       "consortia": "mobius",
@@ -965,8 +965,8 @@
         "rights_statements": 12
       },
       "counts": {
-        "works": 36234,
-        "filesets": 0,
+        "works": 4610,
+        "filesets": 16111,
         "users": 138
       },
       "features": {
@@ -1004,22 +1004,22 @@
       },
       "sample_works": [
         {
-          "id": "e66a2d2d-6860-48c8-a41b-02f09ca54621",
-          "model": "Collection",
+          "id": "eff55b07-4772-4737-816c-e803bc334d6a",
+          "model": "MobiusWork",
           "has_thumbnail": true
         },
         {
-          "id": "33c4d6e7-df04-4835-b075-febddfbe1d04",
-          "model": "Collection",
+          "id": "0ecb60eb-10af-4147-9ce1-2705322861a4",
+          "model": "MobiusWork",
           "has_thumbnail": true
         },
         {
-          "id": "5b832161-eb09-4623-8601-a6bddec05abf",
-          "model": "Collection",
+          "id": "561ea84a-d2cf-45ec-adaa-03facf2a3d33",
+          "model": "MobiusWork",
           "has_thumbnail": true
         }
       ],
-      "pending_migrations": "ERROR: NoMethodError: undefined method `migration_context' for an instance of ActiveRecord::Connection"
+      "pending_migrations": false
     },
     "webster": {
       "consortia": "mobius",
@@ -1063,8 +1063,8 @@
         "rights_statements": 12
       },
       "counts": {
-        "works": 1102,
-        "filesets": 0,
+        "works": 293,
+        "filesets": 396,
         "users": 138
       },
       "features": {
@@ -1102,22 +1102,22 @@
       },
       "sample_works": [
         {
-          "id": "1e71fcb9-14ff-44b7-9f5d-ee8492ae41bf",
-          "model": "Hyrax::FileSet",
+          "id": "b2671385-d556-46a6-9713-d3ee8e5e251d",
+          "model": "MobiusWork",
           "has_thumbnail": true
         },
         {
-          "id": "3efbbefd-5863-4724-aa2d-59b79f6b446b",
-          "model": "Collection",
+          "id": "7c4f039a-b33e-4190-a424-2a311a068a5d",
+          "model": "MobiusWork",
           "has_thumbnail": true
         },
         {
-          "id": "7f36d858-717b-4570-853d-e0bfb1db7d98",
-          "model": "Collection",
+          "id": "de843146-16d8-41a4-9e70-8ea4b4d806b5",
+          "model": "MobiusWork",
           "has_thumbnail": true
         }
       ],
-      "pending_migrations": "ERROR: NoMethodError: undefined method `migration_context' for an instance of ActiveRecord::Connection"
+      "pending_migrations": false
     },
     "ccis": {
       "consortia": "mobius",
@@ -1163,8 +1163,8 @@
         "rights_statements": 12
       },
       "counts": {
-        "works": 3253,
-        "filesets": 0,
+        "works": 1048,
+        "filesets": 1086,
         "users": 138
       },
       "features": {
@@ -1202,22 +1202,22 @@
       },
       "sample_works": [
         {
-          "id": "515e2916-7884-49bb-aec7-dca39f269133",
-          "model": "Collection",
+          "id": "a99745a6-0a50-4684-bc95-6cf89c1d7a8e",
+          "model": "MobiusWork",
           "has_thumbnail": true
         },
         {
-          "id": "282cdfbf-afd2-4905-a575-3c96077dd1f3",
-          "model": "Collection",
+          "id": "6bffa7db-6c03-48ea-89f7-85b6ef2d5b10",
+          "model": "MobiusWork",
           "has_thumbnail": true
         },
         {
-          "id": "5d070038-266b-4986-ae4b-4ec7a8aa4168",
-          "model": "Collection",
+          "id": "6b749eb0-fd0b-43c0-b5ad-b9da78263697",
+          "model": "MobiusWork",
           "has_thumbnail": true
         }
       ],
-      "pending_migrations": "ERROR: NoMethodError: undefined method `migration_context' for an instance of ActiveRecord::Connection"
+      "pending_migrations": false
     },
     "mobap": {
       "consortia": "mobius",
@@ -1263,8 +1263,8 @@
         "rights_statements": 12
       },
       "counts": {
-        "works": 179,
-        "filesets": 0,
+        "works": 58,
+        "filesets": 58,
         "users": 138
       },
       "features": {
@@ -1302,22 +1302,22 @@
       },
       "sample_works": [
         {
-          "id": "bc415f57-a343-44ad-8dae-62e31bedb4dd",
-          "model": "Collection",
+          "id": "01d0b9aa-19ee-466e-bd52-a3cd365927b0",
+          "model": "MobiusWork",
           "has_thumbnail": true
         },
         {
-          "id": "1012d11f-c5d1-4447-afac-aab4c0aa4293",
-          "model": "Collection",
+          "id": "342ebe40-8654-4c09-b25d-750e3b91da3a",
+          "model": "MobiusWork",
           "has_thumbnail": true
         },
         {
-          "id": "5e55c74f-19db-446f-9d65-b714af939521",
-          "model": "Collection",
+          "id": "aa67526e-0c6a-4ccb-ae64-976d2a3fc753",
+          "model": "MobiusWork",
           "has_thumbnail": true
         }
       ],
-      "pending_migrations": "ERROR: NoMethodError: undefined method `migration_context' for an instance of ActiveRecord::Connection"
+      "pending_migrations": false
     },
     "sbuniv": {
       "consortia": "mobius",
@@ -1363,8 +1363,8 @@
         "rights_statements": 12
       },
       "counts": {
-        "works": 1658,
-        "filesets": 0,
+        "works": 420,
+        "filesets": 422,
         "users": 138
       },
       "features": {
@@ -1402,22 +1402,22 @@
       },
       "sample_works": [
         {
-          "id": "7782edc7-b0f3-4d8f-9f57-997a941ebcba",
-          "model": "Collection",
+          "id": "03e24b64-aafb-47af-8652-1b3c3a427d9a",
+          "model": "MobiusWork",
           "has_thumbnail": true
         },
         {
-          "id": "bf931e7d-8ac0-405d-8f93-c27efdaa704d",
-          "model": "Collection",
+          "id": "bfc7c9cc-701f-462d-9d29-923957217eb9",
+          "model": "MobiusWork",
           "has_thumbnail": true
         },
         {
-          "id": "5e487bc9-6932-4840-b557-8cd79137810a",
-          "model": "Collection",
+          "id": "36efd081-35b0-4df0-939d-ff445181f858",
+          "model": "MobiusWork",
           "has_thumbnail": true
         }
       ],
-      "pending_migrations": "ERROR: NoMethodError: undefined method `migration_context' for an instance of ActiveRecord::Connection"
+      "pending_migrations": false
     },
     "moval": {
       "consortia": "mobius",
@@ -1463,8 +1463,8 @@
         "rights_statements": 12
       },
       "counts": {
-        "works": 482,
-        "filesets": 0,
+        "works": 147,
+        "filesets": 149,
         "users": 138
       },
       "features": {
@@ -1502,22 +1502,22 @@
       },
       "sample_works": [
         {
-          "id": "8e5ef3c1-405f-47b6-a16c-f12e4f225b66",
-          "model": "Hyrax::FileSet",
+          "id": "0e8489f4-ceb2-48e5-8b8a-92d1a9e5676a",
+          "model": "MobiusWork",
           "has_thumbnail": true
         },
         {
-          "id": "1e71fcb9-14ff-44b7-9f5d-ee8492ae41bf",
-          "model": "Hyrax::FileSet",
+          "id": "e38e2271-07fd-49b8-b6c4-fc624674eff0",
+          "model": "MobiusWork",
           "has_thumbnail": true
         },
         {
-          "id": "1c3553b7-7979-4856-a77a-0776985e256e",
-          "model": "Collection",
+          "id": "56d489da-4099-4a53-a8f2-16e286d49c6c",
+          "model": "MobiusWork",
           "has_thumbnail": true
         }
       ],
-      "pending_migrations": "ERROR: NoMethodError: undefined method `migration_context' for an instance of ActiveRecord::Connection"
+      "pending_migrations": false
     },
     "eastcentral": {
       "consortia": "mobius",
@@ -1563,7 +1563,7 @@
         "rights_statements": 12
       },
       "counts": {
-        "works": 5,
+        "works": 0,
         "filesets": 0,
         "users": 138
       },
@@ -1601,7 +1601,7 @@
         "enable_standard_deposit": true
       },
       "sample_works": [],
-      "pending_migrations": "ERROR: NoMethodError: undefined method `migration_context' for an instance of ActiveRecord::Connection"
+      "pending_migrations": false
     },
     "kenrick": {
       "consortia": "mobius",
@@ -1647,8 +1647,8 @@
         "rights_statements": 12
       },
       "counts": {
-        "works": 26,
-        "filesets": 0,
+        "works": 8,
+        "filesets": 5,
         "users": 138
       },
       "features": {
@@ -1686,11 +1686,6 @@
       },
       "sample_works": [
         {
-          "id": "8e5ef3c1-405f-47b6-a16c-f12e4f225b66",
-          "model": "Hyrax::FileSet",
-          "has_thumbnail": true
-        },
-        {
           "id": "de0037cf-d246-43a5-9fde-7b0940ebf448",
           "model": "GenericWork",
           "has_thumbnail": true
@@ -1699,9 +1694,14 @@
           "id": "5116b7ee-8dc6-4833-a35c-48cf41f683a9",
           "model": "GenericWork",
           "has_thumbnail": true
+        },
+        {
+          "id": "932032f0-a0df-43d5-b09b-ddeeddc307bb",
+          "model": "GenericWork",
+          "has_thumbnail": true
         }
       ],
-      "pending_migrations": "ERROR: NoMethodError: undefined method `migration_context' for an instance of ActiveRecord::Connection"
+      "pending_migrations": false
     },
     "jewell": {
       "consortia": "mobius",
@@ -1747,8 +1747,8 @@
         "rights_statements": 12
       },
       "counts": {
-        "works": 1944,
-        "filesets": 0,
+        "works": 662,
+        "filesets": 584,
         "users": 138
       },
       "features": {
@@ -1786,22 +1786,22 @@
       },
       "sample_works": [
         {
-          "id": "1aff11d4-fc90-464e-b82a-41806e769f44",
-          "model": "Collection",
+          "id": "1c8c9f70-a440-451c-8c87-6ca8c417adaa",
+          "model": "MobiusWork",
           "has_thumbnail": true
         },
         {
-          "id": "966d34b3-2274-4ae4-9f28-133399a8ad6d",
-          "model": "Collection",
+          "id": "48c71c74-9eef-4d90-972c-c61c9768ad21",
+          "model": "MobiusWork",
           "has_thumbnail": true
         },
         {
-          "id": "6e609430-55b7-4b66-8e00-09010a5ef486",
-          "model": "Collection",
+          "id": "7708f002-5fef-4d02-bf4c-aa7c28b3f99d",
+          "model": "MobiusWork",
           "has_thumbnail": true
         }
       ],
-      "pending_migrations": "ERROR: NoMethodError: undefined method `migration_context' for an instance of ActiveRecord::Connection"
+      "pending_migrations": false
     },
     "demo": {
       "consortia": null,
@@ -1821,7 +1821,7 @@
       ],
       "profile_path": "DEFAULT",
       "themes": {
-        "home": "community",
+        "home": "heritage",
         "show": "scholarly_show",
         "search": "list_view"
       },
@@ -1848,8 +1848,8 @@
         "rights_statements": 12
       },
       "counts": {
-        "works": 559,
-        "filesets": 0,
+        "works": 43,
+        "filesets": 95,
         "users": 138
       },
       "features": {
@@ -1892,17 +1892,17 @@
           "has_thumbnail": true
         },
         {
-          "id": "e72c3515-05ad-43b5-a729-64f03913bc15",
-          "model": "Hyrax::FileSet",
+          "id": "39434064-e090-434a-900d-7bf58e333f25",
+          "model": "ImageResource",
           "has_thumbnail": true
         },
         {
-          "id": "39434064-e090-434a-900d-7bf58e333f25",
+          "id": "4dd1a19f-0ffc-47ff-a64e-6cc5e01f211b",
           "model": "ImageResource",
           "has_thumbnail": true
         }
       ],
-      "pending_migrations": "ERROR: NoMethodError: undefined method `migration_context' for an instance of ActiveRecord::Connection"
+      "pending_migrations": false
     },
     "atsu": {
       "consortia": "mobius",
@@ -1948,8 +1948,8 @@
         "rights_statements": 12
       },
       "counts": {
-        "works": 17,
-        "filesets": 0,
+        "works": 4,
+        "filesets": 5,
         "users": 138
       },
       "features": {
@@ -1987,22 +1987,22 @@
       },
       "sample_works": [
         {
-          "id": "8e5ef3c1-405f-47b6-a16c-f12e4f225b66",
-          "model": "Hyrax::FileSet",
-          "has_thumbnail": true
-        },
-        {
-          "id": "1e71fcb9-14ff-44b7-9f5d-ee8492ae41bf",
-          "model": "Hyrax::FileSet",
-          "has_thumbnail": true
-        },
-        {
           "id": "358f1acd-c353-467d-9d9c-061953385331",
+          "model": "Image",
+          "has_thumbnail": true
+        },
+        {
+          "id": "e55c37c3-5f0d-4345-9f10-586b2d36feb2",
+          "model": "Image",
+          "has_thumbnail": true
+        },
+        {
+          "id": "fdc4b259-2f25-446c-9fa0-62f296046074",
           "model": "Image",
           "has_thumbnail": true
         }
       ],
-      "pending_migrations": "ERROR: NoMethodError: undefined method `migration_context' for an instance of ActiveRecord::Connection"
+      "pending_migrations": false
     },
     "mobius-search": {
       "consortia": null,
@@ -2027,8 +2027,8 @@
       "schema_version": "",
       "vocabularies": {},
       "counts": {
-        "works": 67797,
-        "filesets": 0,
+        "works": 14575,
+        "filesets": 26264,
         "users": 138
       },
       "features": {
@@ -2066,22 +2066,22 @@
       },
       "sample_works": [
         {
-          "id": "8e5ef3c1-405f-47b6-a16c-f12e4f225b66",
-          "model": "Hyrax::FileSet",
-          "has_thumbnail": true
-        },
-        {
-          "id": "1e71fcb9-14ff-44b7-9f5d-ee8492ae41bf",
-          "model": "Hyrax::FileSet",
-          "has_thumbnail": true
-        },
-        {
           "id": "de0037cf-d246-43a5-9fde-7b0940ebf448",
           "model": "GenericWork",
           "has_thumbnail": true
+        },
+        {
+          "id": "5116b7ee-8dc6-4833-a35c-48cf41f683a9",
+          "model": "GenericWork",
+          "has_thumbnail": true
+        },
+        {
+          "id": "a99745a6-0a50-4684-bc95-6cf89c1d7a8e",
+          "model": "MobiusWork",
+          "has_thumbnail": true
         }
       ],
-      "pending_migrations": "ERROR: NoMethodError: undefined method `migration_context' for an instance of ActiveRecord::Connection"
+      "pending_migrations": false
     },
     "alaska": {
       "consortia": null,
@@ -2124,7 +2124,7 @@
         "rights_statements": 12
       },
       "counts": {
-        "works": 5,
+        "works": 0,
         "filesets": 0,
         "users": 138
       },
@@ -2162,7 +2162,7 @@
         "enable_standard_deposit": true
       },
       "sample_works": [],
-      "pending_migrations": "ERROR: NoMethodError: undefined method `migration_context' for an instance of ActiveRecord::Connection"
+      "pending_migrations": false
     },
     "dcpl-demo": {
       "consortia": null,
@@ -2205,7 +2205,7 @@
         "rights_statements": 12
       },
       "counts": {
-        "works": 5,
+        "works": 0,
         "filesets": 0,
         "users": 138
       },
@@ -2243,7 +2243,7 @@
         "enable_standard_deposit": true
       },
       "sample_works": [],
-      "pending_migrations": "ERROR: NoMethodError: undefined method `migration_context' for an instance of ActiveRecord::Connection"
+      "pending_migrations": false
     },
     "scientist-demo": {
       "consortia": null,
@@ -2286,7 +2286,7 @@
         "rights_statements": 12
       },
       "counts": {
-        "works": 5,
+        "works": 0,
         "filesets": 0,
         "users": 138
       },
@@ -2324,7 +2324,7 @@
         "enable_standard_deposit": true
       },
       "sample_works": [],
-      "pending_migrations": "ERROR: NoMethodError: undefined method `migration_context' for an instance of ActiveRecord::Connection"
+      "pending_migrations": false
     },
     "wcu": {
       "consortia": "unca",
@@ -2372,8 +2372,8 @@
         "rights_statements": 12
       },
       "counts": {
-        "works": 4746,
-        "filesets": 0,
+        "works": 1562,
+        "filesets": 1565,
         "users": 138
       },
       "features": {
@@ -2426,7 +2426,7 @@
           "has_thumbnail": true
         }
       ],
-      "pending_migrations": "ERROR: NoMethodError: undefined method `migration_context' for an instance of ActiveRecord::Connection"
+      "pending_migrations": false
     },
     "unca": {
       "consortia": "unca",
@@ -2474,7 +2474,7 @@
         "rights_statements": 12
       },
       "counts": {
-        "works": 3,
+        "works": 0,
         "filesets": 0,
         "users": 138
       },
@@ -2512,7 +2512,7 @@
         "enable_standard_deposit": true
       },
       "sample_works": [],
-      "pending_migrations": "ERROR: NoMethodError: undefined method `migration_context' for an instance of ActiveRecord::Connection"
+      "pending_migrations": false
     },
     "stephens": {
       "consortia": "mobius",
@@ -2556,8 +2556,8 @@
         "rights_statements": 12
       },
       "counts": {
-        "works": 245,
-        "filesets": 0,
+        "works": 76,
+        "filesets": 82,
         "users": 138
       },
       "features": {
@@ -2595,22 +2595,22 @@
       },
       "sample_works": [
         {
-          "id": "8fbcd678-7c55-41ea-990d-0ef2f6535f42",
-          "model": "Collection",
-          "has_thumbnail": true
-        },
-        {
-          "id": "6f5ca490-bd7f-4651-8f67-5eeb2970e7b7",
-          "model": "Collection",
-          "has_thumbnail": true
-        },
-        {
           "id": "a369be5a-30ea-49f4-8fef-e9aceea2b8a1",
+          "model": "MobiusWork",
+          "has_thumbnail": true
+        },
+        {
+          "id": "731a7950-9910-494e-93b8-d4ae22ab63f7",
+          "model": "MobiusWork",
+          "has_thumbnail": true
+        },
+        {
+          "id": "b282e4c6-6e98-40c3-8425-4f531b2ea4db",
           "model": "MobiusWork",
           "has_thumbnail": true
         }
       ],
-      "pending_migrations": "ERROR: NoMethodError: undefined method `migration_context' for an instance of ActiveRecord::Connection"
+      "pending_migrations": false
     },
     "stjude": {
       "consortia": "stjude",
@@ -2657,8 +2657,8 @@
         "rights_statements": 12
       },
       "counts": {
-        "works": 252,
-        "filesets": 0,
+        "works": 62,
+        "filesets": 67,
         "users": 138
       },
       "features": {
@@ -2696,11 +2696,6 @@
       },
       "sample_works": [
         {
-          "id": "14d1cb07-f9c6-49dc-b574-745b7b2a76f9",
-          "model": "Collection",
-          "has_thumbnail": true
-        },
-        {
           "id": "44ab2d55-7a93-4f8f-9c2f-afdab30867e6",
           "model": "GenericWork",
           "has_thumbnail": true
@@ -2709,9 +2704,14 @@
           "id": "df9766d1-f991-48b0-9a81-56328a27a9a2",
           "model": "GenericWork",
           "has_thumbnail": true
+        },
+        {
+          "id": "896ca639-6caf-45f4-8c2a-93704fa28ecd",
+          "model": "GenericWork",
+          "has_thumbnail": true
         }
       ],
-      "pending_migrations": "ERROR: NoMethodError: undefined method `migration_context' for an instance of ActiveRecord::Connection"
+      "pending_migrations": false
     },
     "texas-state": {
       "consortia": null,
@@ -2758,7 +2758,7 @@
         "rights_statements": 12
       },
       "counts": {
-        "works": 1,
+        "works": 0,
         "filesets": 0,
         "users": 138
       },
@@ -2796,7 +2796,7 @@
         "enable_standard_deposit": true
       },
       "sample_works": [],
-      "pending_migrations": "ERROR: NoMethodError: undefined method `migration_context' for an instance of ActiveRecord::Connection"
+      "pending_migrations": false
     },
     "surfboard-archive": {
       "consortia": null,
@@ -2842,7 +2842,7 @@
         "rights_statements": 12
       },
       "counts": {
-        "works": 1,
+        "works": 0,
         "filesets": 0,
         "users": 138
       },
@@ -2880,7 +2880,7 @@
         "enable_standard_deposit": true
       },
       "sample_works": [],
-      "pending_migrations": "ERROR: NoMethodError: undefined method `migration_context' for an instance of ActiveRecord::Connection"
+      "pending_migrations": false
     },
     "main": {
       "consortia": null,
@@ -2926,7 +2926,7 @@
         "rights_statements": 12
       },
       "counts": {
-        "works": 1,
+        "works": 0,
         "filesets": 0,
         "users": 138
       },
@@ -2964,7 +2964,7 @@
         "enable_standard_deposit": true
       },
       "sample_works": [],
-      "pending_migrations": "ERROR: NoMethodError: undefined method `migration_context' for an instance of ActiveRecord::Connection"
+      "pending_migrations": false
     },
     "wcs-demo": {
       "consortia": null,
@@ -3011,8 +3011,8 @@
         "rights_statements": 12
       },
       "counts": {
-        "works": 56,
-        "filesets": 0,
+        "works": 25,
+        "filesets": 19,
         "users": 138
       },
       "features": {
@@ -3055,17 +3055,17 @@
           "has_thumbnail": true
         },
         {
-          "id": "b4809df7-819c-4bd8-af0f-f06d6b16f80f",
-          "model": "Collection",
+          "id": "12295a74-93eb-4c3a-832e-5a8f8fb1b40a",
+          "model": "GenericWork",
           "has_thumbnail": true
         },
         {
-          "id": "12295a74-93eb-4c3a-832e-5a8f8fb1b40a",
+          "id": "5620ef37-15b3-488b-b448-c74387af7581",
           "model": "GenericWork",
           "has_thumbnail": true
         }
       ],
-      "pending_migrations": "ERROR: NoMethodError: undefined method `migration_context' for an instance of ActiveRecord::Connection"
+      "pending_migrations": false
     },
     "qa": {
       "consortia": null,
@@ -3112,7 +3112,7 @@
         "rights_statements": 12
       },
       "counts": {
-        "works": 1,
+        "works": 0,
         "filesets": 0,
         "users": 138
       },
@@ -3150,7 +3150,7 @@
         "enable_standard_deposit": true
       },
       "sample_works": [],
-      "pending_migrations": "ERROR: NoMethodError: undefined method `migration_context' for an instance of ActiveRecord::Connection"
+      "pending_migrations": false
     },
     "uw-cc": {
       "consortia": null,
@@ -3195,8 +3195,8 @@
         "rights_statements": 12
       },
       "counts": {
-        "works": 1,
-        "filesets": 0,
+        "works": 0,
+        "filesets": 2,
         "users": 138
       },
       "features": {
@@ -3233,7 +3233,7 @@
         "enable_standard_deposit": true
       },
       "sample_works": [],
-      "pending_migrations": "ERROR: NoMethodError: undefined method `migration_context' for an instance of ActiveRecord::Connection"
+      "pending_migrations": false
     },
     "flyovercountry": {
       "consortia": null,
@@ -3280,8 +3280,8 @@
         "rights_statements": 12
       },
       "counts": {
-        "works": 8,
-        "filesets": 0,
+        "works": 2,
+        "filesets": 2,
         "users": 138
       },
       "features": {
@@ -3319,17 +3319,12 @@
       },
       "sample_works": [
         {
-          "id": "f30982ec-4425-4ca5-8161-efea03f4316e",
-          "model": "Collection",
-          "has_thumbnail": true
-        },
-        {
           "id": "babb705e-a41e-46e6-916d-deff8de6ad83",
           "model": "Image",
           "has_thumbnail": true
         }
       ],
-      "pending_migrations": "ERROR: NoMethodError: undefined method `migration_context' for an instance of ActiveRecord::Connection"
+      "pending_migrations": false
     },
     "new": {
       "consortia": null,
@@ -3374,7 +3369,7 @@
         "rights_statements": 12
       },
       "counts": {
-        "works": 1,
+        "works": 0,
         "filesets": 0,
         "users": 138
       },
@@ -3412,7 +3407,7 @@
         "enable_standard_deposit": true
       },
       "sample_works": [],
-      "pending_migrations": "ERROR: NoMethodError: undefined method `migration_context' for an instance of ActiveRecord::Connection"
+      "pending_migrations": false
     },
     "max-anon-test": {
       "consortia": null,
@@ -3457,7 +3452,7 @@
         "rights_statements": 12
       },
       "counts": {
-        "works": 1,
+        "works": 0,
         "filesets": 0,
         "users": 138
       },
@@ -3495,7 +3490,7 @@
         "enable_standard_deposit": true
       },
       "sample_works": [],
-      "pending_migrations": "ERROR: NoMethodError: undefined method `migration_context' for an instance of ActiveRecord::Connection"
+      "pending_migrations": false
     }
   }
 }
