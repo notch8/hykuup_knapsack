@@ -169,6 +169,12 @@ extraEnvVars: &envVars
     value: "true"
   - name: HYKU_ROOT_HOST
     value: hykuup-knapsack-staging.notch8.cloud
+  # Non-production only. samvera/hyku#3190 stopped defaulting an activated user's
+  # password, which is right for production but leaves no way into a new staging
+  # account short of reading the reset mail out of maildev. Deliberately absent
+  # from production-deploy.tmpl.yaml.
+  - name: HYKU_USER_DEFAULT_PASSWORD
+    value: password
   # Shows the controlled vocabularies dashboard link. Upstream withholds it in
   # production by default; HykuUp opts in. Needs `rails populate_qa` after deploy.
   - name: HYKU_VOCABULARY_SIDEBAR_ENABLED
