@@ -1,4 +1,4 @@
-Defaulted container "hyrax" out of: hyrax, load-solr-config (init), db-setup (init), sync-static-assets (init)
+Defaulted container "hyrax" out of: hyrax, load-solr-config (init), db-setup (init)
 /usr/local/bundle/gems/bundler-2.6.9/lib/bundler/rubygems_ext.rb:64: warning: already initialized constant Gem::Platform::JAVA
 /usr/local/lib/ruby/site_ruby/3.3.0/rubygems/platform.rb:279: warning: previous definition of JAVA was here
 /usr/local/bundle/gems/bundler-2.6.9/lib/bundler/rubygems_ext.rb:65: warning: already initialized constant Gem::Platform::MSWIN
@@ -18,19 +18,19 @@ Defaulted container "hyrax" out of: hyrax, load-solr-config (init), db-setup (in
 /usr/local/bundle/gems/bundler-2.6.9/lib/bundler/rubygems_ext.rb:73: warning: already initialized constant Gem::Platform::X64_LINUX_MUSL
 /usr/local/lib/ruby/site_ruby/3.3.0/rubygems/platform.rb:288: warning: previous definition of X64_LINUX_MUSL was here
 [DEPRECATION] PCDM is deprecating 'Valkyrie::Vocab::PCDMUse#PreservationMasterFile'. Use 'Valkyrie::Vocab::PCDMUse#PreservationFile' instead. This warning does *not* indicate that usage of the deprecated term has been detected.
-DEPRECATION WARNING: You are using deprecated behavior which will be removed from the next major or minor release. (called from block (2 levels) in <class:Engine> at /usr/local/bundle/gems/iiif_print-3.0.12/lib/iiif_print/engine.rb:67)
+DEPRECATION WARNING: You are using deprecated behavior which will be removed from the next major or minor release. (called from block (2 levels) in <class:Engine> at /usr/local/bundle/gems/iiif_print-3.1.0/lib/iiif_print/engine.rb:67)
 /app/samvera/config/initializers/hyrax.rb:7: warning: already initialized constant HykuKnapsack::DEFAULT_M3_PROFILE_PATH
 /app/samvera/config/initializers/hyrax.rb:7: warning: previous definition of DEFAULT_M3_PROFILE_PATH was here
 /app/samvera/config/initializers/knapsack_authorities.rb:12: warning: already initialized constant HykuKnapsack::AUTHORITIES_PATH
 /app/samvera/config/initializers/knapsack_authorities.rb:12: warning: previous definition of AUTHORITIES_PATH was here
-DEPRECATION WARNING: ActiveFedora and Wings will be removed from a future major release of Hyrax in favor of Valkyrie resource models. Please migrate your models from ActiveFedora::Base to Hyrax::Resource. (called from <module:Wings> at /usr/local/bundle/bundler/gems/hyrax-c2b18e57523a/lib/wings.rb:64)
-I, [2026-08-26T16:33:19.068462 #59957]  INFO -- : ActiveFedora: loading fedora config from /app/samvera/hyrax-webapp/config/fedora.yml
-I, [2026-08-26T16:33:19.069608 #59957]  INFO -- : ActiveFedora: loading solr config from /app/samvera/hyrax-webapp/config/solr.yml
-DEPRECATION WARNING: Hyrax::DerivativeService.services is deprecated; favor Hyrax.config.derivative_servies. (called from services at /usr/local/bundle/bundler/gems/hyrax-c2b18e57523a/app/services/hyrax/derivative_service.rb:22)
-W, [2026-08-26T16:33:19.922770 #59957]  WARN -- : Same predicate (http://purl.org/dc/terms/accessRights) used for properties additional_information and access_right
-W, [2026-08-26T16:33:19.927856 #59957]  WARN -- : Same predicate (http://purl.org/dc/terms/bibliographicCitation) used for properties bibliographic_citation and bibliographic_citation
-W, [2026-08-26T16:33:19.959572 #59957]  WARN -- : Same predicate (http://purl.org/dc/terms/accessRights) used for properties additional_information and access_right
-W, [2026-08-26T16:33:19.963514 #59957]  WARN -- : Same predicate (http://purl.org/dc/terms/bibliographicCitation) used for properties bibliographic_citation and bibliographic_citation
+DEPRECATION WARNING: ActiveFedora and Wings will be removed from a future major release of Hyrax in favor of Valkyrie resource models. Please migrate your models from ActiveFedora::Base to Hyrax::Resource. (called from <module:Wings> at /usr/local/bundle/bundler/gems/hyrax-4bd778e968d1/lib/wings.rb:64)
+I, [2026-08-26T20:19:05.530854 #1410]  INFO -- : ActiveFedora: loading fedora config from /app/samvera/hyrax-webapp/config/fedora.yml
+I, [2026-08-26T20:19:05.531893 #1410]  INFO -- : ActiveFedora: loading solr config from /app/samvera/hyrax-webapp/config/solr.yml
+DEPRECATION WARNING: Hyrax::DerivativeService.services is deprecated; favor Hyrax.config.derivative_servies. (called from services at /usr/local/bundle/bundler/gems/hyrax-4bd778e968d1/app/services/hyrax/derivative_service.rb:22)
+W, [2026-08-26T20:19:06.248486 #1410]  WARN -- : Same predicate (http://purl.org/dc/terms/accessRights) used for properties additional_information and access_right
+W, [2026-08-26T20:19:06.251579 #1410]  WARN -- : Same predicate (http://purl.org/dc/terms/bibliographicCitation) used for properties bibliographic_citation and bibliographic_citation
+W, [2026-08-26T20:19:06.283240 #1410]  WARN -- : Same predicate (http://purl.org/dc/terms/accessRights) used for properties additional_information and access_right
+W, [2026-08-26T20:19:06.286313 #1410]  WARN -- : Same predicate (http://purl.org/dc/terms/bibliographicCitation) used for properties bibliographic_citation and bibliographic_citation
 DEPRECATION WARNING: Blacklight::Base is deprecated and will be removed in Blacklight 8.0.0.
 	Include Blacklight::Configurable and Blacklight::SearchContext as needed (included in Blacklight::Catalog). (called from included at /usr/local/bundle/gems/blacklight-7.41.0/app/controllers/concerns/blacklight/base.rb:9)
 DEPRECATION WARNING: Blacklight::Base is deprecated and will be removed in Blacklight 8.0.0.
@@ -39,18 +39,16 @@ DEPRECATION WARNING: Blacklight::AccessControls::Enforcement is deprecated and w
 DEPRECATION WARNING: Blacklight::Base is deprecated and will be removed in Blacklight 8.0.0.
 	Include Blacklight::Configurable and Blacklight::SearchContext as needed (included in Hyrax::MyController). (called from included at /usr/local/bundle/gems/blacklight-7.41.0/app/controllers/concerns/blacklight/base.rb:9)
 /app/samvera/hyrax-webapp/app/services/hyrax/collection_types/create_service_decorator.rb:151: warning: already initialized constant Hyrax::CollectionTypes::CreateService::DEFAULT_OPTIONS
-/usr/local/bundle/bundler/gems/hyrax-c2b18e57523a/app/services/hyrax/collection_types/create_service.rb:15: warning: previous definition of DEFAULT_OPTIONS was here
+/usr/local/bundle/bundler/gems/hyrax-4bd778e968d1/app/services/hyrax/collection_types/create_service.rb:15: warning: previous definition of DEFAULT_OPTIONS was here
 /app/samvera/hyrax-webapp/app/services/hyrax/collection_types/create_service_decorator.rb:152: warning: already initialized constant Hyrax::CollectionTypes::CreateService::USER_COLLECTION_OPTIONS
-/usr/local/bundle/bundler/gems/hyrax-c2b18e57523a/app/services/hyrax/collection_types/create_service.rb:33: warning: previous definition of USER_COLLECTION_OPTIONS was here
-/usr/local/bundle/bundler/gems/hyrax-c2b18e57523a/app/services/hyrax/user_stat_importer.rb:6: warning: redefining constant Struct::UserRecord
-DEPRECATION WARNING: Hyrax::DerivativeService.services= is deprecated; favor Hyrax.config.derivative_servies=. (called from services= at /usr/local/bundle/bundler/gems/hyrax-c2b18e57523a/app/services/hyrax/derivative_service.rb:16)
-DEPRECATION WARNING: Blacklight::Base is deprecated and will be removed in Blacklight 8.0.0.
-	Include Blacklight::Configurable and Blacklight::SearchContext as needed (included in Hyrax::IiifAv::IiifAvController). (called from included at /usr/local/bundle/gems/blacklight-7.41.0/app/controllers/concerns/blacklight/base.rb:9)
+/usr/local/bundle/bundler/gems/hyrax-4bd778e968d1/app/services/hyrax/collection_types/create_service.rb:33: warning: previous definition of USER_COLLECTION_OPTIONS was here
+/usr/local/bundle/bundler/gems/hyrax-4bd778e968d1/app/services/hyrax/user_stat_importer.rb:6: warning: redefining constant Struct::UserRecord
+DEPRECATION WARNING: Hyrax::DerivativeService.services= is deprecated; favor Hyrax.config.derivative_servies=. (called from services= at /usr/local/bundle/bundler/gems/hyrax-4bd778e968d1/app/services/hyrax/derivative_service.rb:16)
 DEPRECATION WARNING: Blacklight::AccessControls::Enforcement is deprecated and will be removed in 1.0. (called from block in <module:Enforcement> at /usr/local/bundle/gems/blacklight-access_controls-6.1.0/lib/blacklight/access_controls/enforcement.rb:23)
-I, [2026-08-26T16:33:31.345143 #59957]  INFO -- : Hyrax::Engine.after_initialize - persisting registered roles!
-DEPRECATION WARNING: Hyrax::DerivativeService.services= is deprecated; favor Hyrax.config.derivative_servies=. (called from services= at /usr/local/bundle/bundler/gems/hyrax-c2b18e57523a/app/services/hyrax/derivative_service.rb:16)
-W, [2026-08-26T16:33:34.251529 #59957]  WARN -- : Scoped order is ignored, it's forced to be batch order.
-W, [2026-08-26T16:33:35.537460 #59957]  WARN -- : Fedora URL (http://127.0.0.1:99999/nil_fcrepo_endpoint) does not end with /rest. This could be a problem. Check your fedora.yml config
+I, [2026-08-26T20:19:17.080195 #1410]  INFO -- : Hyrax::Engine.after_initialize - persisting registered roles!
+DEPRECATION WARNING: Hyrax::DerivativeService.services= is deprecated; favor Hyrax.config.derivative_servies=. (called from services= at /usr/local/bundle/bundler/gems/hyrax-4bd778e968d1/app/services/hyrax/derivative_service.rb:16)
+W, [2026-08-26T20:19:20.050871 #1410]  WARN -- : Scoped order is ignored, it's forced to be batch order.
+W, [2026-08-26T20:19:20.995677 #1410]  WARN -- : Fedora URL (http://127.0.0.1:99999/nil_fcrepo_endpoint) does not end with /rest. This could be a problem. Check your fedora.yml config
 === (none) - 17 tenant(s) ===
   profiles in use: ["DEFAULT"]
   samvera                works=["GenericWork", "Image"]                       

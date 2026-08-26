@@ -9,17 +9,36 @@
       "Oer",
       "ScholarlyWork"
     ],
-    "realtime_notifications": false,
+    "realtime_notifications": true,
     "iiif_av_viewer": "universal_viewer",
-    "iiif_manifest_factory": "IIIFManifest::ManifestFactory",
-    "derivative_labels": "ERROR: NoMethodError: undefined method `derivative_options' for an instance of Hyrax::Configuration",
+    "iiif_manifest_factory": "IIIFManifest::V3::ManifestFactory",
+    "derivative_labels": {
+      "pdf": [
+        "thumbnail"
+      ],
+      "office": [
+        "",
+        "thumbnail"
+      ],
+      "audio": [
+        "mp3",
+        "ogg"
+      ],
+      "video": [
+        "mp4",
+        "thumbnail"
+      ],
+      "image": [
+        "thumbnail"
+      ]
+    },
     "consortia_defined": [
       "mobius",
       "stjude",
       "unca"
     ],
-    "puma_version": "5.6.9",
-    "hyrax_version": "5.2.0"
+    "puma_version": "7.2.1",
+    "hyrax_version": "5.3.0"
   },
   "tenants": {
     "samvera": {
@@ -50,7 +69,18 @@
         "OerResource"
       ],
       "schema_version": "2",
-      "vocabularies": {},
+      "vocabularies": {
+        "accessibility_features": 18,
+        "accessibility_hazards": 4,
+        "audience": 3,
+        "discipline": 65,
+        "education_levels": 5,
+        "learning_resource_types": 15,
+        "licenses": 15,
+        "oer_types": 12,
+        "resource_types": 20,
+        "rights_statements": 12
+      },
       "counts": {
         "works": 16613,
         "filesets": 0,
@@ -58,7 +88,7 @@
       },
       "features": {
         "cache_work_iiif_manifest": true,
-        "iiif_av": false,
+        "iiif_av": true,
         "iiif_pdf": false,
         "hide_private_items": false,
         "hide_social_buttons": false,
@@ -77,7 +107,6 @@
         "home_page_recent_document_show_keyword": false,
         "show_workflow_roles_menu_item_in_admin_dashboard_sidebar": false,
         "show_featured_researcher": true,
-        "show_share_button": true,
         "show_featured_works": true,
         "show_recently_uploaded": true,
         "show_identity_provider_in_admin_dashboard": false,
@@ -85,7 +114,10 @@
         "show_login_link": true,
         "treat_some_user_inputs_as_markdown": false,
         "use_tenant_specific_colors": false,
-        "include_guided_import": false
+        "include_guided_import": false,
+        "show_share_button": true,
+        "enable_guided_deposit": false,
+        "enable_standard_deposit": true
       },
       "sample_works": [
         {
@@ -135,7 +167,18 @@
         "OerResource"
       ],
       "schema_version": "2",
-      "vocabularies": {},
+      "vocabularies": {
+        "accessibility_features": 18,
+        "accessibility_hazards": 4,
+        "audience": 3,
+        "discipline": 65,
+        "education_levels": 5,
+        "learning_resource_types": 15,
+        "licenses": 15,
+        "oer_types": 12,
+        "resource_types": 20,
+        "rights_statements": 12
+      },
       "counts": {
         "works": 995,
         "filesets": 0,
@@ -143,7 +186,7 @@
       },
       "features": {
         "cache_work_iiif_manifest": false,
-        "iiif_av": false,
+        "iiif_av": true,
         "iiif_pdf": false,
         "hide_private_items": false,
         "hide_social_buttons": false,
@@ -162,7 +205,6 @@
         "home_page_recent_document_show_keyword": false,
         "show_workflow_roles_menu_item_in_admin_dashboard_sidebar": false,
         "show_featured_researcher": false,
-        "show_share_button": true,
         "show_featured_works": true,
         "show_recently_uploaded": true,
         "show_identity_provider_in_admin_dashboard": false,
@@ -170,7 +212,10 @@
         "show_login_link": true,
         "treat_some_user_inputs_as_markdown": false,
         "use_tenant_specific_colors": false,
-        "include_guided_import": false
+        "include_guided_import": false,
+        "show_share_button": true,
+        "enable_guided_deposit": false,
+        "enable_standard_deposit": true
       },
       "sample_works": [
         {
@@ -219,7 +264,18 @@
         "OerResource"
       ],
       "schema_version": "1",
-      "vocabularies": {},
+      "vocabularies": {
+        "accessibility_features": 18,
+        "accessibility_hazards": 4,
+        "audience": 3,
+        "discipline": 65,
+        "education_levels": 5,
+        "learning_resource_types": 15,
+        "licenses": 15,
+        "oer_types": 12,
+        "resource_types": 20,
+        "rights_statements": 12
+      },
       "counts": {
         "works": 96,
         "filesets": 0,
@@ -227,7 +283,7 @@
       },
       "features": {
         "cache_work_iiif_manifest": false,
-        "iiif_av": false,
+        "iiif_av": true,
         "iiif_pdf": false,
         "hide_private_items": false,
         "hide_social_buttons": false,
@@ -246,7 +302,6 @@
         "home_page_recent_document_show_keyword": false,
         "show_workflow_roles_menu_item_in_admin_dashboard_sidebar": false,
         "show_featured_researcher": true,
-        "show_share_button": false,
         "show_featured_works": true,
         "show_recently_uploaded": true,
         "show_identity_provider_in_admin_dashboard": false,
@@ -254,7 +309,10 @@
         "show_login_link": true,
         "treat_some_user_inputs_as_markdown": false,
         "use_tenant_specific_colors": false,
-        "include_guided_import": false
+        "include_guided_import": false,
+        "show_share_button": false,
+        "enable_guided_deposit": false,
+        "enable_standard_deposit": true
       },
       "sample_works": [
         {
@@ -304,7 +362,18 @@
         "OerResource"
       ],
       "schema_version": "4",
-      "vocabularies": {},
+      "vocabularies": {
+        "accessibility_features": 18,
+        "accessibility_hazards": 4,
+        "audience": 3,
+        "discipline": 65,
+        "education_levels": 5,
+        "learning_resource_types": 15,
+        "licenses": 15,
+        "oer_types": 12,
+        "resource_types": 20,
+        "rights_statements": 12
+      },
       "counts": {
         "works": 1421,
         "filesets": 0,
@@ -312,7 +381,7 @@
       },
       "features": {
         "cache_work_iiif_manifest": false,
-        "iiif_av": false,
+        "iiif_av": true,
         "iiif_pdf": false,
         "hide_private_items": false,
         "hide_social_buttons": false,
@@ -331,7 +400,6 @@
         "home_page_recent_document_show_keyword": false,
         "show_workflow_roles_menu_item_in_admin_dashboard_sidebar": false,
         "show_featured_researcher": false,
-        "show_share_button": false,
         "show_featured_works": true,
         "show_recently_uploaded": true,
         "show_identity_provider_in_admin_dashboard": false,
@@ -339,7 +407,10 @@
         "show_login_link": true,
         "treat_some_user_inputs_as_markdown": false,
         "use_tenant_specific_colors": false,
-        "include_guided_import": false
+        "include_guided_import": false,
+        "show_share_button": false,
+        "enable_guided_deposit": false,
+        "enable_standard_deposit": true
       },
       "sample_works": [
         {
@@ -389,7 +460,18 @@
         "OerResource"
       ],
       "schema_version": "7",
-      "vocabularies": {},
+      "vocabularies": {
+        "accessibility_features": 18,
+        "accessibility_hazards": 4,
+        "audience": 3,
+        "discipline": 65,
+        "education_levels": 5,
+        "learning_resource_types": 15,
+        "licenses": 15,
+        "oer_types": 12,
+        "resource_types": 20,
+        "rights_statements": 12
+      },
       "counts": {
         "works": 1085,
         "filesets": 0,
@@ -397,7 +479,7 @@
       },
       "features": {
         "cache_work_iiif_manifest": false,
-        "iiif_av": false,
+        "iiif_av": true,
         "iiif_pdf": false,
         "hide_private_items": false,
         "hide_social_buttons": false,
@@ -416,7 +498,6 @@
         "home_page_recent_document_show_keyword": false,
         "show_workflow_roles_menu_item_in_admin_dashboard_sidebar": false,
         "show_featured_researcher": true,
-        "show_share_button": true,
         "show_featured_works": true,
         "show_recently_uploaded": true,
         "show_identity_provider_in_admin_dashboard": false,
@@ -424,7 +505,10 @@
         "show_login_link": true,
         "treat_some_user_inputs_as_markdown": false,
         "use_tenant_specific_colors": false,
-        "include_guided_import": false
+        "include_guided_import": false,
+        "show_share_button": true,
+        "enable_guided_deposit": false,
+        "enable_standard_deposit": true
       },
       "sample_works": [
         {
@@ -476,7 +560,18 @@
         "OerResource"
       ],
       "schema_version": "3",
-      "vocabularies": {},
+      "vocabularies": {
+        "accessibility_features": 18,
+        "accessibility_hazards": 4,
+        "audience": 3,
+        "discipline": 65,
+        "education_levels": 5,
+        "learning_resource_types": 15,
+        "licenses": 15,
+        "oer_types": 12,
+        "resource_types": 20,
+        "rights_statements": 12
+      },
       "counts": {
         "works": 5901,
         "filesets": 0,
@@ -484,7 +579,7 @@
       },
       "features": {
         "cache_work_iiif_manifest": false,
-        "iiif_av": false,
+        "iiif_av": true,
         "iiif_pdf": false,
         "hide_private_items": false,
         "hide_social_buttons": false,
@@ -503,7 +598,6 @@
         "home_page_recent_document_show_keyword": false,
         "show_workflow_roles_menu_item_in_admin_dashboard_sidebar": false,
         "show_featured_researcher": true,
-        "show_share_button": true,
         "show_featured_works": true,
         "show_recently_uploaded": true,
         "show_identity_provider_in_admin_dashboard": false,
@@ -511,7 +605,10 @@
         "show_login_link": true,
         "treat_some_user_inputs_as_markdown": false,
         "use_tenant_specific_colors": false,
-        "include_guided_import": false
+        "include_guided_import": false,
+        "show_share_button": true,
+        "enable_guided_deposit": false,
+        "enable_standard_deposit": true
       },
       "sample_works": [
         {
@@ -561,7 +658,18 @@
         "OerResource"
       ],
       "schema_version": "3",
-      "vocabularies": {},
+      "vocabularies": {
+        "accessibility_features": 18,
+        "accessibility_hazards": 4,
+        "audience": 3,
+        "discipline": 65,
+        "education_levels": 5,
+        "learning_resource_types": 15,
+        "licenses": 15,
+        "oer_types": 12,
+        "resource_types": 20,
+        "rights_statements": 12
+      },
       "counts": {
         "works": 12810,
         "filesets": 0,
@@ -569,7 +677,7 @@
       },
       "features": {
         "cache_work_iiif_manifest": false,
-        "iiif_av": false,
+        "iiif_av": true,
         "iiif_pdf": false,
         "hide_private_items": false,
         "hide_social_buttons": false,
@@ -588,7 +696,6 @@
         "home_page_recent_document_show_keyword": false,
         "show_workflow_roles_menu_item_in_admin_dashboard_sidebar": false,
         "show_featured_researcher": true,
-        "show_share_button": false,
         "show_featured_works": true,
         "show_recently_uploaded": true,
         "show_identity_provider_in_admin_dashboard": false,
@@ -596,7 +703,10 @@
         "show_login_link": true,
         "treat_some_user_inputs_as_markdown": false,
         "use_tenant_specific_colors": false,
-        "include_guided_import": false
+        "include_guided_import": false,
+        "show_share_button": false,
+        "enable_guided_deposit": false,
+        "enable_standard_deposit": true
       },
       "sample_works": [
         {
@@ -646,7 +756,18 @@
         "OerResource"
       ],
       "schema_version": "4",
-      "vocabularies": {},
+      "vocabularies": {
+        "accessibility_features": 18,
+        "accessibility_hazards": 4,
+        "audience": 3,
+        "discipline": 65,
+        "education_levels": 5,
+        "learning_resource_types": 15,
+        "licenses": 15,
+        "oer_types": 12,
+        "resource_types": 20,
+        "rights_statements": 12
+      },
       "counts": {
         "works": 1188,
         "filesets": 0,
@@ -654,7 +775,7 @@
       },
       "features": {
         "cache_work_iiif_manifest": false,
-        "iiif_av": false,
+        "iiif_av": true,
         "iiif_pdf": false,
         "hide_private_items": false,
         "hide_social_buttons": false,
@@ -673,7 +794,6 @@
         "home_page_recent_document_show_keyword": false,
         "show_workflow_roles_menu_item_in_admin_dashboard_sidebar": true,
         "show_featured_researcher": false,
-        "show_share_button": false,
         "show_featured_works": true,
         "show_recently_uploaded": true,
         "show_identity_provider_in_admin_dashboard": false,
@@ -681,7 +801,10 @@
         "show_login_link": true,
         "treat_some_user_inputs_as_markdown": false,
         "use_tenant_specific_colors": false,
-        "include_guided_import": false
+        "include_guided_import": false,
+        "show_share_button": false,
+        "enable_guided_deposit": false,
+        "enable_standard_deposit": true
       },
       "sample_works": [
         {
@@ -731,7 +854,18 @@
         "OerResource"
       ],
       "schema_version": "3",
-      "vocabularies": {},
+      "vocabularies": {
+        "accessibility_features": 18,
+        "accessibility_hazards": 4,
+        "audience": 3,
+        "discipline": 65,
+        "education_levels": 5,
+        "learning_resource_types": 15,
+        "licenses": 15,
+        "oer_types": 12,
+        "resource_types": 20,
+        "rights_statements": 12
+      },
       "counts": {
         "works": 492,
         "filesets": 0,
@@ -739,7 +873,7 @@
       },
       "features": {
         "cache_work_iiif_manifest": false,
-        "iiif_av": false,
+        "iiif_av": true,
         "iiif_pdf": false,
         "hide_private_items": false,
         "hide_social_buttons": false,
@@ -758,7 +892,6 @@
         "home_page_recent_document_show_keyword": false,
         "show_workflow_roles_menu_item_in_admin_dashboard_sidebar": false,
         "show_featured_researcher": true,
-        "show_share_button": true,
         "show_featured_works": true,
         "show_recently_uploaded": true,
         "show_identity_provider_in_admin_dashboard": false,
@@ -766,7 +899,10 @@
         "show_login_link": true,
         "treat_some_user_inputs_as_markdown": false,
         "use_tenant_specific_colors": false,
-        "include_guided_import": false
+        "include_guided_import": false,
+        "show_share_button": true,
+        "enable_guided_deposit": false,
+        "enable_standard_deposit": true
       },
       "sample_works": [
         {
@@ -816,7 +952,18 @@
         "OerResource"
       ],
       "schema_version": "8",
-      "vocabularies": {},
+      "vocabularies": {
+        "accessibility_features": 18,
+        "accessibility_hazards": 4,
+        "audience": 3,
+        "discipline": 65,
+        "education_levels": 5,
+        "learning_resource_types": 15,
+        "licenses": 15,
+        "oer_types": 12,
+        "resource_types": 20,
+        "rights_statements": 12
+      },
       "counts": {
         "works": 36234,
         "filesets": 0,
@@ -824,7 +971,7 @@
       },
       "features": {
         "cache_work_iiif_manifest": true,
-        "iiif_av": false,
+        "iiif_av": true,
         "iiif_pdf": false,
         "hide_private_items": true,
         "hide_social_buttons": false,
@@ -843,7 +990,6 @@
         "home_page_recent_document_show_keyword": false,
         "show_workflow_roles_menu_item_in_admin_dashboard_sidebar": false,
         "show_featured_researcher": false,
-        "show_share_button": false,
         "show_featured_works": true,
         "show_recently_uploaded": false,
         "show_identity_provider_in_admin_dashboard": false,
@@ -851,7 +997,10 @@
         "show_login_link": true,
         "treat_some_user_inputs_as_markdown": false,
         "use_tenant_specific_colors": false,
-        "include_guided_import": false
+        "include_guided_import": false,
+        "show_share_button": false,
+        "enable_guided_deposit": false,
+        "enable_standard_deposit": true
       },
       "sample_works": [
         {
@@ -901,7 +1050,18 @@
         "OerResource"
       ],
       "schema_version": "3",
-      "vocabularies": {},
+      "vocabularies": {
+        "accessibility_features": 18,
+        "accessibility_hazards": 4,
+        "audience": 3,
+        "discipline": 65,
+        "education_levels": 5,
+        "learning_resource_types": 15,
+        "licenses": 15,
+        "oer_types": 12,
+        "resource_types": 20,
+        "rights_statements": 12
+      },
       "counts": {
         "works": 1102,
         "filesets": 0,
@@ -909,7 +1069,7 @@
       },
       "features": {
         "cache_work_iiif_manifest": true,
-        "iiif_av": false,
+        "iiif_av": true,
         "iiif_pdf": false,
         "hide_private_items": true,
         "hide_social_buttons": false,
@@ -928,7 +1088,6 @@
         "home_page_recent_document_show_keyword": false,
         "show_workflow_roles_menu_item_in_admin_dashboard_sidebar": true,
         "show_featured_researcher": false,
-        "show_share_button": false,
         "show_featured_works": true,
         "show_recently_uploaded": false,
         "show_identity_provider_in_admin_dashboard": false,
@@ -936,7 +1095,10 @@
         "show_login_link": true,
         "treat_some_user_inputs_as_markdown": false,
         "use_tenant_specific_colors": false,
-        "include_guided_import": true
+        "include_guided_import": true,
+        "show_share_button": false,
+        "enable_guided_deposit": false,
+        "enable_standard_deposit": true
       },
       "sample_works": [
         {
@@ -988,7 +1150,18 @@
         "OerResource"
       ],
       "schema_version": "3",
-      "vocabularies": {},
+      "vocabularies": {
+        "accessibility_features": 18,
+        "accessibility_hazards": 4,
+        "audience": 3,
+        "discipline": 65,
+        "education_levels": 5,
+        "learning_resource_types": 15,
+        "licenses": 15,
+        "oer_types": 12,
+        "resource_types": 20,
+        "rights_statements": 12
+      },
       "counts": {
         "works": 3253,
         "filesets": 0,
@@ -996,7 +1169,7 @@
       },
       "features": {
         "cache_work_iiif_manifest": true,
-        "iiif_av": false,
+        "iiif_av": true,
         "iiif_pdf": false,
         "hide_private_items": false,
         "hide_social_buttons": false,
@@ -1015,7 +1188,6 @@
         "home_page_recent_document_show_keyword": false,
         "show_workflow_roles_menu_item_in_admin_dashboard_sidebar": false,
         "show_featured_researcher": false,
-        "show_share_button": false,
         "show_featured_works": true,
         "show_recently_uploaded": false,
         "show_identity_provider_in_admin_dashboard": false,
@@ -1023,7 +1195,10 @@
         "show_login_link": true,
         "treat_some_user_inputs_as_markdown": false,
         "use_tenant_specific_colors": false,
-        "include_guided_import": false
+        "include_guided_import": false,
+        "show_share_button": false,
+        "enable_guided_deposit": false,
+        "enable_standard_deposit": true
       },
       "sample_works": [
         {
@@ -1075,7 +1250,18 @@
         "OerResource"
       ],
       "schema_version": "3",
-      "vocabularies": {},
+      "vocabularies": {
+        "accessibility_features": 18,
+        "accessibility_hazards": 4,
+        "audience": 3,
+        "discipline": 65,
+        "education_levels": 5,
+        "learning_resource_types": 15,
+        "licenses": 15,
+        "oer_types": 12,
+        "resource_types": 20,
+        "rights_statements": 12
+      },
       "counts": {
         "works": 179,
         "filesets": 0,
@@ -1083,7 +1269,7 @@
       },
       "features": {
         "cache_work_iiif_manifest": false,
-        "iiif_av": false,
+        "iiif_av": true,
         "iiif_pdf": false,
         "hide_private_items": false,
         "hide_social_buttons": false,
@@ -1102,7 +1288,6 @@
         "home_page_recent_document_show_keyword": false,
         "show_workflow_roles_menu_item_in_admin_dashboard_sidebar": false,
         "show_featured_researcher": true,
-        "show_share_button": true,
         "show_featured_works": true,
         "show_recently_uploaded": true,
         "show_identity_provider_in_admin_dashboard": false,
@@ -1110,7 +1295,10 @@
         "show_login_link": true,
         "treat_some_user_inputs_as_markdown": false,
         "use_tenant_specific_colors": false,
-        "include_guided_import": false
+        "include_guided_import": false,
+        "show_share_button": true,
+        "enable_guided_deposit": false,
+        "enable_standard_deposit": true
       },
       "sample_works": [
         {
@@ -1162,7 +1350,18 @@
         "OerResource"
       ],
       "schema_version": "3",
-      "vocabularies": {},
+      "vocabularies": {
+        "accessibility_features": 18,
+        "accessibility_hazards": 4,
+        "audience": 3,
+        "discipline": 65,
+        "education_levels": 5,
+        "learning_resource_types": 15,
+        "licenses": 15,
+        "oer_types": 12,
+        "resource_types": 20,
+        "rights_statements": 12
+      },
       "counts": {
         "works": 1658,
         "filesets": 0,
@@ -1170,7 +1369,7 @@
       },
       "features": {
         "cache_work_iiif_manifest": false,
-        "iiif_av": false,
+        "iiif_av": true,
         "iiif_pdf": false,
         "hide_private_items": false,
         "hide_social_buttons": false,
@@ -1189,7 +1388,6 @@
         "home_page_recent_document_show_keyword": false,
         "show_workflow_roles_menu_item_in_admin_dashboard_sidebar": false,
         "show_featured_researcher": true,
-        "show_share_button": true,
         "show_featured_works": true,
         "show_recently_uploaded": true,
         "show_identity_provider_in_admin_dashboard": false,
@@ -1197,7 +1395,10 @@
         "show_login_link": true,
         "treat_some_user_inputs_as_markdown": false,
         "use_tenant_specific_colors": false,
-        "include_guided_import": false
+        "include_guided_import": false,
+        "show_share_button": true,
+        "enable_guided_deposit": false,
+        "enable_standard_deposit": true
       },
       "sample_works": [
         {
@@ -1249,7 +1450,18 @@
         "OerResource"
       ],
       "schema_version": "3",
-      "vocabularies": {},
+      "vocabularies": {
+        "accessibility_features": 18,
+        "accessibility_hazards": 4,
+        "audience": 3,
+        "discipline": 65,
+        "education_levels": 5,
+        "learning_resource_types": 15,
+        "licenses": 15,
+        "oer_types": 12,
+        "resource_types": 20,
+        "rights_statements": 12
+      },
       "counts": {
         "works": 482,
         "filesets": 0,
@@ -1257,7 +1469,7 @@
       },
       "features": {
         "cache_work_iiif_manifest": false,
-        "iiif_av": false,
+        "iiif_av": true,
         "iiif_pdf": false,
         "hide_private_items": false,
         "hide_social_buttons": false,
@@ -1276,7 +1488,6 @@
         "home_page_recent_document_show_keyword": false,
         "show_workflow_roles_menu_item_in_admin_dashboard_sidebar": false,
         "show_featured_researcher": true,
-        "show_share_button": true,
         "show_featured_works": true,
         "show_recently_uploaded": true,
         "show_identity_provider_in_admin_dashboard": false,
@@ -1284,7 +1495,10 @@
         "show_login_link": true,
         "treat_some_user_inputs_as_markdown": false,
         "use_tenant_specific_colors": false,
-        "include_guided_import": false
+        "include_guided_import": false,
+        "show_share_button": true,
+        "enable_guided_deposit": false,
+        "enable_standard_deposit": true
       },
       "sample_works": [
         {
@@ -1336,7 +1550,18 @@
         "OerResource"
       ],
       "schema_version": "3",
-      "vocabularies": {},
+      "vocabularies": {
+        "accessibility_features": 18,
+        "accessibility_hazards": 4,
+        "audience": 3,
+        "discipline": 65,
+        "education_levels": 5,
+        "learning_resource_types": 15,
+        "licenses": 15,
+        "oer_types": 12,
+        "resource_types": 20,
+        "rights_statements": 12
+      },
       "counts": {
         "works": 5,
         "filesets": 0,
@@ -1344,7 +1569,7 @@
       },
       "features": {
         "cache_work_iiif_manifest": false,
-        "iiif_av": false,
+        "iiif_av": true,
         "iiif_pdf": false,
         "hide_private_items": false,
         "hide_social_buttons": false,
@@ -1363,7 +1588,6 @@
         "home_page_recent_document_show_keyword": false,
         "show_workflow_roles_menu_item_in_admin_dashboard_sidebar": false,
         "show_featured_researcher": true,
-        "show_share_button": true,
         "show_featured_works": true,
         "show_recently_uploaded": true,
         "show_identity_provider_in_admin_dashboard": false,
@@ -1371,7 +1595,10 @@
         "show_login_link": true,
         "treat_some_user_inputs_as_markdown": false,
         "use_tenant_specific_colors": false,
-        "include_guided_import": false
+        "include_guided_import": false,
+        "show_share_button": true,
+        "enable_guided_deposit": false,
+        "enable_standard_deposit": true
       },
       "sample_works": [],
       "pending_migrations": "ERROR: NoMethodError: undefined method `migration_context' for an instance of ActiveRecord::Connection"
@@ -1407,7 +1634,18 @@
         "OerResource"
       ],
       "schema_version": "3",
-      "vocabularies": {},
+      "vocabularies": {
+        "accessibility_features": 18,
+        "accessibility_hazards": 4,
+        "audience": 3,
+        "discipline": 65,
+        "education_levels": 5,
+        "learning_resource_types": 15,
+        "licenses": 15,
+        "oer_types": 12,
+        "resource_types": 20,
+        "rights_statements": 12
+      },
       "counts": {
         "works": 26,
         "filesets": 0,
@@ -1415,7 +1653,7 @@
       },
       "features": {
         "cache_work_iiif_manifest": false,
-        "iiif_av": false,
+        "iiif_av": true,
         "iiif_pdf": false,
         "hide_private_items": false,
         "hide_social_buttons": false,
@@ -1434,7 +1672,6 @@
         "home_page_recent_document_show_keyword": false,
         "show_workflow_roles_menu_item_in_admin_dashboard_sidebar": false,
         "show_featured_researcher": true,
-        "show_share_button": true,
         "show_featured_works": true,
         "show_recently_uploaded": true,
         "show_identity_provider_in_admin_dashboard": false,
@@ -1442,7 +1679,10 @@
         "show_login_link": true,
         "treat_some_user_inputs_as_markdown": false,
         "use_tenant_specific_colors": false,
-        "include_guided_import": false
+        "include_guided_import": false,
+        "show_share_button": true,
+        "enable_guided_deposit": false,
+        "enable_standard_deposit": true
       },
       "sample_works": [
         {
@@ -1494,7 +1734,18 @@
         "OerResource"
       ],
       "schema_version": "3",
-      "vocabularies": {},
+      "vocabularies": {
+        "accessibility_features": 18,
+        "accessibility_hazards": 4,
+        "audience": 3,
+        "discipline": 65,
+        "education_levels": 5,
+        "learning_resource_types": 15,
+        "licenses": 15,
+        "oer_types": 12,
+        "resource_types": 20,
+        "rights_statements": 12
+      },
       "counts": {
         "works": 1944,
         "filesets": 0,
@@ -1502,7 +1753,7 @@
       },
       "features": {
         "cache_work_iiif_manifest": false,
-        "iiif_av": false,
+        "iiif_av": true,
         "iiif_pdf": false,
         "hide_private_items": false,
         "hide_social_buttons": false,
@@ -1521,7 +1772,6 @@
         "home_page_recent_document_show_keyword": false,
         "show_workflow_roles_menu_item_in_admin_dashboard_sidebar": false,
         "show_featured_researcher": true,
-        "show_share_button": true,
         "show_featured_works": true,
         "show_recently_uploaded": true,
         "show_identity_provider_in_admin_dashboard": false,
@@ -1529,7 +1779,10 @@
         "show_login_link": true,
         "treat_some_user_inputs_as_markdown": false,
         "use_tenant_specific_colors": false,
-        "include_guided_import": false
+        "include_guided_import": false,
+        "show_share_button": true,
+        "enable_guided_deposit": false,
+        "enable_standard_deposit": true
       },
       "sample_works": [
         {
@@ -1582,7 +1835,18 @@
         "OerResource"
       ],
       "schema_version": "4",
-      "vocabularies": {},
+      "vocabularies": {
+        "accessibility_features": 18,
+        "accessibility_hazards": 4,
+        "audience": 3,
+        "discipline": 65,
+        "education_levels": 5,
+        "learning_resource_types": 15,
+        "licenses": 15,
+        "oer_types": 12,
+        "resource_types": 20,
+        "rights_statements": 12
+      },
       "counts": {
         "works": 559,
         "filesets": 0,
@@ -1609,7 +1873,6 @@
         "home_page_recent_document_show_keyword": false,
         "show_workflow_roles_menu_item_in_admin_dashboard_sidebar": false,
         "show_featured_researcher": true,
-        "show_share_button": true,
         "show_featured_works": true,
         "show_recently_uploaded": true,
         "show_identity_provider_in_admin_dashboard": true,
@@ -1617,7 +1880,10 @@
         "show_login_link": true,
         "treat_some_user_inputs_as_markdown": false,
         "use_tenant_specific_colors": true,
-        "include_guided_import": true
+        "include_guided_import": true,
+        "show_share_button": true,
+        "enable_guided_deposit": false,
+        "enable_standard_deposit": true
       },
       "sample_works": [
         {
@@ -1669,7 +1935,18 @@
         "OerResource"
       ],
       "schema_version": "5",
-      "vocabularies": {},
+      "vocabularies": {
+        "accessibility_features": 18,
+        "accessibility_hazards": 4,
+        "audience": 3,
+        "discipline": 65,
+        "education_levels": 5,
+        "learning_resource_types": 15,
+        "licenses": 15,
+        "oer_types": 12,
+        "resource_types": 20,
+        "rights_statements": 12
+      },
       "counts": {
         "works": 17,
         "filesets": 0,
@@ -1677,7 +1954,7 @@
       },
       "features": {
         "cache_work_iiif_manifest": false,
-        "iiif_av": false,
+        "iiif_av": true,
         "iiif_pdf": false,
         "hide_private_items": false,
         "hide_social_buttons": false,
@@ -1696,7 +1973,6 @@
         "home_page_recent_document_show_keyword": false,
         "show_workflow_roles_menu_item_in_admin_dashboard_sidebar": false,
         "show_featured_researcher": true,
-        "show_share_button": true,
         "show_featured_works": true,
         "show_recently_uploaded": true,
         "show_identity_provider_in_admin_dashboard": false,
@@ -1704,7 +1980,10 @@
         "show_login_link": true,
         "treat_some_user_inputs_as_markdown": false,
         "use_tenant_specific_colors": false,
-        "include_guided_import": false
+        "include_guided_import": false,
+        "show_share_button": true,
+        "enable_guided_deposit": false,
+        "enable_standard_deposit": true
       },
       "sample_works": [
         {
@@ -1754,7 +2033,7 @@
       },
       "features": {
         "cache_work_iiif_manifest": true,
-        "iiif_av": false,
+        "iiif_av": true,
         "iiif_pdf": false,
         "hide_private_items": false,
         "hide_social_buttons": false,
@@ -1773,7 +2052,6 @@
         "home_page_recent_document_show_keyword": false,
         "show_workflow_roles_menu_item_in_admin_dashboard_sidebar": false,
         "show_featured_researcher": true,
-        "show_share_button": true,
         "show_featured_works": true,
         "show_recently_uploaded": true,
         "show_identity_provider_in_admin_dashboard": false,
@@ -1781,7 +2059,10 @@
         "show_login_link": true,
         "treat_some_user_inputs_as_markdown": false,
         "use_tenant_specific_colors": false,
-        "include_guided_import": false
+        "include_guided_import": false,
+        "show_share_button": true,
+        "enable_guided_deposit": false,
+        "enable_standard_deposit": true
       },
       "sample_works": [
         {
@@ -1830,7 +2111,18 @@
         "OerResource"
       ],
       "schema_version": "1",
-      "vocabularies": {},
+      "vocabularies": {
+        "accessibility_features": 18,
+        "accessibility_hazards": 4,
+        "audience": 3,
+        "discipline": 65,
+        "education_levels": 5,
+        "learning_resource_types": 15,
+        "licenses": 15,
+        "oer_types": 12,
+        "resource_types": 20,
+        "rights_statements": 12
+      },
       "counts": {
         "works": 5,
         "filesets": 0,
@@ -1838,7 +2130,7 @@
       },
       "features": {
         "cache_work_iiif_manifest": false,
-        "iiif_av": false,
+        "iiif_av": true,
         "iiif_pdf": false,
         "hide_private_items": false,
         "hide_social_buttons": false,
@@ -1857,7 +2149,6 @@
         "home_page_recent_document_show_keyword": false,
         "show_workflow_roles_menu_item_in_admin_dashboard_sidebar": false,
         "show_featured_researcher": false,
-        "show_share_button": false,
         "show_featured_works": true,
         "show_recently_uploaded": true,
         "show_identity_provider_in_admin_dashboard": false,
@@ -1865,7 +2156,10 @@
         "show_login_link": true,
         "treat_some_user_inputs_as_markdown": false,
         "use_tenant_specific_colors": false,
-        "include_guided_import": false
+        "include_guided_import": false,
+        "show_share_button": false,
+        "enable_guided_deposit": false,
+        "enable_standard_deposit": true
       },
       "sample_works": [],
       "pending_migrations": "ERROR: NoMethodError: undefined method `migration_context' for an instance of ActiveRecord::Connection"
@@ -1898,7 +2192,18 @@
         "OerResource"
       ],
       "schema_version": "2",
-      "vocabularies": {},
+      "vocabularies": {
+        "accessibility_features": 18,
+        "accessibility_hazards": 4,
+        "audience": 3,
+        "discipline": 65,
+        "education_levels": 5,
+        "learning_resource_types": 15,
+        "licenses": 15,
+        "oer_types": 12,
+        "resource_types": 20,
+        "rights_statements": 12
+      },
       "counts": {
         "works": 5,
         "filesets": 0,
@@ -1906,7 +2211,7 @@
       },
       "features": {
         "cache_work_iiif_manifest": false,
-        "iiif_av": false,
+        "iiif_av": true,
         "iiif_pdf": false,
         "hide_private_items": false,
         "hide_social_buttons": false,
@@ -1925,7 +2230,6 @@
         "home_page_recent_document_show_keyword": false,
         "show_workflow_roles_menu_item_in_admin_dashboard_sidebar": false,
         "show_featured_researcher": true,
-        "show_share_button": true,
         "show_featured_works": true,
         "show_recently_uploaded": true,
         "show_identity_provider_in_admin_dashboard": false,
@@ -1933,7 +2237,10 @@
         "show_login_link": true,
         "treat_some_user_inputs_as_markdown": false,
         "use_tenant_specific_colors": false,
-        "include_guided_import": false
+        "include_guided_import": false,
+        "show_share_button": true,
+        "enable_guided_deposit": false,
+        "enable_standard_deposit": true
       },
       "sample_works": [],
       "pending_migrations": "ERROR: NoMethodError: undefined method `migration_context' for an instance of ActiveRecord::Connection"
@@ -1966,7 +2273,18 @@
         "OerResource"
       ],
       "schema_version": "1",
-      "vocabularies": {},
+      "vocabularies": {
+        "accessibility_features": 18,
+        "accessibility_hazards": 4,
+        "audience": 3,
+        "discipline": 65,
+        "education_levels": 5,
+        "learning_resource_types": 15,
+        "licenses": 15,
+        "oer_types": 12,
+        "resource_types": 20,
+        "rights_statements": 12
+      },
       "counts": {
         "works": 5,
         "filesets": 0,
@@ -1974,7 +2292,7 @@
       },
       "features": {
         "cache_work_iiif_manifest": false,
-        "iiif_av": false,
+        "iiif_av": true,
         "iiif_pdf": false,
         "hide_private_items": false,
         "hide_social_buttons": false,
@@ -1993,7 +2311,6 @@
         "home_page_recent_document_show_keyword": false,
         "show_workflow_roles_menu_item_in_admin_dashboard_sidebar": false,
         "show_featured_researcher": true,
-        "show_share_button": true,
         "show_featured_works": true,
         "show_recently_uploaded": true,
         "show_identity_provider_in_admin_dashboard": false,
@@ -2001,7 +2318,10 @@
         "show_login_link": true,
         "treat_some_user_inputs_as_markdown": false,
         "use_tenant_specific_colors": false,
-        "include_guided_import": false
+        "include_guided_import": false,
+        "show_share_button": true,
+        "enable_guided_deposit": false,
+        "enable_standard_deposit": true
       },
       "sample_works": [],
       "pending_migrations": "ERROR: NoMethodError: undefined method `migration_context' for an instance of ActiveRecord::Connection"
@@ -2039,7 +2359,18 @@
         "ScholarlyWork"
       ],
       "schema_version": "4",
-      "vocabularies": {},
+      "vocabularies": {
+        "accessibility_features": 18,
+        "accessibility_hazards": 4,
+        "audience": 3,
+        "discipline": 65,
+        "education_levels": 5,
+        "learning_resource_types": 15,
+        "licenses": 15,
+        "oer_types": 12,
+        "resource_types": 20,
+        "rights_statements": 12
+      },
       "counts": {
         "works": 4746,
         "filesets": 0,
@@ -2047,7 +2378,7 @@
       },
       "features": {
         "cache_work_iiif_manifest": false,
-        "iiif_av": false,
+        "iiif_av": true,
         "iiif_pdf": false,
         "hide_private_items": false,
         "hide_social_buttons": false,
@@ -2066,7 +2397,6 @@
         "home_page_recent_document_show_keyword": false,
         "show_workflow_roles_menu_item_in_admin_dashboard_sidebar": false,
         "show_featured_researcher": false,
-        "show_share_button": false,
         "show_featured_works": false,
         "show_recently_uploaded": false,
         "show_identity_provider_in_admin_dashboard": true,
@@ -2074,7 +2404,10 @@
         "show_login_link": true,
         "treat_some_user_inputs_as_markdown": false,
         "use_tenant_specific_colors": false,
-        "include_guided_import": true
+        "include_guided_import": true,
+        "show_share_button": false,
+        "enable_guided_deposit": false,
+        "enable_standard_deposit": true
       },
       "sample_works": [
         {
@@ -2128,7 +2461,18 @@
         "ScholarlyWork"
       ],
       "schema_version": "3",
-      "vocabularies": {},
+      "vocabularies": {
+        "accessibility_features": 18,
+        "accessibility_hazards": 4,
+        "audience": 3,
+        "discipline": 65,
+        "education_levels": 5,
+        "learning_resource_types": 15,
+        "licenses": 15,
+        "oer_types": 12,
+        "resource_types": 20,
+        "rights_statements": 12
+      },
       "counts": {
         "works": 3,
         "filesets": 0,
@@ -2136,7 +2480,7 @@
       },
       "features": {
         "cache_work_iiif_manifest": false,
-        "iiif_av": false,
+        "iiif_av": true,
         "iiif_pdf": false,
         "hide_private_items": false,
         "hide_social_buttons": false,
@@ -2155,7 +2499,6 @@
         "home_page_recent_document_show_keyword": false,
         "show_workflow_roles_menu_item_in_admin_dashboard_sidebar": false,
         "show_featured_researcher": true,
-        "show_share_button": true,
         "show_featured_works": true,
         "show_recently_uploaded": true,
         "show_identity_provider_in_admin_dashboard": true,
@@ -2163,7 +2506,10 @@
         "show_login_link": true,
         "treat_some_user_inputs_as_markdown": false,
         "use_tenant_specific_colors": false,
-        "include_guided_import": false
+        "include_guided_import": false,
+        "show_share_button": true,
+        "enable_guided_deposit": false,
+        "enable_standard_deposit": true
       },
       "sample_works": [],
       "pending_migrations": "ERROR: NoMethodError: undefined method `migration_context' for an instance of ActiveRecord::Connection"
@@ -2197,7 +2543,18 @@
         "OerResource"
       ],
       "schema_version": "5",
-      "vocabularies": {},
+      "vocabularies": {
+        "accessibility_features": 18,
+        "accessibility_hazards": 4,
+        "audience": 3,
+        "discipline": 65,
+        "education_levels": 5,
+        "learning_resource_types": 15,
+        "licenses": 15,
+        "oer_types": 12,
+        "resource_types": 20,
+        "rights_statements": 12
+      },
       "counts": {
         "works": 245,
         "filesets": 0,
@@ -2205,7 +2562,7 @@
       },
       "features": {
         "cache_work_iiif_manifest": false,
-        "iiif_av": false,
+        "iiif_av": true,
         "iiif_pdf": false,
         "hide_private_items": false,
         "hide_social_buttons": false,
@@ -2224,7 +2581,6 @@
         "home_page_recent_document_show_keyword": false,
         "show_workflow_roles_menu_item_in_admin_dashboard_sidebar": false,
         "show_featured_researcher": false,
-        "show_share_button": false,
         "show_featured_works": true,
         "show_recently_uploaded": true,
         "show_identity_provider_in_admin_dashboard": false,
@@ -2232,7 +2588,10 @@
         "show_login_link": true,
         "treat_some_user_inputs_as_markdown": false,
         "use_tenant_specific_colors": false,
-        "include_guided_import": false
+        "include_guided_import": false,
+        "show_share_button": false,
+        "enable_guided_deposit": false,
+        "enable_standard_deposit": true
       },
       "sample_works": [
         {
@@ -2285,7 +2644,17 @@
       ],
       "schema_version": "14",
       "vocabularies": {
-        "mesh": 30954
+        "accessibility_features": 18,
+        "accessibility_hazards": 4,
+        "audience": 3,
+        "discipline": 65,
+        "education_levels": 5,
+        "learning_resource_types": 15,
+        "licenses": 15,
+        "mesh": 30954,
+        "oer_types": 12,
+        "resource_types": 20,
+        "rights_statements": 12
       },
       "counts": {
         "works": 252,
@@ -2294,7 +2663,7 @@
       },
       "features": {
         "cache_work_iiif_manifest": false,
-        "iiif_av": false,
+        "iiif_av": true,
         "iiif_pdf": false,
         "hide_private_items": false,
         "hide_social_buttons": false,
@@ -2313,7 +2682,6 @@
         "home_page_recent_document_show_keyword": false,
         "show_workflow_roles_menu_item_in_admin_dashboard_sidebar": false,
         "show_featured_researcher": false,
-        "show_share_button": true,
         "show_featured_works": false,
         "show_recently_uploaded": true,
         "show_identity_provider_in_admin_dashboard": true,
@@ -2321,7 +2689,10 @@
         "show_login_link": true,
         "treat_some_user_inputs_as_markdown": false,
         "use_tenant_specific_colors": false,
-        "include_guided_import": false
+        "include_guided_import": false,
+        "show_share_button": true,
+        "enable_guided_deposit": false,
+        "enable_standard_deposit": true
       },
       "sample_works": [
         {
@@ -2374,7 +2745,18 @@
         "OerResource"
       ],
       "schema_version": "1",
-      "vocabularies": {},
+      "vocabularies": {
+        "accessibility_features": 18,
+        "accessibility_hazards": 4,
+        "audience": 3,
+        "discipline": 65,
+        "education_levels": 5,
+        "learning_resource_types": 15,
+        "licenses": 15,
+        "oer_types": 12,
+        "resource_types": 20,
+        "rights_statements": 12
+      },
       "counts": {
         "works": 1,
         "filesets": 0,
@@ -2382,7 +2764,7 @@
       },
       "features": {
         "cache_work_iiif_manifest": false,
-        "iiif_av": false,
+        "iiif_av": true,
         "iiif_pdf": false,
         "hide_private_items": false,
         "hide_social_buttons": false,
@@ -2401,7 +2783,6 @@
         "home_page_recent_document_show_keyword": false,
         "show_workflow_roles_menu_item_in_admin_dashboard_sidebar": false,
         "show_featured_researcher": true,
-        "show_share_button": true,
         "show_featured_works": true,
         "show_recently_uploaded": true,
         "show_identity_provider_in_admin_dashboard": false,
@@ -2409,7 +2790,10 @@
         "show_login_link": true,
         "treat_some_user_inputs_as_markdown": false,
         "use_tenant_specific_colors": false,
-        "include_guided_import": false
+        "include_guided_import": false,
+        "show_share_button": true,
+        "enable_guided_deposit": false,
+        "enable_standard_deposit": true
       },
       "sample_works": [],
       "pending_migrations": "ERROR: NoMethodError: undefined method `migration_context' for an instance of ActiveRecord::Connection"
@@ -2445,7 +2829,18 @@
         "OerResource"
       ],
       "schema_version": "1",
-      "vocabularies": {},
+      "vocabularies": {
+        "accessibility_features": 18,
+        "accessibility_hazards": 4,
+        "audience": 3,
+        "discipline": 65,
+        "education_levels": 5,
+        "learning_resource_types": 15,
+        "licenses": 15,
+        "oer_types": 12,
+        "resource_types": 20,
+        "rights_statements": 12
+      },
       "counts": {
         "works": 1,
         "filesets": 0,
@@ -2453,7 +2848,7 @@
       },
       "features": {
         "cache_work_iiif_manifest": false,
-        "iiif_av": false,
+        "iiif_av": true,
         "iiif_pdf": false,
         "hide_private_items": false,
         "hide_social_buttons": false,
@@ -2472,7 +2867,6 @@
         "home_page_recent_document_show_keyword": false,
         "show_workflow_roles_menu_item_in_admin_dashboard_sidebar": false,
         "show_featured_researcher": true,
-        "show_share_button": true,
         "show_featured_works": true,
         "show_recently_uploaded": true,
         "show_identity_provider_in_admin_dashboard": false,
@@ -2480,7 +2874,10 @@
         "show_login_link": true,
         "treat_some_user_inputs_as_markdown": false,
         "use_tenant_specific_colors": false,
-        "include_guided_import": false
+        "include_guided_import": false,
+        "show_share_button": true,
+        "enable_guided_deposit": false,
+        "enable_standard_deposit": true
       },
       "sample_works": [],
       "pending_migrations": "ERROR: NoMethodError: undefined method `migration_context' for an instance of ActiveRecord::Connection"
@@ -2516,7 +2913,18 @@
         "OerResource"
       ],
       "schema_version": "2",
-      "vocabularies": {},
+      "vocabularies": {
+        "accessibility_features": 18,
+        "accessibility_hazards": 4,
+        "audience": 3,
+        "discipline": 65,
+        "education_levels": 5,
+        "learning_resource_types": 15,
+        "licenses": 15,
+        "oer_types": 12,
+        "resource_types": 20,
+        "rights_statements": 12
+      },
       "counts": {
         "works": 1,
         "filesets": 0,
@@ -2524,7 +2932,7 @@
       },
       "features": {
         "cache_work_iiif_manifest": true,
-        "iiif_av": false,
+        "iiif_av": true,
         "iiif_pdf": false,
         "hide_private_items": false,
         "hide_social_buttons": false,
@@ -2543,7 +2951,6 @@
         "home_page_recent_document_show_keyword": false,
         "show_workflow_roles_menu_item_in_admin_dashboard_sidebar": false,
         "show_featured_researcher": true,
-        "show_share_button": true,
         "show_featured_works": true,
         "show_recently_uploaded": true,
         "show_identity_provider_in_admin_dashboard": false,
@@ -2551,7 +2958,10 @@
         "show_login_link": true,
         "treat_some_user_inputs_as_markdown": false,
         "use_tenant_specific_colors": false,
-        "include_guided_import": false
+        "include_guided_import": false,
+        "show_share_button": true,
+        "enable_guided_deposit": false,
+        "enable_standard_deposit": true
       },
       "sample_works": [],
       "pending_migrations": "ERROR: NoMethodError: undefined method `migration_context' for an instance of ActiveRecord::Connection"
@@ -2588,7 +2998,18 @@
         "OerResource"
       ],
       "schema_version": "2",
-      "vocabularies": {},
+      "vocabularies": {
+        "accessibility_features": 18,
+        "accessibility_hazards": 4,
+        "audience": 3,
+        "discipline": 65,
+        "education_levels": 5,
+        "learning_resource_types": 15,
+        "licenses": 15,
+        "oer_types": 12,
+        "resource_types": 20,
+        "rights_statements": 12
+      },
       "counts": {
         "works": 56,
         "filesets": 0,
@@ -2596,7 +3017,7 @@
       },
       "features": {
         "cache_work_iiif_manifest": false,
-        "iiif_av": false,
+        "iiif_av": true,
         "iiif_pdf": false,
         "hide_private_items": false,
         "hide_social_buttons": false,
@@ -2615,7 +3036,6 @@
         "home_page_recent_document_show_keyword": false,
         "show_workflow_roles_menu_item_in_admin_dashboard_sidebar": false,
         "show_featured_researcher": true,
-        "show_share_button": false,
         "show_featured_works": true,
         "show_recently_uploaded": true,
         "show_identity_provider_in_admin_dashboard": false,
@@ -2623,7 +3043,10 @@
         "show_login_link": true,
         "treat_some_user_inputs_as_markdown": false,
         "use_tenant_specific_colors": false,
-        "include_guided_import": false
+        "include_guided_import": false,
+        "show_share_button": false,
+        "enable_guided_deposit": false,
+        "enable_standard_deposit": true
       },
       "sample_works": [
         {
@@ -2676,7 +3099,18 @@
         "OerResource"
       ],
       "schema_version": "1",
-      "vocabularies": {},
+      "vocabularies": {
+        "accessibility_features": 18,
+        "accessibility_hazards": 4,
+        "audience": 3,
+        "discipline": 65,
+        "education_levels": 5,
+        "learning_resource_types": 15,
+        "licenses": 15,
+        "oer_types": 12,
+        "resource_types": 20,
+        "rights_statements": 12
+      },
       "counts": {
         "works": 1,
         "filesets": 0,
@@ -2684,7 +3118,7 @@
       },
       "features": {
         "cache_work_iiif_manifest": false,
-        "iiif_av": false,
+        "iiif_av": true,
         "iiif_pdf": false,
         "hide_private_items": false,
         "hide_social_buttons": false,
@@ -2703,7 +3137,6 @@
         "home_page_recent_document_show_keyword": false,
         "show_workflow_roles_menu_item_in_admin_dashboard_sidebar": false,
         "show_featured_researcher": true,
-        "show_share_button": true,
         "show_featured_works": true,
         "show_recently_uploaded": true,
         "show_identity_provider_in_admin_dashboard": false,
@@ -2711,7 +3144,10 @@
         "show_login_link": true,
         "treat_some_user_inputs_as_markdown": false,
         "use_tenant_specific_colors": false,
-        "include_guided_import": false
+        "include_guided_import": false,
+        "show_share_button": true,
+        "enable_guided_deposit": false,
+        "enable_standard_deposit": true
       },
       "sample_works": [],
       "pending_migrations": "ERROR: NoMethodError: undefined method `migration_context' for an instance of ActiveRecord::Connection"
@@ -2746,7 +3182,18 @@
         "OerResource"
       ],
       "schema_version": "2",
-      "vocabularies": {},
+      "vocabularies": {
+        "accessibility_features": 18,
+        "accessibility_hazards": 4,
+        "audience": 3,
+        "discipline": 65,
+        "education_levels": 5,
+        "learning_resource_types": 15,
+        "licenses": 15,
+        "oer_types": 12,
+        "resource_types": 20,
+        "rights_statements": 12
+      },
       "counts": {
         "works": 1,
         "filesets": 0,
@@ -2754,7 +3201,7 @@
       },
       "features": {
         "cache_work_iiif_manifest": false,
-        "iiif_av": false,
+        "iiif_av": true,
         "iiif_pdf": false,
         "hide_private_items": false,
         "hide_social_buttons": false,
@@ -2773,7 +3220,6 @@
         "home_page_recent_document_show_keyword": false,
         "show_workflow_roles_menu_item_in_admin_dashboard_sidebar": false,
         "show_featured_researcher": false,
-        "show_share_button": true,
         "show_featured_works": true,
         "show_recently_uploaded": true,
         "show_identity_provider_in_admin_dashboard": true,
@@ -2781,7 +3227,10 @@
         "show_login_link": true,
         "treat_some_user_inputs_as_markdown": false,
         "use_tenant_specific_colors": false,
-        "include_guided_import": false
+        "include_guided_import": false,
+        "show_share_button": true,
+        "enable_guided_deposit": false,
+        "enable_standard_deposit": true
       },
       "sample_works": [],
       "pending_migrations": "ERROR: NoMethodError: undefined method `migration_context' for an instance of ActiveRecord::Connection"
@@ -2818,7 +3267,18 @@
         "OerResource"
       ],
       "schema_version": "1",
-      "vocabularies": {},
+      "vocabularies": {
+        "accessibility_features": 18,
+        "accessibility_hazards": 4,
+        "audience": 3,
+        "discipline": 65,
+        "education_levels": 5,
+        "learning_resource_types": 15,
+        "licenses": 15,
+        "oer_types": 12,
+        "resource_types": 20,
+        "rights_statements": 12
+      },
       "counts": {
         "works": 8,
         "filesets": 0,
@@ -2826,7 +3286,7 @@
       },
       "features": {
         "cache_work_iiif_manifest": false,
-        "iiif_av": false,
+        "iiif_av": true,
         "iiif_pdf": false,
         "hide_private_items": false,
         "hide_social_buttons": false,
@@ -2845,7 +3305,6 @@
         "home_page_recent_document_show_keyword": false,
         "show_workflow_roles_menu_item_in_admin_dashboard_sidebar": false,
         "show_featured_researcher": true,
-        "show_share_button": true,
         "show_featured_works": true,
         "show_recently_uploaded": true,
         "show_identity_provider_in_admin_dashboard": false,
@@ -2853,7 +3312,10 @@
         "show_login_link": true,
         "treat_some_user_inputs_as_markdown": false,
         "use_tenant_specific_colors": false,
-        "include_guided_import": false
+        "include_guided_import": false,
+        "show_share_button": true,
+        "enable_guided_deposit": false,
+        "enable_standard_deposit": true
       },
       "sample_works": [
         {
@@ -2899,7 +3361,18 @@
         "OerResource"
       ],
       "schema_version": "1",
-      "vocabularies": {},
+      "vocabularies": {
+        "accessibility_features": 18,
+        "accessibility_hazards": 4,
+        "audience": 3,
+        "discipline": 65,
+        "education_levels": 5,
+        "learning_resource_types": 15,
+        "licenses": 15,
+        "oer_types": 12,
+        "resource_types": 20,
+        "rights_statements": 12
+      },
       "counts": {
         "works": 1,
         "filesets": 0,
@@ -2907,7 +3380,7 @@
       },
       "features": {
         "cache_work_iiif_manifest": false,
-        "iiif_av": false,
+        "iiif_av": true,
         "iiif_pdf": false,
         "hide_private_items": false,
         "hide_social_buttons": false,
@@ -2926,7 +3399,6 @@
         "home_page_recent_document_show_keyword": false,
         "show_workflow_roles_menu_item_in_admin_dashboard_sidebar": false,
         "show_featured_researcher": true,
-        "show_share_button": true,
         "show_featured_works": true,
         "show_recently_uploaded": true,
         "show_identity_provider_in_admin_dashboard": false,
@@ -2934,7 +3406,10 @@
         "show_login_link": true,
         "treat_some_user_inputs_as_markdown": false,
         "use_tenant_specific_colors": false,
-        "include_guided_import": false
+        "include_guided_import": false,
+        "show_share_button": true,
+        "enable_guided_deposit": false,
+        "enable_standard_deposit": true
       },
       "sample_works": [],
       "pending_migrations": "ERROR: NoMethodError: undefined method `migration_context' for an instance of ActiveRecord::Connection"
@@ -2969,7 +3444,18 @@
         "OerResource"
       ],
       "schema_version": "1",
-      "vocabularies": {},
+      "vocabularies": {
+        "accessibility_features": 18,
+        "accessibility_hazards": 4,
+        "audience": 3,
+        "discipline": 65,
+        "education_levels": 5,
+        "learning_resource_types": 15,
+        "licenses": 15,
+        "oer_types": 12,
+        "resource_types": 20,
+        "rights_statements": 12
+      },
       "counts": {
         "works": 1,
         "filesets": 0,
@@ -2977,7 +3463,7 @@
       },
       "features": {
         "cache_work_iiif_manifest": false,
-        "iiif_av": false,
+        "iiif_av": true,
         "iiif_pdf": false,
         "hide_private_items": false,
         "hide_social_buttons": false,
@@ -2996,7 +3482,6 @@
         "home_page_recent_document_show_keyword": false,
         "show_workflow_roles_menu_item_in_admin_dashboard_sidebar": false,
         "show_featured_researcher": true,
-        "show_share_button": true,
         "show_featured_works": true,
         "show_recently_uploaded": true,
         "show_identity_provider_in_admin_dashboard": false,
@@ -3004,7 +3489,10 @@
         "show_login_link": true,
         "treat_some_user_inputs_as_markdown": false,
         "use_tenant_specific_colors": false,
-        "include_guided_import": false
+        "include_guided_import": false,
+        "show_share_button": true,
+        "enable_guided_deposit": false,
+        "enable_standard_deposit": true
       },
       "sample_works": [],
       "pending_migrations": "ERROR: NoMethodError: undefined method `migration_context' for an instance of ActiveRecord::Connection"

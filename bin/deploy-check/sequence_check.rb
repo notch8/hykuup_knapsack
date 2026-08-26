@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Is any tenant's id sequence behind max(id)? If so, the next insert reuses an
 # existing id and Postgres raises PG::UniqueViolation on the primary key.
 # Read-only: reads sequence state without consuming a value (last_value, not nextval).
