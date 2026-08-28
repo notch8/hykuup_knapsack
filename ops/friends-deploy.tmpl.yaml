@@ -150,6 +150,10 @@ extraEnvVars: &envVars
     value: "true"
   - name: HYKU_BLOCK_VALKYRIE_REDIRECT
     value: "false"
+  # Availability only: use is gated per tenant by the `redirects` Flipflop, and a
+  # profile needs a `redirects` hash property before that flag goes on, not after.
+  - name: HYRAX_REDIRECTS_ENABLED
+    value: "true"
   - name: HYKU_CONTACT_EMAIL
     value: example@hykuup-knapsack-friends.notch8.cloud
   - name: HYKU_CONTACT_EMAIL_TO
