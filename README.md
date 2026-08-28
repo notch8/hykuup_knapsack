@@ -40,6 +40,16 @@ include making contributing back to the Hyku project easier and making upgrades 
 
 Hyku Knapsack versions are aligned with [Hyku](https://github.com/samvera/hyku) versions: **Knapsack 6** works with the **Hyku 6** series, **Knapsack 7** with the **Hyku 7** series (which introduces breaking changes), and so on. That way you can tell at a glance which Knapsack release to use for a given Hyku version. Pick the Knapsack major version that matches your Hyku major version.
 
+### Deploy regression checking
+
+Pre- and post-deploy tenant snapshots live in the shared playbook rather than here, so one reviewed copy serves every knapsack instead of each repo carrying a fork:
+
+```bash
+ln -s ~/Work/playbook/skills/deploy-regression-check ~/.claude/skills/deploy-regression-check
+```
+
+That makes it available as `/deploy-regression-check`. See [notch8/playbook](https://github.com/notch8/playbook) `skills/deploy-regression-check/`, and the method write-up in `devops/deployments/regression-testing-a-deploy-with-claude.md`.
+
 ### Precedence
 
 In a traditional setup, a Rails' application's views, translations, and code supsedes all other gems and engines.  However, we have setup Hyku Knapsack to have a higher load precedence than the underlying Hyku application.
