@@ -143,12 +143,13 @@ extraEnvVars: &envVars
     value: 'true'
   - name: HYKU_BLOCK_VALKYRIE_REDIRECT
     value: "false"
-  # Loads the redirects (vanity URL) schema. Structural: entries persisted while
-  # on are orphaned if this is turned back off, so treat it as one-way. With this
-  # on, each tenant still needs the `redirects` Flipflop, and its m3 profile must
-  # declare a `redirects` property of type hash or profile validation fails.
+  # Loads the redirects (vanity URL) schema, matching upstream Hyku. This only
+  # makes the feature available; use is gated per tenant by the `redirects`
+  # Flipflop, off by default. A tenant must add a `redirects` property of type
+  # hash to its m3 profile before enabling that flag, since the flag makes the
+  # property mandatory during profile validation.
   - name: HYRAX_REDIRECTS_ENABLED
-    value: "false"
+    value: "true"
   - name: HYKU_CONTACT_EMAIL
     value: info@hykuup.com
   - name: HYKU_CONTACT_EMAIL_TO
