@@ -28,3 +28,6 @@ pg/*
 fits.log
 ImageMagick*
 .DS_Store
+
+# Deploy-check captures are per-deploy artifacts, not build inputs.
+bin/deploy-check/baselines/

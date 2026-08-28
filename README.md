@@ -38,7 +38,9 @@ include making contributing back to the Hyku project easier and making upgrades 
 
 ### Version strategy
 
-This repository is HykuUp's deployment of Hyku, and it is versioned on **HykuUp's own line** — `v1.0-prod-baseline`, then `v1.1.0`, and so on. The version says nothing about which Hyku series is pinned, so every release states the Hyku and Hyrax versions it ships in the release body. `lib/hyku_knapsack/version.rb` carries the same number as the release tag.
+This repository is HykuUp's deployment of Hyku, and it is versioned on **HykuUp's own line**: `v1.0-prod-baseline`, then `v1.1.0`, and so on. The version says nothing about which Hyku series is pinned, so every release states the Hyku and Hyrax versions it ships in the release body.
+
+**The git tag is the only thing that identifies a release.** `lib/hyku_knapsack/version.rb` is kept in step with the tag as a breadcrumb, but nothing reads it: its only consumer is `spec.version` in `hyku_knapsack.gemspec`, and the knapsack engine is loaded from upstream by branch (`hyrax-webapp/Gemfile`: `gem 'hyku_knapsack', github: 'samvera-labs/hyku_knapsack', branch: ...`), never from this gemspec. Deploys are dispatched per ref and take their image tag from that ref's SHA, so they never read the tag or the constant either.
 
 Upstream [samvera-labs/hyku_knapsack](https://github.com/samvera-labs/hyku_knapsack) uses a different rule, where the Knapsack major matches the Hyku major (Knapsack 7 for the Hyku 7 series). That rule is not followed here: HykuUp has never had a 6 or a 7, and borrowing Hyku's number would imply releases that do not exist.
 

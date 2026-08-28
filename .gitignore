@@ -14,3 +14,6 @@ file_cache/
 Gemfile.lock
 /.cache
 .bash_history
+
+# Deploy-check captures are transient: compare a before against an after, then prune.
+bin/deploy-check/baselines/

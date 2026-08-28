@@ -124,10 +124,13 @@ end
 
 ## Baselines
 
-`baselines/` holds the capture taken immediately before a production deploy, kept
-only until that deploy is verified. A baseline's value is comparative, so once the
-post-deploy diff is clean the old file is dead weight - prune it rather than
-accumulating one per deploy.
+`baselines/` is gitignored. Write captures there and they stay on your machine: a
+baseline's only value is comparative, so once the post-deploy diff is clean the
+file is dead weight, and committing one per deploy would both accumulate in the
+repo and ride into the image, since the Dockerfile copies the whole context.
+
+When a capture documents something worth keeping, put the finding in an issue
+rather than the file in git.
 
 `production-2026-08-25-pre-v7.2.0.json` is the state on Hyrax 5.2.0 / Puma 5.6.9
 before the Hyku main bump, across all 37 tenants. Delete it once v7.2.0 is
