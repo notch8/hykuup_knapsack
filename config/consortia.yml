@@ -8,6 +8,9 @@
     - "ScholarlyWork"
 - name: "St. Jude Consortium"
   identifier: "stjude"
+  excluded_work_types:
+    - "MobiusWork"
+    - "ScholarlyWork"
 
 
 
