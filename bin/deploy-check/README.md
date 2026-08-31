@@ -10,7 +10,6 @@ deploy log. `snapshot.rb` captures the state that matters per tenant, and
 |---|---|---|
 | production | `r2-besties` | `hykuup-knapsack-production` |
 | staging | `r2-friends` | `hykuup-knapsack-staging` |
-| friends | `r2-friends` | `hykuup-knapsack-friends` |
 
 ```bash
 CTX=r2-besties; NS=hykuup-knapsack-production

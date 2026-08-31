@@ -9,7 +9,7 @@
 # POD=other-pod-name ./bin/cleanup.sh
 
 # Different namespace
-# NS=hykuup-knapsack-friends ./bin/cleanup.sh
+# NS=hykuup-knapsack-staging ./bin/cleanup.sh
 
 # Different age threshold (e.g., 60 days)
 # AGE_DAYS=60 ./bin/cleanup.sh
@@ -18,7 +18,7 @@
 # PARALLEL=16 ./bin/cleanup.sh
 
 # Combine multiple
-# DRY_RUN=false POD=hykuup-knapsack-friends-hyrax-worker-6fbc547668-fzg9t NS=hykuup-knapsack-friends ./bin/cleanup.sh
+# DRY_RUN=false POD=hykuup-knapsack-staging-hyrax-worker-6fbc547668-fzg9t NS=hykuup-knapsack-staging ./bin/cleanup.sh
 
 POD="${POD:-hykuup-knapsack-production-hyrax-worker-7b6c8694d8-dk97k}"
 NS="${NS:-hykuup-knapsack-production}"
