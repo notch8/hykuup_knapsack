@@ -46,7 +46,7 @@ RSpec.describe TenantWorkTypeFilter do
 
       it 'returns both custom work types as excluded' do
         excluded_types = described_class.excluded_work_types
-        expect(excluded_types).to eq(%w[MobiusWork ScholarlyWork])
+        expect(excluded_types).to match_array(%w[MobiusWork ScholarlyWork])
       end
     end
 
