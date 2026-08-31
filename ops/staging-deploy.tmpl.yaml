@@ -82,11 +82,13 @@ extraEnvVars: &envVars
   - name: DB_ADAPTER
     value: postgresql
   - name: DB_HOST
-    value: postgres-postgresql.postgres.svc.cluster.local
+    value: zalando-postgres-v14-pooler.postgres.svc.cluster.local
   - name: DB_NAME
-    value: hykuup-knapsack-staging
+    value: hykuup_knapsack_staging
   - name: DB_USER
     value: postgres
+  - name: PGSSLMODE
+    value: require
   - name: FCREPO_BASE_PATH
     value: /hykuup-knapsack-staging
   - name: FCREPO_HOST
@@ -290,7 +292,7 @@ solr:
 externalFcrepoHost: fcrepo.fcrepo.svc.cluster.local
 
 externalPostgresql:
-  host: postgres-postgresql.postgres.svc.cluster.local
+  host: zalando-postgres-v14-pooler.postgres.svc.cluster.local
   username: postgres
   password: $DB_PASSWORD
 
