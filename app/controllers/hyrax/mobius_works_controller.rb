@@ -9,6 +9,9 @@ module Hyrax
     include Hyrax::WorksControllerBehavior
     include Hyku::WorksControllerBehavior
     include Hyrax::BreadcrumbsForWorks
+    # Prepended here, not only by WorkTypeGuardDecorator's loop: this controller is
+    # reloadable, so a reload drops a prepend applied from outside the class body.
+    prepend HykuKnapsack::WorkTypeGuardDecorator
     self.curation_concern_type = ::MobiusWork
 
     # Use a Valkyrie aware form service to generate Valkyrie::ChangeSet style

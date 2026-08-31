@@ -663,6 +663,198 @@ namespace :hykuup do
     end
   end
 
+  namespace :work_types do
+    desc 'Report tenants offering work types their metadata profile does not declare (read-only)'
+    task audit: :environment do
+      puts fmt.header("AUDITING OFFERED WORK TYPES AGAINST METADATA PROFILES", "🔍")
+      puts "\n#{fmt.green('✅ Read-only. Nothing is written.')}"
+      puts "   Compares Site#available_works against the classes in each tenant's profile.\n"
+
+      total_tenants = Account.count
+      processed = 0
+      drifted = []
+      unknown = []
+
+      Account.find_each do |account|
+        processed += 1
+        puts fmt.tenant_info(
+          "[#{processed}/#{total_tenants}] #{account.cname}",
+          account.tenant,
+          account.part_of_consortia
+        )
+
+        begin
+          Apartment::Tenant.switch!(account.tenant)
+
+          offered = Site.instance.available_works || []
+          profile_allowed = TenantWorkTypeFilter.profile_allowed_work_types
+
+          if profile_allowed.empty?
+            puts fmt.status_line(fmt.warning_icon, "No profile constraint resolved", fmt.yellow("SKIPPED"))
+            unknown << { tenant: account.cname, reason: 'flexible metadata off, or no current profile' }
+            next
+          end
+
+          orphans = offered - profile_allowed
+
+          if orphans.empty?
+            puts fmt.status_line(fmt.success_icon, "Offered types all declared in profile", fmt.green("OK"))
+            next
+          end
+
+          puts fmt.status_line(fmt.error_icon, "Offered but absent from profile", fmt.red(orphans.join(', ')))
+          puts "   #{fmt.info_icon} Offered:        #{offered.join(', ')}"
+          puts "   #{fmt.info_icon} Profile allows: #{profile_allowed.join(', ')}"
+
+          # Hyku skips the profile filter for search-only tenants, so there an orphan
+          # reaches the picker rather than only a hand-entered URL.
+          if account.search_only?
+            puts "   #{fmt.warning_icon} " \
+                 "#{fmt.yellow('search-only tenant: orphans reach the work type picker')}"
+          end
+
+          counts = orphans.index_with { |type| work_count_for(type) }
+          counts.each do |type, count|
+            icon = count.zero? ? fmt.success_icon : fmt.warning_icon
+            puts "   #{icon} #{type}: #{count} existing work(s)"
+          end
+
+          drifted << {
+            tenant: account.cname,
+            orphans:,
+            counts:,
+            search_only: account.search_only?,
+            would_become: offered & profile_allowed
+          }
+        rescue StandardError => e
+          # Only rescue StandardError to avoid masking system-level exceptions.
+          puts "   #{fmt.error_icon} #{fmt.red('ERROR')}: #{e.message}"
+          unknown << { tenant: account.cname, reason: e.message }
+        end
+      end
+
+      puts fmt.section_header("SUMMARY", "📋")
+      puts "Tenants checked: #{processed}"
+      puts "Tenants with drift: #{drifted.any? ? fmt.red(drifted.size.to_s) : fmt.green('0')}"
+      puts "Tenants not evaluated: #{unknown.size}"
+
+      if drifted.any?
+        puts fmt.section_header("PROPOSED available_works", "✏️")
+        drifted.each do |row|
+          puts fmt.bold(row[:tenant])
+          puts "   remove: #{fmt.red(row[:orphans].join(', '))}"
+          puts "   result: #{fmt.green(row[:would_become].join(', '))}"
+        end
+        at_risk = drifted.select { |row| row[:counts].values.any?(&:positive?) }
+        if at_risk.any?
+          puts "\n#{fmt.warning_icon} #{fmt.yellow('Existing works use an orphaned type on:')} " \
+               "#{at_risk.map { |r| r[:tenant] }.join(', ')}. Removing the type would orphan them."
+        end
+
+        clickable = drifted.select { |row| row[:search_only] }
+        if clickable.any?
+          puts "\n#{fmt.warning_icon} #{fmt.yellow('Search-only tenants, where an orphan is offered in the picker:')} " \
+               "#{clickable.map { |r| r[:tenant] }.join(', ')}."
+        end
+        puts "\n#{fmt.info_icon} No changes applied. Run hykuup:work_types:prune[true] to apply."
+      end
+
+      puts fmt.thick_separator
+      puts fmt.final_status(drifted.any?)
+      puts fmt.thick_separator
+    end
+
+    desc 'Remove offered work types absent from the tenant metadata profile. Pass true to apply.'
+    task :prune, [:apply_changes] => :environment do |_t, args|
+      apply = ActiveModel::Type::Boolean.new.cast(args[:apply_changes])
+
+      puts fmt.header("PRUNING OFFERED WORK TYPES", "✂️")
+      if apply
+        puts "\n#{fmt.warning_icon} #{fmt.yellow('APPLYING CHANGES to Site#available_works.')}"
+      else
+        puts "\n#{fmt.green('✅ Dry run. Re-run with [true] to apply.')}"
+      end
+
+      total_tenants = Account.count
+      processed = 0
+      changed = []
+      blocked = []
+
+      Account.find_each do |account|
+        processed += 1
+        puts fmt.tenant_info(
+          "[#{processed}/#{total_tenants}] #{account.cname}",
+          account.tenant,
+          account.part_of_consortia
+        )
+
+        begin
+          Apartment::Tenant.switch!(account.tenant)
+
+          offered = Site.instance.available_works || []
+          profile_allowed = TenantWorkTypeFilter.profile_allowed_work_types
+
+          if profile_allowed.empty?
+            puts fmt.status_line(fmt.warning_icon, "No profile constraint resolved", fmt.yellow("SKIPPED"))
+            next
+          end
+
+          orphans = offered - profile_allowed
+          if orphans.empty?
+            puts fmt.status_line(fmt.success_icon, "Nothing to prune", fmt.green("OK"))
+            next
+          end
+
+          # A type with works is left alone: removing it hides existing records from
+          # their depositors, which is a bigger problem than the drift.
+          in_use = orphans.select { |type| work_count_for(type).positive? }
+          if in_use.any?
+            puts fmt.status_line(fmt.error_icon, "Orphans hold works", fmt.red(in_use.join(', ')))
+            blocked << { tenant: account.cname, types: in_use }
+            next
+          end
+
+          remaining = offered & profile_allowed
+          if apply
+            Site.instance.update!(available_works: remaining)
+            puts fmt.status_line(fmt.success_icon, "Pruned #{orphans.join(', ')}", fmt.green("APPLIED"))
+          else
+            puts fmt.status_line(fmt.info_icon, "Would prune #{orphans.join(', ')}", fmt.yellow("DRY RUN"))
+          end
+          puts "   #{fmt.info_icon} available_works: #{remaining.join(', ')}"
+
+          changed << { tenant: account.cname, orphans:, remaining: }
+        rescue StandardError => e
+          # Only rescue StandardError to avoid masking system-level exceptions.
+          puts "   #{fmt.error_icon} #{fmt.red('ERROR')}: #{e.message}"
+          blocked << { tenant: account.cname, types: [e.message] }
+        end
+      end
+
+      puts fmt.section_header("SUMMARY", "📋")
+      puts "Tenants checked: #{processed}"
+      puts "Tenants #{apply ? 'pruned' : 'that would be pruned'}: #{changed.size}"
+      puts "Tenants skipped for existing works or errors: #{blocked.size}"
+      blocked.each { |row| puts "   #{fmt.warning_icon} #{row[:tenant]}: #{row[:types].join(', ')}" }
+
+      puts fmt.thick_separator
+      puts fmt.final_status(blocked.any?)
+      puts fmt.thick_separator
+    end
+  end
+
+  # Counts persisted works of a given type in the current tenant
+  # @param type [String] Work type name as it appears in Site#available_works
+  # @return [Integer] Number of existing works, or 0 when the type resolves to no queryable class
+  def work_count_for(type)
+    klass = "#{type}Resource".safe_constantize || type.safe_constantize
+    return 0 unless klass.respond_to?(:count)
+
+    klass.count
+  rescue StandardError
+    0
+  end
+
   # Helper method to create a profile with validation
   # Uses M3ProfileMigrationService to migrate the tenant-specific profile
   # (resolved via consortium) before creating the new FlexibleSchema record.

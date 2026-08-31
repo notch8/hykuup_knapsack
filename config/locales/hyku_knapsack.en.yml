@@ -1,0 +1,5 @@
+en:
+  hyku_knapsack:
+    works:
+      errors:
+        work_type_not_offered: That work type is not available on this site. Choose a different one.
