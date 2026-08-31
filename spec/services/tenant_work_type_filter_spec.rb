@@ -37,6 +37,19 @@ RSpec.describe TenantWorkTypeFilter do
       end
     end
 
+    context 'for St. Jude tenant' do
+      before do
+        allow(Apartment::Tenant).to receive(:current).and_return('stjude')
+        account = double('Account', part_of_consortia: 'stjude', cname: 'stjude.hykuup.com')
+        allow(Account).to receive(:find_by).with(tenant: 'stjude').and_return(account)
+      end
+
+      it 'returns both custom work types as excluded' do
+        excluded_types = described_class.excluded_work_types
+        expect(excluded_types).to eq(%w[MobiusWork ScholarlyWork])
+      end
+    end
+
     context 'for generic tenant' do
       before do
         allow(Apartment::Tenant).to receive(:current).and_return('generic')
@@ -79,6 +92,21 @@ RSpec.describe TenantWorkTypeFilter do
 
         expect(allowed_types).to include('GenericWork', 'Image', 'Etd', 'Oer', 'MobiusWork')
         expect(allowed_types).not_to include('ScholarlyWork')
+      end
+    end
+
+    context 'for St. Jude tenant' do
+      before do
+        allow(Apartment::Tenant).to receive(:current).and_return('stjude')
+        account = double('Account', part_of_consortia: 'stjude', cname: 'stjude.hykuup.com')
+        allow(Account).to receive(:find_by).with(tenant: 'stjude').and_return(account)
+      end
+
+      it 'excludes both custom work types' do
+        allowed_types = described_class.allowed_work_types
+
+        expect(allowed_types).to include('GenericWork', 'Image', 'Etd', 'Oer')
+        expect(allowed_types).not_to include('MobiusWork', 'ScholarlyWork')
       end
     end
 
