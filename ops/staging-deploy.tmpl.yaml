@@ -305,6 +305,7 @@ externalFcrepoHost: fcrepo.fcrepo.svc.cluster.local
 
 externalPostgresql:
   host: zalando-postgres-v14-pooler.postgres.svc.cluster.local
+  database: hykuup_knapsack_staging
   username: postgres
   password: $DB_PASSWORD
 
