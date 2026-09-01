@@ -10,10 +10,6 @@ RSpec.describe Hyrax::QuickClassificationQuery, singletenant: true do
                                                                                       'GenericWork', 'Image', 'Etd', 'Oer', 'MobiusWork', 'ScholarlyWork'
                                                                                     ])
 
-      # Disable flexible metadata filtering so filtered_available_works returns
-      # Site.instance.available_works directly without calling Site.account
-      allow(Hyrax.config).to receive(:flexible?).and_return(false)
-
       # Mock user permissions to allow creation of all work types
       allow(user).to receive(:can?).with(:create, anything).and_return(true)
     end
@@ -21,7 +17,7 @@ RSpec.describe Hyrax::QuickClassificationQuery, singletenant: true do
     describe "tenant filtering" do
       context "for UNCA tenant" do
         before do
-          site_instance = double('Site', available_works: ['GenericWork', 'Image', 'Etd', 'Oer', 'ScholarlyWork'])
+          site_instance = double('Site', offerable_work_types: ['GenericWork', 'Image', 'Etd', 'Oer', 'ScholarlyWork'])
           allow(Site).to receive(:instance).and_return(site_instance)
         end
 
@@ -36,7 +32,7 @@ RSpec.describe Hyrax::QuickClassificationQuery, singletenant: true do
 
       context "for Mobius tenant" do
         before do
-          site_instance = double('Site', available_works: ['GenericWork', 'Image', 'Etd', 'Oer', 'MobiusWork'])
+          site_instance = double('Site', offerable_work_types: ['GenericWork', 'Image', 'Etd', 'Oer', 'MobiusWork'])
           allow(Site).to receive(:instance).and_return(site_instance)
         end
 
@@ -51,7 +47,7 @@ RSpec.describe Hyrax::QuickClassificationQuery, singletenant: true do
 
       context "for generic tenant" do
         before do
-          site_instance = double('Site', available_works: ['GenericWork', 'Image', 'Etd', 'Oer'])
+          site_instance = double('Site', offerable_work_types: ['GenericWork', 'Image', 'Etd', 'Oer'])
           allow(Site).to receive(:instance).and_return(site_instance)
         end
 
