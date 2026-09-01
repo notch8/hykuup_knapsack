@@ -28,16 +28,7 @@ CMD ./bin/web
 FROM hyku-web AS hyku-worker
 CMD ./bin/worker
 
-# Use a Solr version with patched Log4j to address CVE-2021-44228
-FROM solr:8.11.2 AS hyku-solr
-ENV SOLR_USER="solr" \
-    SOLR_GROUP="solr"
-USER root
-COPY --chown=solr:solr solr/security.json /var/solr/data/security.json
-USER $SOLR_USER
-
 FROM registry.gitlab.com/notch8/scripts/bitnami-nginx:1.21.5-debian-10-r4 AS hyku-nginx
-
 # Bake this exact commit's compiled assets/vendored viewer libs into the nginx
 # image itself, so nginx and Rails always agree on what a deploy's asset URLs
 # resolve to - no shared volume, no deploy-time copy step, no accumulation to
