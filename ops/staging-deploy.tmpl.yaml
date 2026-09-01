@@ -16,6 +16,18 @@ livenessProbe:
 readinessProbe:
   enabled: false
 
+# db-setup's migration-count check queries schema_migrations before db:create
+# ever runs, so it dies under `set -e` against a genuinely empty database.
+# Host/user/db are hardcoded, not $DB_HOST-style: this container gets no env
+# from the chart, and envsubst blanks any $VARNAME with no matching CI secret.
+dbPreSetupInitContainer:
+  - name: ensure-schema-migrations
+    image: "ghcr.io/$REPO_LOWER/web:$TAG"
+    command:
+      - sh
+      - -c
+      - PGPASSWORD=$DB_PASSWORD psql -h zalando-postgres-v14-pooler.postgres.svc.cluster.local -p 5432 -U postgres hykuup_knapsack_staging -c "CREATE TABLE IF NOT EXISTS schema_migrations (version character varying(255) NOT NULL PRIMARY KEY);"
+
 brandingVolume:
   storageClass: efs-sc
 derivativesVolume:
@@ -82,11 +94,18 @@ extraEnvVars: &envVars
   - name: DB_ADAPTER
     value: postgresql
   - name: DB_HOST
-    value: postgres-postgresql.postgres.svc.cluster.local
+    value: zalando-postgres-v14-pooler.postgres.svc.cluster.local
   - name: DB_NAME
-    value: hykuup-knapsack-staging
+    value: hykuup_knapsack_staging
   - name: DB_USER
     value: postgres
+  - name: PGSSLMODE
+    value: require
+  # Transaction-mode pgbouncer doesn't preserve these across transactions.
+  - name: DB_PREPARED_STATEMENTS
+    value: "false"
+  - name: DB_ADVISORY_LOCKS
+    value: "false"
   - name: FCREPO_BASE_PATH
     value: /hykuup-knapsack-staging
   - name: FCREPO_HOST
@@ -290,7 +309,8 @@ solr:
 externalFcrepoHost: fcrepo.fcrepo.svc.cluster.local
 
 externalPostgresql:
-  host: postgres-postgresql.postgres.svc.cluster.local
+  host: zalando-postgres-v14-pooler.postgres.svc.cluster.local
+  database: hykuup_knapsack_staging
   username: postgres
   password: $DB_PASSWORD
 
