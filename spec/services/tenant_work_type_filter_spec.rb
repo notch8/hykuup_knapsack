@@ -126,6 +126,35 @@ RSpec.describe TenantWorkTypeFilter do
     end
   end
 
+  describe '.profile_allowed_work_types' do
+    before do
+      allow(Apartment::Tenant).to receive(:current).and_return('generic')
+      account = double('Account', part_of_consortia: nil, cname: 'example.com')
+      allow(Account).to receive(:find_by).with(tenant: 'generic').and_return(account)
+    end
+
+    context 'when flexible metadata is off' do
+      before { allow(Hyrax.config).to receive(:flexible?).and_return(false) }
+
+      it 'returns an empty array so callers keep their unfiltered list' do
+        expect(described_class.profile_allowed_work_types).to eq([])
+      end
+    end
+
+    context 'when the profile declares a work type the consortium excludes' do
+      before do
+        allow(Hyrax.config).to receive(:flexible?).and_return(true)
+        allow(Hyrax::FlexibleSchema).to receive(:current_version).and_return(
+          'classes' => { 'GenericWorkResource' => {}, 'OerResource' => {}, 'MobiusWork' => {} }
+        )
+      end
+
+      it 'drops the excluded type' do
+        expect(described_class.profile_allowed_work_types).to match_array(%w[GenericWork Oer])
+      end
+    end
+  end
+
   describe '.tenant_metadata_profile_path' do
     context 'when cname is nil' do
       before do

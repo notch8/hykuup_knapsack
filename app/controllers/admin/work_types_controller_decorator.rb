@@ -23,19 +23,9 @@ module Admin
       available_works & allowed_types
     end
 
-    # Extract common logic for determining allowed work types based on profile and tenant
     # @return [Array<String>] Array of work type names that are allowed for the current tenant and profile
     def allowed_work_types_for_profile
-      return [] unless Hyrax.config.flexible?
-
-      profile = Hyrax::FlexibleSchema.current_version
-      return [] unless profile
-
-      profile_classes = profile['classes']&.keys || []
-      profile_work_types = profile_classes.map { |klass| klass.gsub(/Resource$/, '') }
-
-      tenant_allowed_types = TenantWorkTypeFilter.allowed_work_types
-      profile_work_types & tenant_allowed_types & Hyrax.config.registered_curation_concern_types
+      TenantWorkTypeFilter.profile_allowed_work_types
     end
   end
 end

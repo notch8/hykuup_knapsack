@@ -24,6 +24,24 @@ class TenantWorkTypeFilter
       all_work_types - excluded_work_types
     end
 
+    # Returns work types the current tenant may offer, narrowed by its metadata profile
+    #
+    # [] means no profile constraint, not "nothing allowed": callers must fall back to
+    # their unfiltered list or a non-flexible tenant loses every work type.
+    #
+    # @return [Array<String>] Array of work type names, or [] when no profile applies
+    def profile_allowed_work_types
+      return [] unless Hyrax.config.flexible?
+
+      profile = Hyrax::FlexibleSchema.current_version
+      return [] unless profile
+
+      profile_classes = profile['classes']&.keys || []
+      profile_work_types = profile_classes.map { |klass| klass.gsub(/Resource$/, '') }
+
+      profile_work_types & allowed_work_types & Hyrax.config.registered_curation_concern_types
+    end
+
     # Returns the metadata profile path for the current tenant
     # @param default_path [String] The default profile path to use as fallback
     # @return [String] Path to the tenant-specific metadata profile
