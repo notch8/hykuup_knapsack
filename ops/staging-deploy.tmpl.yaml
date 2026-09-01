@@ -101,6 +101,11 @@ extraEnvVars: &envVars
     value: postgres
   - name: PGSSLMODE
     value: require
+  # Transaction-mode pgbouncer doesn't preserve these across transactions.
+  - name: DB_PREPARED_STATEMENTS
+    value: "false"
+  - name: DB_ADVISORY_LOCKS
+    value: "false"
   - name: FCREPO_BASE_PATH
     value: /hykuup-knapsack-staging
   - name: FCREPO_HOST
