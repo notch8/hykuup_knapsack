@@ -10,6 +10,65 @@ def fmt
   HykuKnapsack::CLIFormatter
 end
 
+# Human-readable byte size, e.g. 58.30 GB
+def human_size(bytes)
+  units = %w[B KB MB GB TB PB]
+  size = bytes.to_f
+  unit = 0
+  while size >= 1024 && unit < units.length - 1
+    size /= 1024
+    unit += 1
+  end
+  format('%.2f %s', size, units[unit])
+end
+
+# Fetch one page of FileSet docs (id + file_size_lts only) via cursorMark.
+def file_set_page(cursor)
+  ActiveFedora::SolrService.get(
+    'has_model_ssim:FileSet OR has_model_ssim:"Hyrax::FileSet"',
+    rows: 1000,
+    fl: 'id,file_size_lts',
+    sort: 'id asc',
+    cursorMark: cursor
+  )
+end
+
+# Sum file_size_lts (bytes) and count docs that carry a size for a page of docs.
+def sum_page(docs)
+  bytes = 0
+  files = 0
+  docs.each do |doc|
+    size = doc['file_size_lts']
+    size = size.first if size.is_a?(Array)
+    next if size.nil?
+
+    bytes += size.to_i
+    files += 1
+  end
+  [bytes, files]
+end
+
+# Sum primary-file storage (bytes) and file count for the CURRENT tenant.
+# file_size_lts is stored-but-not-indexed in Solr, so it can't be summed via stats;
+# we page the FileSet docs (id + file_size_lts only) with cursorMark and sum in Ruby.
+def tenant_file_storage
+  total_bytes = 0
+  total_files = 0
+  cursor = '*'
+  loop do
+    resp = file_set_page(cursor)
+    docs = resp.dig('response', 'docs') || []
+    bytes, files = sum_page(docs)
+    total_bytes += bytes
+    total_files += files
+    next_cursor = resp['nextCursorMark']
+    break if docs.empty? || next_cursor.nil? || next_cursor == cursor
+
+    cursor = next_cursor
+  end
+  [total_bytes, total_files]
+end
+
 namespace :hykuup do
   namespace :mobius do
     desc 'Update Bulkrax field mappings across all Mobius tenants'
@@ -81,6 +140,67 @@ namespace :hykuup do
 
         account.bulkrax_field_mappings = field_mappings.to_json
         account.save!
+      end
+    end
+  end
+
+  namespace :tenants do
+    desc 'Report object count + primary-file storage per tenant. ' \
+         'Pass a consortium to scope to that group, omit for all tenants. ' \
+         'Usage: rake hykuup:tenants:usage[mobius]  (set format=csv for CSV output)'
+    task :usage, [:consortium] => :environment do |_t, args|
+      consortium = args[:consortium]
+
+      accounts =
+        if consortium.present?
+          unless Consortium.identifiers.include?(consortium)
+            puts fmt.red("\nError: Invalid consortium '#{consortium}'")
+            puts "Available consortia: #{Consortium.identifiers.join(', ')}"
+            exit 1
+          end
+          Account.where(part_of_consortia: consortium, search_only: false)
+        else
+          Account.where(search_only: false)
+        end
+
+      work_models = Hyrax.config.curation_concerns.map { |m| %("#{m}") }.join(' OR ')
+      rows = []
+
+      accounts.find_each do |account|
+        next if account.cname.blank?
+
+        AccountElevator.switch!(account.cname)
+        works = ActiveFedora::SolrService.count("has_model_ssim:(#{work_models})")
+        bytes, files = tenant_file_storage
+
+        rows << { cname: account.cname, works:, files:, bytes: }
+        warn "processed #{account.cname} (#{works} works, #{human_size(bytes)})"
+      end
+
+      rows.sort_by! { |r| -r[:bytes] }
+      total_works = rows.sum { |r| r[:works] }
+      total_files = rows.sum { |r| r[:files] }
+      total_bytes = rows.sum { |r| r[:bytes] }
+
+      if ENV['format'] == 'csv'
+        puts 'tenant,works,files,bytes,storage_human'
+        rows.each { |r| puts "#{r[:cname]},#{r[:works]},#{r[:files]},#{r[:bytes]},#{human_size(r[:bytes])}" }
+        puts "TOTAL,#{total_works},#{total_files},#{total_bytes},#{human_size(total_bytes)}"
+      else
+        scope = consortium.present? ? "#{consortium.upcase} CONSORTIUM" : 'ALL TENANTS'
+        puts fmt.header("USAGE REPORT: #{scope}", "📊")
+        w = ([30] + rows.map { |r| r[:cname].length }).max
+        # Format strings are held in variables so the dynamic width (#{w}) does not confuse
+        # RuboCop's Lint/FormatParameterMismatch, which only analyzes literal format strings.
+        head_fmt = "%-#{w}s  %8s  %8s  %14s"
+        row_fmt = "%-#{w}s  %8d  %8d  %14s"
+        puts format(head_fmt, 'TENANT', 'WORKS', 'FILES', 'STORAGE')
+        puts fmt.thin_separator
+        rows.each do |r|
+          puts format(row_fmt, r[:cname], r[:works], r[:files], human_size(r[:bytes]))
+        end
+        puts fmt.thin_separator
+        puts format(row_fmt, "TOTAL (#{rows.size} tenants)", total_works, total_files, human_size(total_bytes))
       end
     end
   end

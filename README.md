@@ -326,6 +326,42 @@ rake hykuup:profiles:reset_all                             # All tenants
 rake hykuup:profiles:reset_tenant[demo]                    # Specific tenant
 ```
 
+## Tenant Usage Reporting
+
+Report object (work) counts and primary-file storage per tenant, optionally scoped to a consortium.
+
+```bash
+rake hykuup:tenants:usage[mobius]     # All tenants in the Mobius consortium
+rake hykuup:tenants:usage             # All (non-search-only) tenants
+```
+
+The consortium argument is optional and, when given, must be a valid identifier from
+`config/consortia.yml` (run without it to report every tenant). Tenants are selected by
+`part_of_consortia`, the same way as `hykuup:profiles:add_consortium_profiles`.
+
+**Output formats:**
+```bash
+rake hykuup:tenants:usage[mobius]                 # Padded table, sorted by storage, with totals
+format=csv rake hykuup:tenants:usage[mobius]      # CSV (tenant,works,files,bytes,storage_human)
+
+# Save CSV to a file you can copy out of the pod:
+format=csv rake hykuup:tenants:usage[mobius] | tee /tmp/mobius_usage.csv
+```
+
+Progress is written to stderr (one line per tenant) so stdout stays clean for piping.
+
+**What it measures:**
+- **Works** counts curation-concern objects (`Hyrax.config.curation_concerns`).
+- **Files** / **Storage** sum `file_size_lts` (bytes) across the tenant's FileSets. This is
+  the ORIGINAL/primary file size only. It excludes derivatives, thumbnails, and prior file
+  versions, and reflects only what has been characterized and indexed, so real disk/object-store
+  usage will be somewhat higher.
+
+> Note: this task supersedes Hyku's `tenants:calculate_usage`, which reports `0 MB` on
+> Valkyrie/flexible-metadata indexes (it reads the empty `file_set_ids_ssim` field and cannot
+> sum the stored-but-not-indexed `file_size_lts`). This task pages the FileSet docs and sums
+> in Ruby instead.
+
 ## Adding New Consortia
 
 <details>
