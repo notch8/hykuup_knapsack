@@ -9,6 +9,7 @@ on:
         default: 'staging'
         type: choice
         options:
+          - friends
           - staging
           - production
       debug_enabled:
