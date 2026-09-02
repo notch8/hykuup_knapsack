@@ -14,18 +14,22 @@ resources:
     cpu: "1250m"
 
 # Chart default path "/" 404s via Hyku's tenant-CNAME check against the kubelet's pod-IP Host header.
+# /monitoring/puma_stats (knapsack's own middleware, ahead of Rack::Attack/session/tenant) never touches Solr/DB/cache, so it stays cheap and up even when a dependency or the thread pool is under pressure - same endpoint Site24x7 already polls.
 startupProbe:
   enabled: true
-  path: "/healthz"
+  path: "/monitoring/puma_stats"
   failureThreshold: 30
-# Bare /healthz only runs OkComputer's dependency-free "default" check.
 livenessProbe:
   enabled: true
-  path: "/healthz"
+  path: "/monitoring/puma_stats"
+  timeoutSeconds: 10
+  failureThreshold: 5
+  periodSeconds: 15
 # /healthz/all also checks Solr/migrations/cache/DB, so a dependency outage pulls the pod from rotation instead of restarting it.
 readinessProbe:
   enabled: true
   path: "/healthz/all"
+  timeoutSeconds: 8
 
 brandingVolume:
   storageClass: efs-sc
