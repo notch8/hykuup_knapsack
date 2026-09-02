@@ -24,9 +24,14 @@ livenessProbe:
   failureThreshold: 5
   periodSeconds: 15
 # Only the exact path "/healthz" is exempted from config.force_ssl's redirect (production.rb); "/healthz/all" 302s to https and a plain httpGet probe can't follow that, so it fails forever.
+# Loosened timing to tolerate /healthz queuing behind slow large-work renders (hyrax/_items.html.erb N+1) without pulling pods from rotation mid-spike - utk-hyku hit this same cascade on chart-default timing (#882).
 readinessProbe:
   enabled: true
   path: "/healthz"
+  initialDelaySeconds: 15
+  periodSeconds: 60
+  timeoutSeconds: 60
+  failureThreshold: 6
 
 # db-setup's migration-count check queries schema_migrations before db:create
 # ever runs, so it dies under `set -e` against a genuinely empty database.
