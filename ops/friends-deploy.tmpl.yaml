@@ -1,5 +1,8 @@
 replicaCount: 2
 
+imagePullSecrets:
+  - name: github
+
 resources:
   limits:
     memory: "4Gi"
@@ -8,10 +11,39 @@ resources:
     memory: "2Gi"
     cpu: "100m"
 
+# Chart default path "/" 404s via Hyku's tenant-CNAME check against the kubelet's pod-IP Host header.
+# /monitoring/puma_stats (knapsack's own middleware, ahead of Rack::Attack/session/tenant) never touches Solr/DB/cache, so it stays cheap and up even when a dependency or the thread pool is under pressure - same endpoint Site24x7 already polls.
+startupProbe:
+  enabled: true
+  path: "/monitoring/puma_stats"
+  failureThreshold: 30
 livenessProbe:
-  enabled: false
+  enabled: true
+  path: "/monitoring/puma_stats"
+  timeoutSeconds: 10
+  failureThreshold: 5
+  periodSeconds: 15
+# Only the exact path "/healthz" is exempted from config.force_ssl's redirect (production.rb); "/healthz/all" 302s to https and a plain httpGet probe can't follow that, so it fails forever.
+# Loosened timing to tolerate /healthz queuing behind slow large-work renders (hyrax/_items.html.erb N+1) without pulling pods from rotation mid-spike - utk-hyku hit this same cascade on chart-default timing (#882).
 readinessProbe:
-  enabled: false
+  enabled: true
+  path: "/healthz"
+  initialDelaySeconds: 15
+  periodSeconds: 60
+  timeoutSeconds: 60
+  failureThreshold: 6
+
+# db-setup's migration-count check queries schema_migrations before db:create
+# ever runs, so it dies under `set -e` against a genuinely empty database.
+# Host/user/db are hardcoded, not $DB_HOST-style: this container gets no env
+# from the chart, and envsubst blanks any $VARNAME with no matching CI secret.
+dbPreSetupInitContainer:
+  - name: ensure-schema-migrations
+    image: "ghcr.io/$REPO_LOWER/web:$TAG"
+    command:
+      - sh
+      - -c
+      - PGPASSWORD=$DB_PASSWORD psql -h zalando-postgres-v14-pooler.postgres.svc.cluster.local -p 5432 -U postgres hykuup_knapsack_friends -c "CREATE TABLE IF NOT EXISTS schema_migrations (version character varying(255) NOT NULL PRIMARY KEY);"
 
 brandingVolume:
   storageClass: efs-sc
@@ -20,9 +52,6 @@ derivativesVolume:
 uploadsVolume:
   storageClass: efs-sc
   size: 200Gi
-
-imagePullSecrets:
- - name: github
 
 extraVolumeMounts: &volMounts
   - name: uploads
@@ -59,6 +88,7 @@ ingress:
         - path: /
   annotations: {
     nginx.org/client-max-body-size: "0",
+    nginx.org/websocket-services: "hykuup-knapsack-friends-nginx",
     cert-manager.io/cluster-issuer: letsencrypt-production-dns
   }
   tls:
@@ -81,11 +111,18 @@ extraEnvVars: &envVars
   - name: DB_ADAPTER
     value: postgresql
   - name: DB_HOST
-    value: postgres-postgresql.postgres.svc.cluster.local
+    value: zalando-postgres-v14-pooler.postgres.svc.cluster.local
   - name: DB_NAME
-    value: hykuup-knapsack-friends
+    value: hykuup_knapsack_friends
   - name: DB_USER
     value: postgres
+  - name: PGSSLMODE
+    value: require
+  # Transaction-mode pgbouncer doesn't preserve these across transactions.
+  - name: DB_PREPARED_STATEMENTS
+    value: "false"
+  - name: DB_ADVISORY_LOCKS
+    value: "false"
   - name: FCREPO_BASE_PATH
     value: /hykuup-knapsack-friends
   - name: FCREPO_HOST
@@ -172,6 +209,16 @@ extraEnvVars: &envVars
     value: "true"
   - name: HYKU_ROOT_HOST
     value: hykuup-knapsack-friends.notch8.cloud
+  # Non-production only. samvera/hyku#3190 stopped defaulting an activated user's
+  # password, which is right for production but leaves no way into a new friends
+  # account short of reading the reset mail out of maildev. Deliberately absent
+  # from production-deploy.tmpl.yaml.
+  - name: HYKU_USER_DEFAULT_PASSWORD
+    value: password
+  # Shows the controlled vocabularies dashboard link. Upstream withholds it in
+  # production by default; HykuUp opts in. Needs `rails populate_qa` after deploy.
+  - name: HYKU_VOCABULARY_SIDEBAR_ENABLED
+    value: "true"
   - name: HYKU_SHOW_BACKTRACE
     value: "true"
   - name: NEGATIVE_CAPTCHA_SECRET
@@ -198,8 +245,6 @@ extraEnvVars: &envVars
     value: $SOLR_ADMIN_PASSWORD
   - name: SOLR_COLLECTION_NAME
     value: hykuup-knapsack-friends
-  - name: SOLR_COLLECTION_REPLICAS
-    value: "3"
   - name: SOLR_CONFIGSET_NAME
     value: hykuup-knapsack-friends
   - name: SOLR_HOST
@@ -256,7 +301,14 @@ redis:
   image:
     repository: bitnamilegacy/redis
     tag: 7.0.2-debian-11-r7
+  enabled: true
   master:
+    # Testing the maxmemory/eviction fix from the 2026-07-29 production redis
+    # OOM incident here before rolling it out further. 384mb leaves headroom
+    # under the 512Mi container limit.
+    configuration: |-
+      maxmemory 384mb
+      maxmemory-policy volatile-lru
     resources:
       limits:
         memory: "512Mi"
@@ -264,17 +316,18 @@ redis:
       requests:
         memory: "256Mi"
         cpu: "20m"
-  enabled: true
   architecture: standalone
   auth:
     password: $REDIS_PASSWORD
+
 solr:
   enabled: false
 
 externalFcrepoHost: fcrepo.fcrepo.svc.cluster.local
 
 externalPostgresql:
-  host: postgres-postgresql.postgres.svc.cluster.local
+  host: zalando-postgres-v14-pooler.postgres.svc.cluster.local
+  database: hykuup_knapsack_friends
   username: postgres
   password: $DB_PASSWORD
 
@@ -296,9 +349,153 @@ fits:
   subPath: /fits
 
 global:
-  hyraxName: hykuup-knapsack-friends-hyrax
+  hyraxHostName: hykuup-knapsack-friends-hyrax
 
 nginx:
-  enabled: false
+  enabled: true
   service:
-    port: 80
+    type: ClusterIP
+  image:
+    # Built from the `hyku-nginx` Dockerfile stage, which bakes public/assets,
+    # public/pdf.js, and public/uv in from the `hyku-web` stage of the exact
+    # same commit - no shared volume/copy step needed for these anymore.
+    # Still based on registry.gitlab.com/notch8/scripts/bitnami-nginx (see
+    # Dockerfile) since the server block below references that image's
+    # bots.d/{ddos,blockbots}.conf includes.
+    registry: ghcr.io
+    repository: "$REPO_LOWER/nginx"
+    tag: "$TAG"
+  extraVolumes:
+    - name: "uploads"
+      persistentVolumeClaim:
+        claimName: "{{ .Values.global.hyraxHostName }}-uploads"
+    - name: "branding"
+      persistentVolumeClaim:
+        claimName: "{{ .Values.global.hyraxHostName }}-branding"
+  extraVolumeMounts:
+    - name: uploads
+      mountPath: /app/samvera/hyrax-webapp/public/system
+      subPath: public-system
+    - name: branding
+      mountPath: /app/samvera/hyrax-webapp/public/branding
+  # public/assets, public/pdf.js, and public/uv need no volume mount at all -
+  # they're baked directly into this pod's own nginx image (see nginx.image
+  # above), always matching the exact commit currently deployed.
+  # Serves /system (Site branding images: logo/banner/favicon) and /branding
+  # (per-tenant branding assets) directly from shared EFS PVCs so these
+  # requests never tie up a Puma worker.
+  # NOTE: deliberately excludes /uploads/, unlike /system/ that directory may
+  # hold access-controlled content Rails is supposed to gate - matches the
+  # convention already used for other notch8 Hyrax apps' nginx server blocks.
+  # All other paths fall through to the Rails app unchanged.
+  serverBlock: |-
+    upstream rails_app {
+      server {{ .Values.global.hyraxHostName }};
+    }
+
+    map ${DOLLAR}status ${DOLLAR}loggable {
+        ~^444  0;
+        default 1;
+    }
+
+    log_format loki 'host=${DOLLAR}host ip=${DOLLAR}http_x_forwarded_for remote_user=${DOLLAR}remote_user [${DOLLAR}time_local] '
+                      'request="${DOLLAR}request" status=${DOLLAR}status bytes=${DOLLAR}body_bytes_sent '
+                      'referer="${DOLLAR}http_referer" agent="${DOLLAR}http_user_agent" request_time=${DOLLAR}request_time upstream_response_time=${DOLLAR}upstream_response_time upstream_response_length=${DOLLAR}upstream_response_length';
+
+    error_log  /opt/bitnami/nginx/logs/error.log warn;
+
+    # Lets ActionCable's websocket handshake upgrade instead of falling through to a plain HTTP request Rails 404s.
+    map ${DOLLAR}http_upgrade ${DOLLAR}connection_upgrade {
+        default upgrade;
+        ''      '';
+    }
+
+    # Cloudflare ips see for refresh
+    # https://support.cloudflare.com/hc/en-us/articles/200170786-Restoring-original-visitor-IPs-logging-visitor-IP-addresses
+    # update list https://www.cloudflare.com/ips/
+    set_real_ip_from 103.21.244.0/22;
+    set_real_ip_from 103.22.200.0/22;
+    set_real_ip_from 103.31.4.0/22;
+    set_real_ip_from 104.16.0.0/13;
+    set_real_ip_from 104.24.0.0/14;
+    set_real_ip_from 108.162.192.0/18;
+    set_real_ip_from 131.0.72.0/22;
+    set_real_ip_from 141.101.64.0/18;
+    set_real_ip_from 162.158.0.0/15;
+    set_real_ip_from 172.64.0.0/13;
+    set_real_ip_from 173.245.48.0/20;
+    set_real_ip_from 188.114.96.0/20;
+    set_real_ip_from 190.93.240.0/20;
+    set_real_ip_from 197.234.240.0/22;
+    set_real_ip_from 198.41.128.0/17;
+    set_real_ip_from 2400:cb00::/32;
+    set_real_ip_from 2606:4700::/32;
+    set_real_ip_from 2803:f800::/32;
+    set_real_ip_from 2405:b500::/32;
+    set_real_ip_from 2405:8100::/32;
+    set_real_ip_from 2a06:98c0::/29;
+    set_real_ip_from 2c0f:f248::/32;
+
+    real_ip_header X-Forwarded-For;
+    real_ip_recursive on;
+    include /opt/bitnami/nginx/conf/conf.d/*.conf;
+    server {
+        listen 8080;
+        server_name _;
+        root /app/samvera/hyrax-webapp/public;
+        index index.html;
+
+        client_body_in_file_only clean;
+        client_body_buffer_size 32K;
+        client_max_body_size 0;
+        access_log /opt/bitnami/nginx/logs/access.log loki;
+
+        sendfile on;
+        send_timeout 300s;
+
+        include /opt/bitnami/nginx/conf/bots.d/ddos.conf;
+        include /opt/bitnami/nginx/conf/bots.d/blockbots.conf;
+
+        location ~ (\.php|\.aspx|\.asp) {
+        	return 404;
+        }
+
+        # deny requests for files that should never be accessed
+        location ~ /\. {
+          deny all;
+        }
+
+        location ~* ^.+\.(rb|log)${DOLLAR} {
+          deny all;
+        }
+
+        # serve static (compiled) assets / branding images directly if they exist
+        location ~ ^/(assets|branding|packs|fonts|images|javascripts|stylesheets|swfs|system|uv|pdf\.js)/ {
+          try_files ${DOLLAR}uri @rails;
+
+          gzip_static on; # to serve pre-gzipped version
+
+          expires max;
+          add_header Cache-Control public;
+
+          # Some browsers still send conditional-GET requests if there's a
+          # Last-Modified header or an ETag header even if they haven't
+          # reached the expiry date sent in the Expires header.
+          add_header Last-Modified "";
+          add_header ETag "";
+          break;
+        }
+
+        # send non-static file requests to the app server
+        location / {
+          try_files ${DOLLAR}uri @rails;
+        }
+
+        location @rails {
+          proxy_set_header  X-Real-IP  ${DOLLAR}remote_addr;
+          proxy_set_header  X-Forwarded-For ${DOLLAR}proxy_add_x_forwarded_for;
+          proxy_set_header Host ${DOLLAR}http_host;
+          proxy_redirect off;
+          proxy_pass http://rails_app;
+        }
+    }
