@@ -13,10 +13,19 @@ resources:
     memory: "5Gi"
     cpu: "1250m"
 
+# Chart default path "/" 404s via Hyku's tenant-CNAME check against the kubelet's pod-IP Host header.
+startupProbe:
+  enabled: true
+  path: "/healthz"
+  failureThreshold: 30
+# Bare /healthz only runs OkComputer's dependency-free "default" check.
 livenessProbe:
-  enabled: false
+  enabled: true
+  path: "/healthz"
+# /healthz/all also checks Solr/migrations/cache/DB, so a dependency outage pulls the pod from rotation instead of restarting it.
 readinessProbe:
-  enabled: false
+  enabled: true
+  path: "/healthz/all"
 
 brandingVolume:
   storageClass: efs-sc
