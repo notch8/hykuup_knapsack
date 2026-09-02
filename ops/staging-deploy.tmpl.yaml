@@ -23,11 +23,10 @@ livenessProbe:
   timeoutSeconds: 10
   failureThreshold: 5
   periodSeconds: 15
-# /healthz/all also checks Solr/migrations/cache/DB, so a dependency outage pulls the pod from rotation instead of restarting it.
+# Only the exact path "/healthz" is exempted from config.force_ssl's redirect (production.rb); "/healthz/all" 302s to https and a plain httpGet probe can't follow that, so it fails forever.
 readinessProbe:
   enabled: true
-  path: "/healthz/all"
-  timeoutSeconds: 8
+  path: "/healthz"
 
 # db-setup's migration-count check queries schema_migrations before db:create
 # ever runs, so it dies under `set -e` against a genuinely empty database.
