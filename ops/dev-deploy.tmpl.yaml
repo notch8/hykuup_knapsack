@@ -1,4 +1,4 @@
-replicaCount: 2
+replicaCount: 1
 
 imagePullSecrets:
   - name: github
@@ -43,7 +43,7 @@ dbPreSetupInitContainer:
     command:
       - sh
       - -c
-      - PGPASSWORD=$DB_PASSWORD psql -h zalando-postgres-v14-pooler.postgres.svc.cluster.local -p 5432 -U postgres hykuup_knapsack_friends -c "CREATE TABLE IF NOT EXISTS schema_migrations (version character varying(255) NOT NULL PRIMARY KEY);"
+      - PGPASSWORD=$DB_PASSWORD psql -h zalando-postgres-v14-pooler.postgres.svc.cluster.local -p 5432 -U postgres hykuup_knapsack_dev -c "CREATE TABLE IF NOT EXISTS schema_migrations (version character varying(255) NOT NULL PRIMARY KEY);"
 
 brandingVolume:
   storageClass: efs-sc
@@ -80,22 +80,22 @@ ingress:
   enabled: true
   ingressClassName: "nginx-ingress"
   hosts:
-    - host: "hykuup-knapsack-friends.notch8.cloud"
+    - host: "hykuup-knapsack-dev.notch8.cloud"
       paths:
         - path: /
-    - host: "*.hykuup-knapsack-friends.notch8.cloud"
+    - host: "*.hykuup-knapsack-dev.notch8.cloud"
       paths:
         - path: /
   annotations: {
     nginx.org/client-max-body-size: "0",
-    nginx.org/websocket-services: "hykuup-knapsack-friends-nginx",
+    nginx.org/websocket-services: "hykuup-knapsack-dev-nginx",
     cert-manager.io/cluster-issuer: letsencrypt-production-dns
   }
   tls:
     - hosts:
-        - "hykuup-knapsack-friends.notch8.cloud"
-        - "*.hykuup-knapsack-friends.notch8.cloud"
-      secretName: hykuup-knapsack-friends-tls
+        - "hykuup-knapsack-dev.notch8.cloud"
+        - "*.hykuup-knapsack-dev.notch8.cloud"
+      secretName: hykuup-knapsack-dev-tls
 
 extraEnvVars: &envVars
   - name: BUNDLE_LOCAL__HYKU_KNAPSACK
@@ -113,7 +113,7 @@ extraEnvVars: &envVars
   - name: DB_HOST
     value: zalando-postgres-v14-pooler.postgres.svc.cluster.local
   - name: DB_NAME
-    value: hykuup_knapsack_friends
+    value: hykuup_knapsack_dev
   - name: DB_USER
     value: postgres
   - name: PGSSLMODE
@@ -124,7 +124,7 @@ extraEnvVars: &envVars
   - name: DB_ADVISORY_LOCKS
     value: "false"
   - name: FCREPO_BASE_PATH
-    value: /hykuup-knapsack-friends
+    value: /hykuup-knapsack-dev
   - name: FCREPO_HOST
     value: fcrepo.fcrepo.svc.cluster.local
   - name: FCREPO_PORT
@@ -134,7 +134,7 @@ extraEnvVars: &envVars
   - name: GOOGLE_ANALYTICS_ID
     value: $GOOGLE_ANALYTICS_ID
   - name: GOOGLE_OAUTH_APP_NAME
-    value: hykuup-knapsack-friends
+    value: hykuup-knapsack-dev
   - name: GOOGLE_OAUTH_APP_VERSION
     value: '1.0'
   - name: GOOGLE_OAUTH_PRIVATE_KEY_SECRET
@@ -144,7 +144,7 @@ extraEnvVars: &envVars
   - name: GOOGLE_OAUTH_PRIVATE_KEY_VALUE
     value: $GOOGLE_OAUTH_PRIVATE_KEY_VALUE
   - name: GOOGLE_OAUTH_CLIENT_EMAIL
-    value: hyku-demo@hykuup-knapsack-friends.notch8.cloud
+    value: hyku-demo@hykuup-knapsack-dev.notch8.cloud
   - name: INITIAL_ADMIN_EMAIL
     value: admin@example.com
   - name: INITIAL_ADMIN_PASSWORD
@@ -156,7 +156,7 @@ extraEnvVars: &envVars
   - name: PASSENGER_APP_ENV
     value: production
   - name: RAILS_CACHE_STORE_URL
-    value: redis://:$REDIS_PASSWORD@hykuup-knapsack-friends-redis-master:6379/0
+    value: redis://:$REDIS_PASSWORD@hykuup-knapsack-dev-redis-master:6379/0
   - name: RAILS_ENV
     value: production
   - name: RAILS_LOG_TO_STDOUT
@@ -166,9 +166,9 @@ extraEnvVars: &envVars
   - name: RAILS_SERVE_STATIC_FILES
     value: "true"
   - name: REDIS_HOST
-    value: hykuup-knapsack-friends-redis-master
+    value: hykuup-knapsack-dev-redis-master
   - name: REDIS_URL
-    value: redis://:$REDIS_PASSWORD@hykuup-knapsack-friends-redis-master:6379/0
+    value: redis://:$REDIS_PASSWORD@hykuup-knapsack-dev-redis-master:6379/0
   - name: HYRAX_ACTIVE_JOB_QUEUE
     value: good_job
   - name: HYRAX_ANALYTICS
@@ -192,25 +192,25 @@ extraEnvVars: &envVars
   - name: HYRAX_REDIRECTS_ENABLED
     value: "true"
   - name: HYKU_CONTACT_EMAIL
-    value: example@hykuup-knapsack-friends.notch8.cloud
+    value: example@hykuup-knapsack-dev.notch8.cloud
   - name: HYKU_CONTACT_EMAIL_TO
-    value: example@hykuup-knapsack-friends.notch8.cloud
+    value: example@hykuup-knapsack-dev.notch8.cloud
   - name: HYKU_FILE_ACL
     value: "true"
   - name: HYKU_ADMIN_HOST
-    value: hykuup-knapsack-friends.notch8.cloud
+    value: hykuup-knapsack-dev.notch8.cloud
   - name: HYKU_ADMIN_ONLY_TENANT_CREATION
     value: "false"
   - name: HYKU_ALLOW_SIGNUP
     value: "false"
   - name: HYKU_DEFAULT_HOST
-    value: "%{tenant}.hykuup-knapsack-friends.notch8.cloud"
+    value: "%{tenant}.hykuup-knapsack-dev.notch8.cloud"
   - name: HYKU_MULTITENANT
     value: "true"
   - name: HYKU_ROOT_HOST
-    value: hykuup-knapsack-friends.notch8.cloud
+    value: hykuup-knapsack-dev.notch8.cloud
   # Non-production only. samvera/hyku#3190 stopped defaulting an activated user's
-  # password, which is right for production but leaves no way into a new friends
+  # password, which is right for production but leaves no way into a new dev
   # account short of reading the reset mail out of maildev. Deliberately absent
   # from production-deploy.tmpl.yaml.
   - name: HYKU_USER_DEFAULT_PASSWORD
@@ -244,9 +244,9 @@ extraEnvVars: &envVars
   - name: SOLR_ADMIN_PASSWORD
     value: $SOLR_ADMIN_PASSWORD
   - name: SOLR_COLLECTION_NAME
-    value: hykuup-knapsack-friends
+    value: hykuup-knapsack-dev
   - name: SOLR_CONFIGSET_NAME
-    value: hykuup-knapsack-friends
+    value: hykuup-knapsack-dev
   - name: SOLR_HOST
     value: solr.solr
   - name: SOLR_PORT
@@ -256,7 +256,7 @@ extraEnvVars: &envVars
   - name: SENTRY_DSN
     value: $SENTRY_DSN
   - name: SENTRY_ENVIRONMENT
-    value: "hykuup-knapsack-friends"
+    value: "hykuup-knapsack-dev"
   - name: TEST_USER_EMAIL
     value: user@example.com
   - name: TEST_USER_PASSWORD
@@ -327,13 +327,13 @@ externalFcrepoHost: fcrepo.fcrepo.svc.cluster.local
 
 externalPostgresql:
   host: zalando-postgres-v14-pooler.postgres.svc.cluster.local
-  database: hykuup_knapsack_friends
+  database: hykuup_knapsack_dev
   username: postgres
   password: $DB_PASSWORD
 
 externalSolrHost: solr.solr.svc.cluster.local
 externalSolrUser: admin
-externalSolrCollection: "hykuup-knapsack-friends"
+externalSolrCollection: "hykuup-knapsack-dev"
 externalSolrPassword: $SOLR_ADMIN_PASSWORD
 
 fits:
@@ -349,7 +349,7 @@ fits:
   subPath: /fits
 
 global:
-  hyraxHostName: hykuup-knapsack-friends-hyrax
+  hyraxHostName: hykuup-knapsack-dev-hyrax
 
 nginx:
   enabled: true
