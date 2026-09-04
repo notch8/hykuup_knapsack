@@ -335,17 +335,89 @@ externalSolrUser: admin
 externalSolrCollection: "hykuup-knapsack-staging"
 externalSolrPassword: $SOLR_ADMIN_PASSWORD
 
+# See the matching block in production-deploy.tmpl.yaml: the fits subchart's
+# probes have no configurable timeout, so the kubelet SIGKILLs FITS mid-analysis.
+# Reverts to `fits.enabled: true` once samvera-labs/fits-charts#6 lands.
 fits:
+  enabled: false
+
+externalFits:
   enabled: true
-  resources:
-    limits:
-      memory: "2Gi"
-      cpu: "1000m"
-    requests:
-      memory: "1Gi"
-      cpu: "250m"
-  servicePort: 8080
-  subPath: /fits
+  url: http://hykuup-knapsack-staging-fits:8080/fits
+
+extraDeploy:
+  - |
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: {{ .Release.Name }}-fits
+      labels:
+        app.kubernetes.io/name: fits
+        app.kubernetes.io/instance: {{ .Release.Name }}
+    spec:
+      replicas: 1
+      strategy:
+        type: Recreate
+      selector:
+        matchLabels:
+          app.kubernetes.io/name: fits
+          app.kubernetes.io/instance: {{ .Release.Name }}
+      template:
+        metadata:
+          labels:
+            app.kubernetes.io/name: fits
+            app.kubernetes.io/instance: {{ .Release.Name }}
+        spec:
+          restartPolicy: Always
+          containers:
+            - name: fits
+              image: ghcr.io/samvera/fitsservlet:1.6.0
+              imagePullPolicy: IfNotPresent
+              ports:
+                - name: http
+                  containerPort: 8080
+                  protocol: TCP
+              readinessProbe:
+                httpGet:
+                  path: /fits
+                  port: http
+                initialDelaySeconds: 15
+                periodSeconds: 30
+                timeoutSeconds: 10
+                failureThreshold: 30
+              livenessProbe:
+                httpGet:
+                  path: /fits
+                  port: http
+                initialDelaySeconds: 60
+                periodSeconds: 30
+                timeoutSeconds: 30
+                failureThreshold: 40
+              resources:
+                limits:
+                  memory: "2Gi"
+                  cpu: "1000m"
+                requests:
+                  memory: "1Gi"
+                  cpu: "250m"
+  - |
+    apiVersion: v1
+    kind: Service
+    metadata:
+      name: {{ .Release.Name }}-fits
+      labels:
+        app.kubernetes.io/name: fits
+        app.kubernetes.io/instance: {{ .Release.Name }}
+    spec:
+      type: ClusterIP
+      ports:
+        - port: 8080
+          targetPort: http
+          protocol: TCP
+          name: http
+      selector:
+        app.kubernetes.io/name: fits
+        app.kubernetes.io/instance: {{ .Release.Name }}
 
 global:
   hyraxHostName: hykuup-knapsack-staging-hyrax

@@ -487,14 +487,92 @@ nginx:
         }
     }
 
+# The fits subchart hardcodes both probes with no timeout, so Kubernetes' 1s
+# default applies and the kubelet SIGKILLs FITS while it is analyzing a large
+# file. A 100 MB PDF measured at 282s, so such files could never characterize.
+# Runs our own deployment until samvera-labs/fits-charts#6 makes the probes
+# configurable, then this reverts to `fits.enabled: true`.
 fits:
-  resources:
-    limits:
-      memory: "4Gi"
-      cpu: "1000m"
-    requests:
-      memory: "4Gi"
-      cpu: "250m"
+  enabled: false
+
+externalFits:
   enabled: true
-  servicePort: 8080
-  subPath: /fits
+  url: http://hykuup-knapsack-production-fits:8080/fits
+
+extraDeploy:
+  - |
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: {{ .Release.Name }}-fits
+      labels:
+        app.kubernetes.io/name: fits
+        app.kubernetes.io/instance: {{ .Release.Name }}
+    spec:
+      replicas: 1
+      strategy:
+        type: Recreate
+      selector:
+        matchLabels:
+          app.kubernetes.io/name: fits
+          app.kubernetes.io/instance: {{ .Release.Name }}
+      template:
+        metadata:
+          labels:
+            app.kubernetes.io/name: fits
+            app.kubernetes.io/instance: {{ .Release.Name }}
+        spec:
+          restartPolicy: Always
+          containers:
+            - name: fits
+              image: ghcr.io/samvera/fitsservlet:1.6.0
+              imagePullPolicy: IfNotPresent
+              ports:
+                - name: http
+                  containerPort: 8080
+                  protocol: TCP
+              # Blocking on a long analysis is normal for FITS, not ill health.
+              # Both windows exceed the slowest observed analysis; with one
+              # replica a failing readiness probe leaves the Service with no
+              # endpoint, so it has to tolerate the same duration as liveness.
+              readinessProbe:
+                httpGet:
+                  path: /fits
+                  port: http
+                initialDelaySeconds: 15
+                periodSeconds: 30
+                timeoutSeconds: 10
+                failureThreshold: 30
+              livenessProbe:
+                httpGet:
+                  path: /fits
+                  port: http
+                initialDelaySeconds: 60
+                periodSeconds: 30
+                timeoutSeconds: 30
+                failureThreshold: 40
+              resources:
+                limits:
+                  memory: "4Gi"
+                  cpu: "1000m"
+                requests:
+                  memory: "4Gi"
+                  cpu: "250m"
+  - |
+    apiVersion: v1
+    kind: Service
+    metadata:
+      name: {{ .Release.Name }}-fits
+      labels:
+        app.kubernetes.io/name: fits
+        app.kubernetes.io/instance: {{ .Release.Name }}
+    spec:
+      type: ClusterIP
+      ports:
+        - port: 8080
+          targetPort: http
+          protocol: TCP
+          name: http
+      selector:
+        app.kubernetes.io/name: fits
+        app.kubernetes.io/instance: {{ .Release.Name }}
