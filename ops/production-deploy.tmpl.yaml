@@ -139,6 +139,11 @@ extraEnvVars: &envVars
   #   value: $GOOGLE_OAUTH_PRIVATE_KEY_VALUE
   # - name: GOOGLE_OAUTH_CLIENT_EMAIL
   #   value: hyku-demo@hyku-demo.iam.gserviceaccount.com
+  # Without this DemoTenantResetJob wipes a public demo tenant nightly and
+  # restores branding but no works, so the sandbox would empty itself. The
+  # %{tenant} placeholder expands to the account name.
+  - name: DEMO_SEED_CSV_PATH
+    value: tmp/imports/%{tenant}/seed/metadata.csv
   - name: HYRAX_ACTIVE_JOB_QUEUE
     value: good_job
   - name: HYRAX_FITS_PATH
