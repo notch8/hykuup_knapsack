@@ -168,6 +168,11 @@ extraEnvVars: &envVars
     value: hykuup-knapsack-staging-redis-master
   - name: REDIS_URL
     value: redis://:$REDIS_PASSWORD@hykuup-knapsack-staging-redis-master:6379/0
+  # Without this DemoTenantResetJob wipes a public demo tenant nightly and
+  # restores branding but no works, so the sandbox would empty itself. The
+  # %{tenant} placeholder expands to the account name.
+  - name: DEMO_SEED_CSV_PATH
+    value: tmp/imports/%{tenant}/seed/metadata.csv
   - name: HYRAX_ACTIVE_JOB_QUEUE
     value: good_job
   - name: HYRAX_ANALYTICS
