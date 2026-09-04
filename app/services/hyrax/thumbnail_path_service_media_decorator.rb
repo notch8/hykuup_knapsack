@@ -39,11 +39,19 @@ module Hyrax
 
     # @return [:audio, :video, nil]
     def media_kind(file_set)
-      service = Hyrax::FileSetTypeService.new(file_set: file_set)
+      service = Hyrax::FileSetTypeService.new(file_set:)
       return :audio if service.audio?
       return :video if service.video?
+      # A characterized non-media file is answered, not guessed at: trusting the
+      # extension here would mislabel a PDF that happens to be named .mp4.
+      return nil unless uncharacterized?(service)
 
       kind_from_extension(file_set, service)
+    end
+
+    def uncharacterized?(service)
+      mime = service.mime_type
+      mime.blank? || mime == Hyrax::FileMetadata::GENERIC_MIME_TYPE
     end
 
     # mime_type is FileMetadata::GENERIC_MIME_TYPE until characterization runs,
