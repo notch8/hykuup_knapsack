@@ -326,6 +326,41 @@ rake hykuup:profiles:reset_all                             # All tenants
 rake hykuup:profiles:reset_tenant[demo]                    # Specific tenant
 ```
 
+### Public demo tenants
+
+A tenant flagged `public_demo_tenant` resets itself nightly to a stored **golden snapshot**, so a publicly writable demo recovers from whatever visitors did to it. `sandbox.hykuup.com` is the only one in production.
+
+The reset does three different things to three categories, and the third is the one that surprises people:
+
+| Category | What the nightly reset does |
+|---|---|
+| In the snapshot: the `Site` row, all content blocks, featured works | **Overwritten** with the captured values |
+| Deposited content: works, file sets, collections, Bulkrax importers and exporters | **Destroyed**, then the seed corpus is re-imported |
+| Everything else: metadata profile, available work types, feature flags, collection types | **Untouched**, so a change there is permanent |
+
+Note that collections *are* destroyed and re-seeded; collection *types*, being configuration, are not.
+
+**To make a change survive the reset, retake the snapshot.** Appearance settings and page copy live in the `Site` row and in content blocks, so they are restored from the snapshot every night. Editing them through the admin UI without retaking the snapshot means the change is reverted at the next reset, with no error and nothing in the logs. The demo password lives in the `marketing_text` content block, so it has the same problem.
+
+```bash
+bundle exec rails "hyku:demo:snapshot[sandbox.hykuup.com]"   # capture current state as golden
+bundle exec rails "hyku:demo:reset[sandbox.hykuup.com]"      # force a reset (DESTRUCTIVE)
+```
+
+Quote the task name; an unquoted `[...]` is a glob in zsh. The tenant argument is required and accepts a cname or an account name.
+
+`snapshot!` captures current state wholesale, not just the field you changed, so anything else that has drifted is promoted to permanent at the same time. Check the tenant looks right before running it.
+
+**Configuration** comes from the environment, set in `ops/production-deploy.tmpl.yaml`: `DEMO_SEED_CSV_PATH` (a `%{tenant}` placeholder expands to the account name), `DEMO_KEEP_USERS`, `DEMO_IMPORT_USER`, `DEMO_HEALTH_CHECK`. There is no cron: `Account#find_or_schedule_jobs` plants `DemoTenantResetJob` and each successful run re-enqueues itself for the next day.
+
+The full operational guide, including how to check the nightly chain is actually succeeding, is in [notch8/playbook](https://github.com/notch8/playbook) `skills/demo-tenant-snapshot/`:
+
+```bash
+ln -s ~/Work/playbook/skills/demo-tenant-snapshot ~/.claude/skills/demo-tenant-snapshot
+```
+
+**Known gaps.** The third row of that table is a defect rather than a design decision: the published demo admin login can change those settings and nothing restores them (#760). Uploads are also uncapped (#752), the reset never reclaims stored files (#761), and the "nightly" reset fires at 17:00 Pacific because `Date.tomorrow.midnight` is evaluated in a UTC application (#751).
+
 ## Adding New Consortia
 
 <details>
