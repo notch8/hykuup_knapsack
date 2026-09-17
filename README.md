@@ -51,6 +51,22 @@ ln -s ~/Work/playbook/skills/deploy-regression-check ~/.claude/skills/deploy-reg
 
 That makes it available as `/deploy-regression-check`. See [notch8/playbook](https://github.com/notch8/playbook) `skills/deploy-regression-check/`, and the method write-up in `devops/deployments/regression-testing-a-deploy-with-claude.md`.
 
+### Deploying to production
+
+**Production deploys go out Tuesdays, 1pm-5pm Pacific, and never on a Friday.** The window can be moved to another weekday when there is reason to; Friday is out either way, because it leaves no working day to notice or fix fallout. Staging has no window.
+
+`.github/workflows/deploy.yaml` is `workflow_dispatch` only. **Dispatch on the release tag, not on a branch** - a branch ref can move under you if someone merges mid-dispatch, and the image tag is derived from the ref's SHA.
+
+The order is: capture the regression baseline immediately before dispatching, tag `origin/main` and push, dispatch Deploy with the tag as the ref, verify the rollout, then snapshot again and diff, and only then write the release notes. The release body makes client-facing claims about what is live, so it cannot honestly be written beforehand.
+
+Releases are on HykuUp's own `v1.x` line and do not mirror Hyku's version. `lib/hyku_knapsack/version.rb` carries a separate `7.x` number tracking Hyku compatibility.
+
+Full process, including the cluster contexts, rollback approach and the traps that have cost us, in [notch8/playbook](https://github.com/notch8/playbook) `skills/hykuup-production-deploy/`:
+
+```bash
+ln -s ~/Work/playbook/skills/hykuup-production-deploy ~/.claude/skills/hykuup-production-deploy
+```
+
 ### Precedence
 
 In a traditional setup, a Rails' application's views, translations, and code supsedes all other gems and engines.  However, we have setup Hyku Knapsack to have a higher load precedence than the underlying Hyku application.
@@ -257,7 +273,7 @@ Any file with `_decorator.rb` in the app or lib directory will automatically be 
 
 ### Deployment scripts
 
-Deployment code can be added as needed.
+Deployment code can be added as needed. For the production deploy process itself, see [Deploying to production](#deploying-to-production).
 
 ### Theme files
 
