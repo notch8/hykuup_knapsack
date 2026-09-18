@@ -10,30 +10,33 @@ RSpec.describe Hyrax::UploadsController, type: :controller do
   # fixture_paths points at hyrax-webapp; reach the knapsack's own fixtures explicitly.
   let(:fixture) { HykuKnapsack::Engine.root.join('spec', 'fixtures', 'files', 'malformed.pdf') }
   let(:file) { Rack::Test::UploadedFile.new(fixture, 'application/pdf') }
+  let(:file_size) { File.size(fixture) }
+
+  def stub_limit(bytes)
+    allow(Site).to receive(:account).and_return(instance_double(Account, file_size_limit: bytes&.to_s))
+  end
 
   before { sign_in user }
 
   describe 'POST #create' do
-    context 'when the site has no upload limit' do
-      before { allow(Site).to receive(:account).and_return(instance_double(Account, file_size_limit: nil)) }
-
-      it 'accepts the upload' do
+    context 'with no limit configured' do
+      it 'accepts the upload rather than rejecting everything' do
+        stub_limit(nil)
         post :create, params: { files: [file], format: 'json' }
         expect(response).not_to have_http_status(:payload_too_large)
       end
     end
 
-    context 'when the file is under the limit' do
-      before { allow(Site).to receive(:account).and_return(instance_double(Account, file_size_limit: 5.megabytes.to_s)) }
-
+    context 'with a limit the file fits inside' do
       it 'accepts the upload' do
+        stub_limit(file_size + 1)
         post :create, params: { files: [file], format: 'json' }
         expect(response).not_to have_http_status(:payload_too_large)
       end
     end
 
-    context 'when the file is over the limit' do
-      before { allow(Site).to receive(:account).and_return(instance_double(Account, file_size_limit: '10')) }
+    context 'with a limit the file exceeds' do
+      before { stub_limit(file_size - 1) }
 
       it 'refuses with 413 and an error blueimp can render' do
         post :create, params: { files: [file], format: 'json' }
@@ -48,19 +51,39 @@ RSpec.describe Hyrax::UploadsController, type: :controller do
       end
     end
 
-    # The bug this override exists for: each chunk is small, the assembled file is not.
-    context 'when a chunk would take an existing upload over the limit' do
+    # The bug this override exists for. Hyrax appends only when CONTENT-RANGE starts
+    # exactly where the file on disk ends, so each request is small and the assembled
+    # file is not.
+    describe 'the chunked path' do
       let(:existing) { Hyrax::UploadedFile.create!(file:, user:) }
+      let(:on_disk) { File.size(existing.file.path) }
 
-      before do
-        allow(Site).to receive(:account)
-          .and_return(instance_double(Account, file_size_limit: (File.size(existing.file.path) + 1).to_s))
+      def append_chunk
+        request.headers['CONTENT-RANGE'] = "bytes #{on_disk}-#{(on_disk + file_size) - 1}/#{on_disk + file_size}"
+        post :create, params: { id: existing.id, files: [file], format: 'json' }
       end
 
-      it 'refuses the chunk' do
-        post :create, params: { id: existing.id, files: [file], format: 'json' }
+      it 'refuses an append that would take the assembled file over the limit' do
+        stub_limit(on_disk + file_size - 1)
+        append_chunk
 
         expect(response).to have_http_status(:payload_too_large)
+      end
+
+      it 'accepts an append that stays under the limit' do
+        stub_limit(on_disk + file_size + 1)
+        append_chunk
+
+        expect(response).not_to have_http_status(:payload_too_large)
+      end
+
+      # Without a CONTENT-RANGE header Hyrax replaces rather than appends, so counting
+      # the bytes already on disk would reject a legitimate replacement.
+      it 'does not count existing bytes when the request replaces rather than appends' do
+        stub_limit(file_size + 1)
+        post :create, params: { id: existing.id, files: [file], format: 'json' }
+
+        expect(response).not_to have_http_status(:payload_too_large)
       end
     end
   end

@@ -11,29 +11,44 @@ module Hyrax
   module UploadsControllerDecorator
     extend ActiveSupport::Concern
 
-    included do
+    # prepended, not included: ActiveSupport::Concern only evaluates the included
+    # block from append_features, so pairing `included do` with prepend registers
+    # nothing at all and the check silently never runs.
+    prepended do
       before_action :enforce_upload_limit!, only: [:create]
     end
 
     private
 
-    # Rejects a chunk that would take the assembled file past the tenant's limit,
-    # counting bytes already on disk rather than the size of this request alone.
     def enforce_upload_limit!
       limit = tenant_upload_limit
       return if limit.blank?
 
       incoming = params[:files]&.first
-      return if incoming.blank?
+      # The first POST of an upload carries the filename as a String rather than a
+      # file, so there is nothing to measure yet.
+      return unless incoming.respond_to?(:original_filename)
 
-      return if incoming.size.to_i + bytes_already_uploaded <= limit
+      return if assembled_size(incoming) <= limit
 
       render_upload_too_large(limit)
     end
 
-    def bytes_already_uploaded
-      return 0 if params[:id].blank?
+    # Mirrors Hyrax::UploadsController#handle_chunk: bytes are appended only when a
+    # CONTENT-RANGE header starts exactly where the file on disk ends. Every other
+    # path replaces the file, so the assembled size is this request alone. Counting
+    # the existing bytes unconditionally would reject a legitimate replacement.
+    def assembled_size(incoming)
+      content_range = request.headers['CONTENT-RANGE']
+      return incoming.size if params[:id].blank? || content_range.blank?
 
+      current = bytes_already_uploaded
+      begin_of_chunk = content_range[/\ (.*?)-/, 1].to_i
+
+      begin_of_chunk == current ? current + incoming.size : incoming.size
+    end
+
+    def bytes_already_uploaded
       path = Hyrax::UploadedFile.find_by(id: params[:id])&.file&.path
       return 0 if path.blank? || !File.exist?(path)
 
