@@ -3,6 +3,9 @@
 require 'rails_helper'
 
 RSpec.describe Hyrax::UploadsController, type: :controller do
+  # The uploads route lives in the Hyrax engine, not the host application.
+  routes { Hyrax::Engine.routes }
+
   let(:user) { FactoryBot.create(:user) }
   # fixture_paths points at hyrax-webapp; reach the knapsack's own fixtures explicitly.
   let(:fixture) { HykuKnapsack::Engine.root.join('spec', 'fixtures', 'files', 'malformed.pdf') }
@@ -47,7 +50,7 @@ RSpec.describe Hyrax::UploadsController, type: :controller do
 
     # The bug this override exists for: each chunk is small, the assembled file is not.
     context 'when a chunk would take an existing upload over the limit' do
-      let(:existing) { Hyrax::UploadedFile.create!(file: file, user: user) }
+      let(:existing) { Hyrax::UploadedFile.create!(file:, user:) }
 
       before do
         allow(Site).to receive(:account)
