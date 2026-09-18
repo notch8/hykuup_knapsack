@@ -45,6 +45,14 @@ RSpec.describe Hyrax::UploadsController, type: :controller do
       end
     end
 
+    context 'with a limit that is not a byte count' do
+      it 'disables the check rather than reading "5 GB" as five bytes' do
+        stub_limit('5 GB')
+        post :create, params: { files: [file], format: 'json' }
+        expect(response).not_to have_http_status(:payload_too_large)
+      end
+    end
+
     context 'with a limit the file fits inside' do
       it 'accepts the upload' do
         stub_limit(file_size + 1)

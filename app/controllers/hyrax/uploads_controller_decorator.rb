@@ -20,6 +20,10 @@ module Hyrax
 
     private
 
+    # Not atomic with Hyrax's append, which takes no lock of its own, so parallel
+    # chunk requests can each read the same on-disk size and pass. The overshoot is
+    # bounded by concurrency times the chunk size rather than unbounded, and closing
+    # it means adding locking to a write this decorator does not own.
     def enforce_upload_limit!
       limit = tenant_upload_limit
       return if limit.blank?
