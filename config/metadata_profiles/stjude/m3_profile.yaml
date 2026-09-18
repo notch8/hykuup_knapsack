@@ -1606,7 +1606,6 @@ properties:
       class:
       - GenericWorkResource
       - ImageResource
-      - OerResource
       - EtdResource
     cardinality:
       minimum: 0

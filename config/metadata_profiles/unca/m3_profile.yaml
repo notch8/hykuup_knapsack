@@ -2004,6 +2004,7 @@ properties:
       - ImageResource
       - OerResource
       - EtdResource
+      - ScholarlyWork
     cardinality:
       minimum: 0
       maximum: 1

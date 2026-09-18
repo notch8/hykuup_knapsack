@@ -2003,6 +2003,7 @@ properties:
       - ImageResource
       - OerResource
       - EtdResource
+      - MobiusWork
     cardinality:
       minimum: 0
       maximum: 1
