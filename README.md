@@ -359,7 +359,7 @@ The reset does three different things to three categories, and the third is the 
 |---|---|
 | In the snapshot: the `Site` row, all content blocks, featured works | **Overwritten** with the captured values |
 | Deposited content: works, file sets, collections, Bulkrax importers and exporters | **Destroyed**, then the seed corpus is re-imported |
-| Everything else: metadata profile, available work types, feature flags, collection types | **Untouched**, so a change there is permanent |
+| Everything else: metadata profile, feature flags, collection types, and **account settings** | **Untouched**, so a change there is permanent |
 
 Note that collections *are* destroyed and re-seeded; collection *types*, being configuration, are not.
 
@@ -373,6 +373,10 @@ bundle exec rails "hyku:demo:reset[sandbox.hykuup.com]"      # force a reset (DE
 Quote the task name; an unquoted `[...]` is a glob in zsh. The tenant argument is required and accepts a cname or an account name.
 
 `snapshot!` captures current state wholesale, not just the field you changed, so anything else that has drifted is promoted to permanent at the same time. Check the tenant looks right before running it.
+
+**Do not retake the snapshot to recover from vandalism.** `accounts.demo_tenant_snapshot` is a single column overwritten in place with no history, so retaking it after someone has damaged the tenant destroys the known-good state permanently.
+
+`Site#contact_email` is a `sites` column and therefore reverts, while `Account#contact_email_to`, which is where the contact form actually mails, is an account setting and never reverts. Two similarly named fields, opposite behaviour.
 
 **Configuration** comes from the environment, set in `ops/production-deploy.tmpl.yaml`: `DEMO_SEED_CSV_PATH` (a `%{tenant}` placeholder expands to the account name), `DEMO_KEEP_USERS`, `DEMO_IMPORT_USER`, `DEMO_HEALTH_CHECK`. There is no cron: `Account#find_or_schedule_jobs` plants `DemoTenantResetJob` and each successful run re-enqueues itself for the next day.
 
