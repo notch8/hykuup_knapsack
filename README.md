@@ -50,6 +50,22 @@ ln -s ~/Work/playbook/skills/deploy-regression-check ~/.claude/skills/deploy-reg
 
 That makes it available as `/deploy-regression-check`. See [notch8/playbook](https://github.com/notch8/playbook) `skills/deploy-regression-check/`, and the method write-up in `devops/deployments/regression-testing-a-deploy-with-claude.md`.
 
+### Deploying to production
+
+**Production deploys go out Tuesdays, 1pm-5pm Pacific, and never on a Friday.** The window can be moved to another weekday when there is reason to; Friday is out either way, because it leaves no working day to notice or fix fallout. Staging has no window.
+
+`.github/workflows/deploy.yaml` is `workflow_dispatch` only. **Dispatch on the release tag, not on a branch** - a branch ref can move under you if someone merges mid-dispatch, and the image tag is derived from the ref's SHA.
+
+The order is: capture the regression baseline immediately before dispatching, tag `origin/main` and push, dispatch Deploy with the tag as the ref, verify the rollout, then snapshot again and diff, and only then write the release notes. The release body makes client-facing claims about what is live, so it cannot honestly be written beforehand.
+
+Releases are on HykuUp's own `v1.x` line and do not mirror Hyku's version. `lib/hyku_knapsack/version.rb` carries a separate `7.x` number tracking Hyku compatibility.
+
+Full process, including the cluster contexts, rollback approach and the traps that have cost us, in [notch8/playbook](https://github.com/notch8/playbook) `skills/hykuup-production-deploy/`:
+
+```bash
+ln -s ~/Work/playbook/skills/hykuup-production-deploy ~/.claude/skills/hykuup-production-deploy
+```
+
 ### Precedence
 
 In a traditional setup, a Rails' application's views, translations, and code supsedes all other gems and engines.  However, we have setup Hyku Knapsack to have a higher load precedence than the underlying Hyku application.
@@ -250,7 +266,7 @@ Any file with `_decorator.rb` in the app or lib directory will automatically be 
 
 ### Deployment scripts
 
-Deployment code can be added as needed.
+Deployment code can be added as needed. For the production deploy process itself, see [Deploying to production](#deploying-to-production).
 
 ### Theme files
 
@@ -325,6 +341,45 @@ rake hykuup:profiles:add_tenant_profile[demo]              # Specific tenant
 rake hykuup:profiles:reset_all                             # All tenants
 rake hykuup:profiles:reset_tenant[demo]                    # Specific tenant
 ```
+
+### Public demo tenants
+
+A tenant flagged `public_demo_tenant` resets itself nightly to a stored **golden snapshot**, so a publicly writable demo recovers from whatever visitors did to it. `sandbox.hykuup.com` is the only one in production.
+
+The reset does three different things to three categories, and the third is the one that surprises people:
+
+| Category | What the nightly reset does |
+|---|---|
+| In the snapshot: the `Site` row, all content blocks, featured works | **Overwritten** with the captured values |
+| Deposited content: works, file sets, collections, Bulkrax importers and exporters | **Destroyed**, then the seed corpus is re-imported |
+| Everything else: metadata profile, feature flags, collection types, and **account settings** | **Untouched**, so a change there is permanent |
+
+Note that collections *are* destroyed and re-seeded; collection *types*, being configuration, are not.
+
+**To make a change survive the reset, retake the snapshot.** Appearance settings and page copy live in the `Site` row and in content blocks, so they are restored from the snapshot every night. Editing them through the admin UI without retaking the snapshot means the change is reverted at the next reset, with no error and nothing in the logs. The demo password lives in the `marketing_text` content block, so it has the same problem.
+
+```bash
+bundle exec rails "hyku:demo:snapshot[sandbox.hykuup.com]"   # capture current state as golden
+bundle exec rails "hyku:demo:reset[sandbox.hykuup.com]"      # force a reset (DESTRUCTIVE)
+```
+
+Quote the task name; an unquoted `[...]` is a glob in zsh. The tenant argument is required and accepts a cname or an account name.
+
+`snapshot!` captures current state wholesale, not just the field you changed, so anything else that has drifted is promoted to permanent at the same time. Check the tenant looks right before running it.
+
+**Do not retake the snapshot to recover from vandalism.** `accounts.demo_tenant_snapshot` is a single column overwritten in place with no history, so retaking it after someone has damaged the tenant destroys the known-good state permanently.
+
+`Site#contact_email` is a `sites` column and therefore reverts, while `Account#contact_email_to`, which is where the contact form actually mails, is an account setting and never reverts. Two similarly named fields, opposite behaviour.
+
+**Configuration** comes from the environment, set in `ops/production-deploy.tmpl.yaml`: `DEMO_SEED_CSV_PATH` (a `%{tenant}` placeholder expands to the account name), `DEMO_KEEP_USERS`, `DEMO_IMPORT_USER`, `DEMO_HEALTH_CHECK`. There is no cron: `Account#find_or_schedule_jobs` plants `DemoTenantResetJob` and each successful run re-enqueues itself for the next day.
+
+The full operational guide, including how to check the nightly chain is actually succeeding, is in [notch8/playbook](https://github.com/notch8/playbook) `skills/demo-tenant-snapshot/`:
+
+```bash
+ln -s ~/Work/playbook/skills/demo-tenant-snapshot ~/.claude/skills/demo-tenant-snapshot
+```
+
+**Known gaps.** The third row of that table is a defect rather than a design decision: the published demo admin login can change those settings and nothing restores them (#760). Uploads are also uncapped (#752), the reset never reclaims stored files (#761), and the "nightly" reset fires at 17:00 Pacific because `Date.tomorrow.midnight` is evaluated in a UTC application (#751).
 
 ## Adding New Consortia
 
