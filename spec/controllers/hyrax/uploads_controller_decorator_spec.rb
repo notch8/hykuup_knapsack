@@ -12,31 +12,45 @@ RSpec.describe Hyrax::UploadsController, type: :controller do
   let(:file) { Rack::Test::UploadedFile.new(fixture, 'application/pdf') }
   let(:file_size) { File.size(fixture) }
 
-  # A real Account, not a verifying double: building the ability chain on every
-  # request reads Site.account for search_only? and public_demo_tenant?, and a
-  # double stubbed only with file_size_limit raises on those before any assertion.
-  def stub_limit(bytes)
-    account = FactoryBot.build(:account)
-    allow(account).to receive(:file_size_limit).and_return(bytes&.to_s)
-    allow(Site).to receive(:account).and_return(account)
+  # Hyku's ApplicationController runs require_active_account!, which looks the tenant
+  # up through Account.from_request rather than Site.account and re-raises as a
+  # routing error when it finds none. Hyku's own suite stubs this for every
+  # controller spec in spec/support/multitenancy_metadata.rb, which the knapsack's
+  # rails_helper does not load, so the same shape is set up here.
+  let(:account) do
+    FactoryBot.build(:account, tenant: 'FakeTenant', cname: 'tenant1').tap do |acct|
+      allow(acct).to receive(:persisted?).and_return(true)
+    end
   end
 
-  before { sign_in user }
+  # A real Account rather than a verifying double: building the ability chain reads
+  # Site.account for search_only? and public_demo_tenant? on every request.
+  def stub_limit(bytes)
+    allow(account).to receive(:file_size_limit).and_return(bytes&.to_s)
+  end
+
+  before do
+    allow(Account).to receive(:from_request).and_return(account)
+    allow(Site).to receive(:account).and_return(account)
+    sign_in user
+  end
 
   describe 'POST #create' do
     context 'with no limit configured' do
       it 'accepts the upload rather than rejecting everything' do
         stub_limit(nil)
-        post :create, params: { files: [file], format: 'json' }
-        expect(response).not_to have_http_status(:payload_too_large)
+        expect { post :create, params: { files: [file], format: 'json' } }
+          .to change(Hyrax::UploadedFile, :count).by(1)
+        expect(response).to be_successful
       end
     end
 
     context 'with a limit the file fits inside' do
       it 'accepts the upload' do
         stub_limit(file_size + 1)
-        post :create, params: { files: [file], format: 'json' }
-        expect(response).not_to have_http_status(:payload_too_large)
+        expect { post :create, params: { files: [file], format: 'json' } }
+          .to change(Hyrax::UploadedFile, :count).by(1)
+        expect(response).to be_successful
       end
     end
 
