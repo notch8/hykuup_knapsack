@@ -68,7 +68,9 @@ module Hyrax
       limit.positive? ? limit : nil
     end
 
-    # blueimp reads the error off each file entry; a bare 413 renders as a silent failure.
+    # blueimp's _onFail reads its error off the browser File object rather than the
+    # response, so the browser shows the status text and this body reaches API and
+    # curl callers and the logs. Kept in blueimp's files-array shape regardless.
     def render_upload_too_large(limit)
       render json: {
         files: [{

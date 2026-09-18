@@ -12,8 +12,13 @@ RSpec.describe Hyrax::UploadsController, type: :controller do
   let(:file) { Rack::Test::UploadedFile.new(fixture, 'application/pdf') }
   let(:file_size) { File.size(fixture) }
 
+  # A real Account, not a verifying double: building the ability chain on every
+  # request reads Site.account for search_only? and public_demo_tenant?, and a
+  # double stubbed only with file_size_limit raises on those before any assertion.
   def stub_limit(bytes)
-    allow(Site).to receive(:account).and_return(instance_double(Account, file_size_limit: bytes&.to_s))
+    account = FactoryBot.build(:account)
+    allow(account).to receive(:file_size_limit).and_return(bytes&.to_s)
+    allow(Site).to receive(:account).and_return(account)
   end
 
   before { sign_in user }
