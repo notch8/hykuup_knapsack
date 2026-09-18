@@ -75,7 +75,9 @@ ingress:
       paths:
         - path: /
   annotations: {
-    nginx.org/client-max-body-size: "0",
+    # Sized off the demo corpus's largest legitimate file, ~159 MB: sandbox
+    # publishes its login, so any visitor can deposit against shared EFS.
+    nginx.org/client-max-body-size: "256m",
     nginx.org/proxy-connect-timeout: "120s",
     nginx.org/websocket-services: "hykuup-knapsack-production-nginx",
     cert-manager.io/cluster-issuer: letsencrypt-production-dns
