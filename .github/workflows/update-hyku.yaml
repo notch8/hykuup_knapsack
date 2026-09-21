@@ -1,0 +1,101 @@
+name: "Update Hyku Submodule"
+run-name: Update hyrax-webapp submodule by @${{ github.actor }}
+
+on:
+  schedule:
+    - cron: '0 14 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  bump-submodule:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Generate GitHub App token
+        id: app-token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ secrets.BOT_APP_ID }}
+          private-key: ${{ secrets.BOT_PRIVATE_KEY }}
+
+      - name: Checkout knapsack
+        uses: actions/checkout@v6
+        with:
+          token: ${{ steps.app-token.outputs.token }}
+
+      - name: Record current submodule SHA
+        id: old
+        run: |
+          OLD_SHA=$(git ls-tree HEAD hyrax-webapp | awk '{print $3}')
+          echo "sha=$OLD_SHA" >> "$GITHUB_OUTPUT"
+          echo "short=${OLD_SHA:0:8}" >> "$GITHUB_OUTPUT"
+
+      - name: Fetch latest Hyku main SHA
+        id: new
+        run: |
+          NEW_SHA=$(git ls-remote https://github.com/samvera/hyku.git refs/heads/main | awk '{print $1}')
+          echo "sha=$NEW_SHA" >> "$GITHUB_OUTPUT"
+          echo "short=${NEW_SHA:0:8}" >> "$GITHUB_OUTPUT"
+
+      - name: Check if bump is needed
+        id: check
+        run: |
+          if [ "${{ steps.old.outputs.sha }}" = "${{ steps.new.outputs.sha }}" ]; then
+            echo "No new commits on Hyku main since ${{ steps.old.outputs.short }}. Nothing to do."
+            echo "needed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "Bump needed: ${{ steps.old.outputs.short }} -> ${{ steps.new.outputs.short }}"
+            echo "needed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Generate commit log
+        if: steps.check.outputs.needed == 'true'
+        id: log
+        run: |
+          git submodule update --init hyrax-webapp
+          cd hyrax-webapp
+          git fetch origin main
+          LOG=$(git log --oneline ${{ steps.old.outputs.sha }}..${{ steps.new.outputs.sha }} 2>/dev/null | head -50 || echo "(could not generate log; old SHA may have been force-pushed away)")
+          COUNT=$(git rev-list --count ${{ steps.old.outputs.sha }}..${{ steps.new.outputs.sha }} 2>/dev/null || echo "unknown")
+          {
+            echo 'commits<<ENDOFLOG'
+            echo "$LOG"
+            echo 'ENDOFLOG'
+          } >> "$GITHUB_OUTPUT"
+          echo "count=$COUNT" >> "$GITHUB_OUTPUT"
+
+      - name: Update submodule to latest Hyku main
+        if: steps.check.outputs.needed == 'true'
+        run: |
+          cd hyrax-webapp
+          git checkout ${{ steps.new.outputs.sha }}
+
+      - name: Create or update pull request
+        if: steps.check.outputs.needed == 'true'
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ steps.app-token.outputs.token }}
+          branch: automated/bump-hyku-main
+          commit-message: "Bump hyrax-webapp to ${{ steps.new.outputs.short }}"
+          title: "Bump hyrax-webapp to ${{ steps.new.outputs.short }}"
+          body: |
+            Automated weekly bump of the `hyrax-webapp` submodule.
+
+            **${{ steps.old.outputs.short }}** to **${{ steps.new.outputs.short }}** (${{ steps.log.outputs.count }} commits)
+
+            [Compare on GitHub](https://github.com/samvera/hyku/compare/${{ steps.old.outputs.sha }}...${{ steps.new.outputs.sha }})
+
+            <details>
+            <summary>Commits</summary>
+
+            ```
+            ${{ steps.log.outputs.commits }}
+            ```
+
+            </details>
+          labels: dependencies
+          base: main
+          delete-branch: true
