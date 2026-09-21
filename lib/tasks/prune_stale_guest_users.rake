@@ -1,10 +1,12 @@
 # frozen_string_literal: true
 namespace :hyku do
   desc "Destroy stale guest users (guest: true, updated_at older than OLDER_THAN_DAYS) in throttled batches. " \
-       "ENV: OLDER_THAN_DAYS (default 7), BATCH_SIZE (default 500), BATCH_SLEEP_SECONDS (default 1), DRY_RUN (default false)"
+       "Uses bulk delete_all rather than per-record destroy - guest users carry no dependent bookmarks/searches/ " \
+       "trophies/proxy-deposit records in practice (verified via hyku:report_guest_user_dependents). " \
+       "ENV: OLDER_THAN_DAYS (default 7), BATCH_SIZE (default 5000), BATCH_SLEEP_SECONDS (default 1), DRY_RUN (default false)"
   task prune_stale_guest_users: :environment do
     older_than_days = ENV.fetch('OLDER_THAN_DAYS', 7).to_i
-    batch_size = ENV.fetch('BATCH_SIZE', 500).to_i
+    batch_size = ENV.fetch('BATCH_SIZE', 5_000).to_i
     batch_sleep_seconds = ENV.fetch('BATCH_SLEEP_SECONDS', 1).to_f
     dry_run = ActiveModel::Type::Boolean.new.cast(ENV.fetch('DRY_RUN', false))
 
@@ -20,12 +22,9 @@ namespace :hyku do
     end
 
     destroyed = 0
-    loop do
-      batch = scope.order(:id).limit(batch_size).to_a
-      break if batch.empty?
-
-      batch.each(&:destroy)
-      destroyed += batch.size
+    scope.in_batches(of: batch_size) do |relation|
+      batch_count = relation.delete_all
+      destroyed += batch_count
       Rails.logger.info("hyku:prune_stale_guest_users - destroyed #{destroyed}/#{total}...")
       sleep batch_sleep_seconds
     end
