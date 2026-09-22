@@ -13,6 +13,7 @@
     - [Hyku and HykuKnapsack](#hyku-and-hykuknapsack)
     - [Overrides](#overrides)
     - [Deployment scripts](#deployment-scripts)
+    - [Merge strategy](#merge-strategy)
     - [Theme files](#theme-files)
     - [Gems](#gems)
   - [Features](#features)
@@ -189,6 +190,12 @@ When you want to bring down an updated version of your Hyku submodule, use the f
 ```
 
 This will checkout the submodule to the HEAD of the specified branch.
+
+#### Merge strategy
+
+This repo uses **merge commits only** (no squash-merge). Squash-merging can silently roll back the `hyrax-webapp` submodule pointer when a PR contains multiple commits. PR #758 was squash-merged and the security fix it carried was reversed without anyone noticing.
+
+GitHub repo settings should have "Allow squash merging" unchecked. If you want a clean history, squash your commits locally before merging (`git rebase -i`).
 
 ### 🚀 Getting Started with Stack Car
 
