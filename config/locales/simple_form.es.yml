@@ -1,0 +1,9 @@
+es:
+  simple_form:
+    hints:
+      account:
+        part_of_consortia: "Seleccione el consorcio al que pertenece este inquilino. Esto controlará los tipos de trabajo y los perfiles de metadatos disponibles."
+        part_of_consortia_edit: "Advertencia: Cambiar el consorcio alterará los tipos de trabajo y los perfiles de metadatos disponibles. Esto puede afectar el contenido existente y no se recomienda."
+    labels:
+      account:
+        part_of_consortia: "Parte de los consorcios"

@@ -1,0 +1,25 @@
+---
+zh:
+  hyrax:
+    models:
+      scholarly_work: 学术著作
+    select_type:
+      scholarly_work:
+        name: 学术著作
+    scholarly_work:
+      labels:
+        admin_note: 管理说明
+        committee_member: 委员
+        creator: 创造者
+        date_created: 创建日期
+        date_published: 出版日期
+        degree_discipline: 纪律
+        degree_grantor: 授予人
+        degree_level: 学位级别
+        degree_name: 学位名称
+        description: 描述
+        related_url: 相关网址
+        resource_type: 类型
+        rights_statement: 权利
+        spatial_coverage: 覆盖范围 - 地理名称
+        temporal_coverage: 报道 - 历史时代

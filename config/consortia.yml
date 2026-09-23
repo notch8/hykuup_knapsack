@@ -1,0 +1,16 @@
+- name: "UNCA Consortium"
+  identifier: "unca"
+  excluded_work_types:
+    - "MobiusWork"
+- name: "Mobius Consortium"
+  identifier: "mobius"
+  excluded_work_types:
+    - "ScholarlyWork"
+- name: "St. Jude Consortium"
+  identifier: "stjude"
+  excluded_work_types:
+    - "MobiusWork"
+    - "ScholarlyWork"
+
+
+

@@ -1,0 +1,9 @@
+en:
+  simple_form:
+    hints:
+      account:
+        part_of_consortia: "Select the consortium this tenant belongs to. This will control available work types and metadata profiles."
+        part_of_consortia_edit: "Warning: Changing the consortium will alter available work types and metadata profiles. This may affect existing content and is not recommended."
+    labels:
+      account:
+        part_of_consortia: "Part of Consortia"

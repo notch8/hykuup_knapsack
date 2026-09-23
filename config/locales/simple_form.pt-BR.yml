@@ -1,0 +1,9 @@
+"pt-BR":
+  simple_form:
+    hints:
+      account:
+        part_of_consortia: "Selecione o consórcio ao qual este locatário pertence. Isso controlará os tipos de trabalho e perfis de metadados disponíveis."
+        part_of_consortia_edit: "Aviso: A alteração do consórcio alterará os tipos de trabalho e os perfis de metadados disponíveis. Isso pode afetar o conteúdo existente e não é recomendado."
+    labels:
+      account:
+        part_of_consortia: "Parte de Consórcios"
