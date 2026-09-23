@@ -55,9 +55,9 @@ That makes it available as `/deploy-regression-check`. See [notch8/playbook](htt
 
 **Production deploys go out Tuesdays, 1pm-5pm Pacific, and never on a Friday.** The window can be moved to another weekday when there is reason to; Friday is out either way, because it leaves no working day to notice or fix fallout. Staging has no window.
 
-`.github/workflows/deploy.yaml` is `workflow_dispatch` only. **Dispatch on the release tag, not on a branch** - a branch ref can move under you if someone merges mid-dispatch, and the image tag is derived from the ref's SHA.
+Deploys are automatic: merging a promotion PR into the `production` branch triggers CI, and on success `.github/workflows/deploy.yaml` deploys to production. Manual `workflow_dispatch` is still available for ad-hoc deploys. See [Branching and Releases](./docs/branching-and-releases.md) for the full promotion model.
 
-The order is: capture the regression baseline immediately before dispatching, tag `origin/main` and push, dispatch Deploy with the tag as the ref, verify the rollout, then snapshot again and diff, and only then write the release notes. The release body makes client-facing claims about what is live, so it cannot honestly be written beforehand.
+The order is: capture the regression baseline, merge the staging-to-production promotion PR, verify the rollout, then snapshot again and diff. Release notes are drafted automatically when code reaches `staging` and published automatically when it reaches `production` via [release-drafter](https://github.com/release-drafter/release-drafter).
 
 Releases are on HykuUp's own `v1.x` line and do not mirror Hyku's version. `lib/hyku_knapsack/version.rb` carries a separate `7.x` number tracking Hyku compatibility.
 
