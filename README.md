@@ -5,24 +5,56 @@
 - [HykuKnapsack](#hykuknapsack)
   - [Introduction](#introduction)
     - [Version strategy](#version-strategy)
+    - [Deploy regression checking](#deploy-regression-checking)
+    - [Deploying to production](#deploying-to-production)
     - [Precedence](#precedence)
   - [Usage](#usage)
     - [Creating Your Knapsack](#creating-your-knapsack)
       - [New Repository](#new-repository)
       - [Fork on Github](#fork-on-github)
+    - [Keeping Your Knapsack Updated with Prime](#keeping-your-knapsack-updated-with-prime)
     - [Hyku and HykuKnapsack](#hyku-and-hykuknapsack)
+      - [Reserved Branch](#reserved-branch)
+      - [Hyku Submodule](#hyku-submodule)
+      - [Merge strategy](#merge-strategy)
+    - [🚀 Getting Started with Stack Car](#-getting-started-with-stack-car)
+      - [1. Install Stack Car (if you haven't already)](#1-install-stack-car-if-you-havent-already)
+      - [2. Set up the development proxy](#2-set-up-the-development-proxy)
+      - [3. Prepare and start the stack](#3-prepare-and-start-the-stack)
+      - [4. Open the app in your browser](#4-open-the-app-in-your-browser)
+      - [5. Open a shell in the container (if needed)](#5-open-a-shell-in-the-container-if-needed)
     - [Overrides](#overrides)
     - [Deployment scripts](#deployment-scripts)
-    - [Merge strategy](#merge-strategy)
     - [Theme files](#theme-files)
     - [Gems](#gems)
+    - [Work Resource Generator](#work-resource-generator)
   - [Features](#features)
     - [Consortium-Based Tenant Configuration](#consortium-based-tenant-configuration)
     - [Tenant-Specific Work Type Filtering](#tenant-specific-work-type-filtering)
     - [Dynamic Metadata Profile Loading](#dynamic-metadata-profile-loading)
+    - [Public demo tenants](#public-demo-tenants)
+  - [Adding New Consortia](#adding-new-consortia)
+    - [1. Define the Consortium](#1-define-the-consortium)
+    - [2. Create Consortium-Specific Profile](#2-create-consortium-specific-profile)
+    - [3. Update Rake Tasks (Optional)](#3-update-rake-tasks-optional)
+    - [4. Test Your Changes](#4-test-your-changes)
   - [Converting a Fork of Hyku Prime to a Knapsack](#converting-a-fork-of-hyku-prime-to-a-knapsack)
   - [Using the Knapsacker Tool](#using-the-knapsacker-tool)
+    - [Basic Usage](#basic-usage)
+      - [Parameters](#parameters)
+    - [Common Use Cases](#common-use-cases)
+      - [1. Comparing Your Hyku Fork Against Knapsack Prime](#1-comparing-your-hyku-fork-against-knapsack-prime)
+      - [2. Comparing Your Knapsack Against Its Hyku Submodule](#2-comparing-your-knapsack-against-its-hyku-submodule)
+      - [3. Comparing Any Two Hyku Repositories](#3-comparing-any-two-hyku-repositories)
+    - [Understanding the Output](#understanding-the-output)
+      - [Files with `=` prefix](#files-with--prefix)
+      - [Files with `+` prefix](#files-with--prefix-1)
+      - [Files with `Δ` prefix](#files-with-%CE%B4-prefix)
+    - [Example Output](#example-output)
+    - [Migration Workflow](#migration-workflow)
+    - [Tips](#tips)
   - [Installation](#installation)
+  - [Branching and Releases](#branching-and-releases)
   - [Contributing](#contributing)
   - [License](#license)
 
@@ -50,6 +82,22 @@ ln -s ~/Work/playbook/skills/deploy-regression-check ~/.claude/skills/deploy-reg
 ```
 
 That makes it available as `/deploy-regression-check`. See [notch8/playbook](https://github.com/notch8/playbook) `skills/deploy-regression-check/`, and the method write-up in `devops/deployments/regression-testing-a-deploy-with-claude.md`.
+
+### Deploying to production
+
+**Production deploys go out Tuesdays, 1pm-5pm Pacific, and never on a Friday.** The window can be moved to another weekday when there is reason to; Friday is out either way, because it leaves no working day to notice or fix fallout. Staging has no window.
+
+Deploys are automatic: merging a promotion PR into the `production` branch triggers CI, and on success `.github/workflows/deploy.yaml` deploys to production. Manual `workflow_dispatch` is still available for ad-hoc deploys. See [Branching and Releases](./docs/branching-and-releases.md) for the full promotion model.
+
+The order is: capture the regression baseline, merge the staging-to-production promotion PR, verify the rollout, then snapshot again and diff. Release notes are drafted automatically when code reaches `staging` and published automatically when it reaches `production` via [release-drafter](https://github.com/release-drafter/release-drafter).
+
+Releases are on HykuUp's own `v1.x` line and do not mirror Hyku's version. `lib/hyku_knapsack/version.rb` carries a separate `7.x` number tracking Hyku compatibility.
+
+Full process, including the cluster contexts, rollback approach and the traps that have cost us, in [notch8/playbook](https://github.com/notch8/playbook) `skills/hykuup-production-deploy/`:
+
+```bash
+ln -s ~/Work/playbook/skills/hykuup-production-deploy ~/.claude/skills/hykuup-production-deploy
+```
 
 ### Precedence
 
@@ -257,7 +305,7 @@ Any file with `_decorator.rb` in the app or lib directory will automatically be 
 
 ### Deployment scripts
 
-Deployment code can be added as needed.
+Deployment code can be added as needed. For the production deploy process itself, see [Deploying to production](#deploying-to-production).
 
 ### Theme files
 
@@ -332,6 +380,45 @@ rake hykuup:profiles:add_tenant_profile[demo]              # Specific tenant
 rake hykuup:profiles:reset_all                             # All tenants
 rake hykuup:profiles:reset_tenant[demo]                    # Specific tenant
 ```
+
+### Public demo tenants
+
+A tenant flagged `public_demo_tenant` resets itself nightly to a stored **golden snapshot**, so a publicly writable demo recovers from whatever visitors did to it. `sandbox.hykuup.com` is the only one in production.
+
+The reset does three different things to three categories, and the third is the one that surprises people:
+
+| Category | What the nightly reset does |
+|---|---|
+| In the snapshot: the `Site` row, all content blocks, featured works | **Overwritten** with the captured values |
+| Deposited content: works, file sets, collections, Bulkrax importers and exporters | **Destroyed**, then the seed corpus is re-imported |
+| Everything else: metadata profile, feature flags, collection types, and **account settings** | **Untouched**, so a change there is permanent |
+
+Note that collections *are* destroyed and re-seeded; collection *types*, being configuration, are not.
+
+**To make a change survive the reset, retake the snapshot.** Appearance settings and page copy live in the `Site` row and in content blocks, so they are restored from the snapshot every night. Editing them through the admin UI without retaking the snapshot means the change is reverted at the next reset, with no error and nothing in the logs. The demo password lives in the `marketing_text` content block, so it has the same problem.
+
+```bash
+bundle exec rails "hyku:demo:snapshot[sandbox.hykuup.com]"   # capture current state as golden
+bundle exec rails "hyku:demo:reset[sandbox.hykuup.com]"      # force a reset (DESTRUCTIVE)
+```
+
+Quote the task name; an unquoted `[...]` is a glob in zsh. The tenant argument is required and accepts a cname or an account name.
+
+`snapshot!` captures current state wholesale, not just the field you changed, so anything else that has drifted is promoted to permanent at the same time. Check the tenant looks right before running it.
+
+**Do not retake the snapshot to recover from vandalism.** `accounts.demo_tenant_snapshot` is a single column overwritten in place with no history, so retaking it after someone has damaged the tenant destroys the known-good state permanently.
+
+`Site#contact_email` is a `sites` column and therefore reverts, while `Account#contact_email_to`, which is where the contact form actually mails, is an account setting and never reverts. Two similarly named fields, opposite behaviour.
+
+**Configuration** comes from the environment, set in `ops/production-deploy.tmpl.yaml`: `DEMO_SEED_CSV_PATH` (a `%{tenant}` placeholder expands to the account name), `DEMO_KEEP_USERS`, `DEMO_IMPORT_USER`. There is no cron: `Account#find_or_schedule_jobs` plants `DemoTenantResetJob` and each successful run re-enqueues itself for the next day.
+
+The full operational guide, including how to check the nightly chain is actually succeeding, is in [notch8/playbook](https://github.com/notch8/playbook) `skills/demo-tenant-snapshot/`:
+
+```bash
+ln -s ~/Work/playbook/skills/demo-tenant-snapshot ~/.claude/skills/demo-tenant-snapshot
+```
+
+**Known gaps.** The third row of that table is a defect rather than a design decision: the published demo admin login can change those settings and nothing restores them (#760). Uploads are also uncapped (#752), the reset never reclaims stored files (#761), and the "nightly" reset fires at 17:00 Pacific because `Date.tomorrow.midnight` is evaluated in a UTC application (#751).
 
 ## Adding New Consortia
 
@@ -540,6 +627,10 @@ And then execute:
 ```bash
 $ bundle
 ```
+
+## Branching and Releases
+
+See [docs/branching-and-releases.md](./docs/branching-and-releases.md) for the GitLab Flow branching model, promotion process, auto-deploy mapping, and release automation.
 
 ## Contributing
 
