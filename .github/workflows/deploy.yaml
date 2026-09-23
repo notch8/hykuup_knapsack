@@ -1,6 +1,13 @@
 name: "Deploy"
-run-name: Deploy (${{ github.ref_name }} -> ${{ inputs.environment }}) by @${{ github.actor }}
+run-name: Deploy (${{ github.event.workflow_run.head_branch || github.ref_name }} -> ${{ inputs.environment || (github.event.workflow_run.head_branch == 'main' && 'dev') || (github.event.workflow_run.head_branch == 'staging' && 'staging') || (github.event.workflow_run.head_branch == 'production' && 'production') }}) by @${{ github.actor }}
 on:
+  workflow_run:
+    workflows: ["Build Test Lint"]
+    types: [completed]
+    branches:
+      - main
+      - staging
+      - production
   workflow_dispatch:
     inputs:
       environment:
@@ -19,6 +26,36 @@ on:
         default: false
 
 jobs:
+  determine-environment:
+    if: ${{ github.event_name == 'workflow_dispatch' || (github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push') }}
+    runs-on: ubuntu-latest
+    outputs:
+      environment: ${{ steps.set.outputs.environment }}
+      tag: ${{ steps.set.outputs.tag }}
+    steps:
+      - id: set
+        name: Map branch/input to target environment
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "environment=${{ inputs.environment }}" >> "$GITHUB_OUTPUT"
+            echo "tag=${GITHUB_SHA::8}" >> "$GITHUB_OUTPUT"
+          else
+            SHA="${{ github.event.workflow_run.head_sha }}"
+            echo "tag=${SHA::8}" >> "$GITHUB_OUTPUT"
+            case "${{ github.event.workflow_run.head_branch }}" in
+              main) echo "environment=dev" >> "$GITHUB_OUTPUT" ;;
+              staging) echo "environment=staging" >> "$GITHUB_OUTPUT" ;;
+              production) echo "environment=production" >> "$GITHUB_OUTPUT" ;;
+            esac
+          fi
+
   deploy:
+    needs: determine-environment
+    concurrency:
+      group: deploy-${{ needs.determine-environment.outputs.environment }}
+      cancel-in-progress: false
     uses: notch8/actions/.github/workflows/deploy.yaml@v1.0.10
+    with:
+      environment: ${{ needs.determine-environment.outputs.environment }}
+      tag: ${{ needs.determine-environment.outputs.tag }}
     secrets: inherit
