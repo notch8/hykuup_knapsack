@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="Media file">
+  <g fill="none" stroke="#2f6fad" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round">
+    <rect x="6" y="12" width="52" height="40" rx="4" />
+    <path d="M6 22h52M6 42h52" />
+    <path d="M14 12v10M24 12v10M40 12v10M50 12v10" />
+    <path d="M14 42v10M24 42v10M40 42v10M50 42v10" />
+  </g>
+  <path d="M28 25.5v13l11-6.5z" fill="#2f6fad" />
+</svg>
