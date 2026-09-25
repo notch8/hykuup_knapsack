@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+# rubocop:disable Metrics/BlockLength
 namespace :hyku do
   desc "Destroy stale guest users (guest: true, updated_at older than OLDER_THAN_DAYS) in throttled batches. " \
        "Uses bulk delete_all rather than per-record destroy - guest users carry no dependent bookmarks/searches/ " \
@@ -32,3 +33,4 @@ namespace :hyku do
     Rails.logger.info("hyku:prune_stale_guest_users - done, destroyed #{destroyed} stale guest users.")
   end
 end
+# rubocop:enable Metrics/BlockLength

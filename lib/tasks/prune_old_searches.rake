@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+# rubocop:disable Metrics/BlockLength
 namespace :hyku do
   desc "Destroy old anonymous (unsaved) Blacklight searches (created_at older than OLDER_THAN_DAYS, user_id IS NULL) " \
        "in throttled batches, across all tenants. Real searches saved by a user (user_id present) are never touched " \
@@ -36,3 +37,4 @@ namespace :hyku do
     Rails.logger.info("hyku:prune_old_searches - done, destroyed #{total_destroyed} old anonymous searches across all tenants.")
   end
 end
+# rubocop:enable Metrics/BlockLength
