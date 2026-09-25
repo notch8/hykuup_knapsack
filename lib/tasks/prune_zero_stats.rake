@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+# Proposed upstream as samvera/hyku#3331 - remove this file once that (or an equivalent) merges and the submodule picks it up.
 # rubocop:disable Metrics/BlockLength
 namespace :hyku do
   desc "Delete redundant zero-count rows from the stats cache tables (FileViewStat, FileDownloadStat, " \
