@@ -20,6 +20,8 @@ RSpec.describe Hyrax::Analytics::Ga4::BaseDecorator do
     context 'when the provider config is valid' do
       before do
         allow(Hyrax::Analytics.config).to receive(:valid?).and_return(true)
+        # report's own body is Ga4-specific (Hyrax::Analytics.property etc.) and irrelevant here.
+        allow(visits).to receive(:report).and_return(double)
         allow(Hyrax::Analytics).to receive(:client).and_return(double(run_report: double(rows: []))) # rubocop:disable RSpec/VerifiedDoubles
       end
 
