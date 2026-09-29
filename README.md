@@ -43,13 +43,13 @@ Hyku Knapsack versions are aligned with [Hyku](https://github.com/samvera/hyku) 
 
 ### Deploy regression checking
 
-Pre- and post-deploy tenant snapshots live in the shared playbook rather than here, so one reviewed copy serves every knapsack instead of each repo carrying a fork:
+Pre- and post-deploy tenant snapshots live in the shared playbook rather than here, so one reviewed copy serves every knapsack instead of each repo carrying a fork. Install the playbook skills from a playbook checkout:
 
 ```bash
-ln -s ~/Work/playbook/skills/deploy-regression-check ~/.claude/skills/deploy-regression-check
+~/Work/playbook/bin/install-skills
 ```
 
-That makes it available as `/deploy-regression-check`. See [notch8/playbook](https://github.com/notch8/playbook) `skills/deploy-regression-check/`, and the method write-up in `devops/deployments/regression-testing-a-deploy-with-claude.md`.
+That makes it available as `/deploy-regression-check`. Repo-specific deploy facts are in [CLAUDE.md](CLAUDE.md#deploying). See [notch8/playbook](https://github.com/notch8/playbook) `skills/deploy-regression-check/`, and the method write-up in `devops/deployments/regression-testing-a-deploy-with-claude.md`.
 
 ### Precedence
 
