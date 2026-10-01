@@ -333,6 +333,23 @@ rake hykuup:profiles:reset_all                             # All tenants
 rake hykuup:profiles:reset_tenant[demo]                    # Specific tenant
 ```
 
+## Onboarding a Mobius Tenant
+
+Mobius tenants are served at `<subdomain>.digitalmobius.org`. That zone belongs to MOBIUS, while HykuUp sits behind Notch8's Cloudflare, so a new tenant needs work in Hyku, in our Cloudflare, and in MOBIUS's DNS. Do the steps in order; [notch8-ops#572](https://github.com/notch8/notch8-ops/issues/572) is a worked example.
+
+1. **Confirm the subdomain with MOBIUS.** Their existing ones are short (`sbuniv`, `mssu`, `nwmsu`).
+2. **Create the tenant** in the proprietor interface with the subdomain as its name, Part of Consortia set to Mobius, and "Is public" unchecked. It comes up at `<subdomain>.hykuup.com`. Avoid deleting and recreating an account: Cloudflare caches the 404 served in between, and the tenant looks broken until that URL is purged from the `hykuup.com` zone (Caching > Configuration > Purge Cache > Custom Purge).
+3. **Add a Cloudflare custom hostname** in notch8-ops: a row in the Digital Mobius block of `terraform/cloudflare/envs/notch8-main/custom_hostnames.tfvars` with `custom_origin_server = "mobius-origin.notch8.cloud"`, matching `sbuniv`. Also add the host to `digitalmobius_domains` in `terraform/site24x7/integrations.tf` for SSL monitoring.
+4. **Ask MOBIUS IT for the DNS record**: a CNAME from `<subdomain>.digitalmobius.org` to `mobius-origin.notch8.cloud`. This must come after step 3, or visitors get a Cloudflare 1014 error.
+5. **Verify** that `https://<subdomain>.digitalmobius.org` loads with a valid certificate and returns Hyku's basic-auth prompt rather than a Cloudflare error page.
+6. **Switch the primary domain** in a Rails console. The proprietor form shows the primary domain read-only and the create form builds it from the name, so this cannot be done in the UI. Wait for step 5, because Hyku uses the primary domain for generated links and emails.
+   ```ruby
+   Account.find_by(name: '<subdomain>').update!(cname: '<subdomain>.digitalmobius.org')
+   ```
+   `<subdomain>.hykuup.com` stays as an alias.
+7. **Check the metadata profile.** The tenant's Metadata Profiles page should show the Mobius profile, and `ScholarlyWork` should not be an available work type. If not, run `rake hykuup:profiles:add_tenant_profile[<subdomain>]`.
+8. **Check "Is public"** when the institution is ready to use the site.
+
 ## Adding New Consortia
 
 <details>
