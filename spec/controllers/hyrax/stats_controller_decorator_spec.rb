@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'rails_helper'
+
 RSpec.describe Hyrax::StatsController, type: :controller do
   routes { Hyrax::Engine.routes }
   render_views
@@ -7,7 +9,19 @@ RSpec.describe Hyrax::StatsController, type: :controller do
   let(:user) { create(:admin) }
   let(:error) { Google::Cloud::PermissionDeniedError.new('User does not have sufficient permissions for this property.') }
 
-  before { sign_in user }
+  # The knapsack's rails_helper doesn't load Hyku's fake-tenant setup, so stub the account lookup
+  # the same way uploads_controller_decorator_spec does.
+  let(:account) do
+    FactoryBot.build(:account, tenant: 'FakeTenant', cname: 'tenant1').tap do |acct|
+      allow(acct).to receive(:persisted?).and_return(true)
+    end
+  end
+
+  before do
+    allow(Account).to receive(:from_request).and_return(account)
+    allow(Site).to receive(:account).and_return(account)
+    sign_in user
+  end
 
   describe '#file' do
     let(:file_set) { valkyrie_create(:hyrax_file_set, depositor: user.user_key, date_uploaded: 3.days.ago) }
@@ -23,7 +37,7 @@ RSpec.describe Hyrax::StatsController, type: :controller do
   end
 
   describe '#work' do
-    let(:work) { valkyrie_create(:monograph, depositor: user.user_key) }
+    let(:work) { valkyrie_create(:generic_work_resource, depositor: user.user_key) }
 
     before { allow(Hyrax::Analytics).to receive(:daily_events_for_id).and_raise(error) }
 
