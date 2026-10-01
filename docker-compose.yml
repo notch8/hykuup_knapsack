@@ -69,6 +69,7 @@ services:
     extends:
       file: hyrax-webapp/docker-compose.yml
       service: db
+    image: postgres:14
 
   web:
     <<: *app
