@@ -2,6 +2,9 @@
 
 require 'rails_helper'
 
+# The :hyrax_work factory builds Hyrax::Test::SimpleWork, which hyrax-webapp's rails_helper loads but the knapsack's doesn't.
+require Hyrax::Engine.root.join('lib/hyrax/specs/shared_specs/simple_work.rb').to_s unless Hyrax.config.disable_wings
+
 RSpec.describe Hyrax::StatsController, type: :controller do
   routes { Hyrax::Engine.routes }
   render_views
