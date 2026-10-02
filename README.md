@@ -272,12 +272,12 @@ The generic procedure (promotion, baseline, verify, publish) lives in the
 - Promotion is `main` -> `staging` -> `production` by merge-commit PR only, never squash.
 - Production window: Tuesdays 1-5pm Pacific, never Friday. Another weekday is fine if agreed.
   Merging the `staging` -> `production` PR is the deploy, so merge it inside the window.
-- Release tags are HykuUp's own `v1.x` line, not Hyku's. `lib/hyku_knapsack/version.rb` must equal
-  the Hyku version in `hyrax-webapp`; CI fails when they differ.
+- Release tags are HykuUp's own `v1.x` line, not Hyku's. Each release draft's footer records the
+  pinned Hyku version and SHA.
 - Needs a human:
   - capture the `/deploy-regression-check` baseline before merging a promotion PR, and diff after;
   - publish the release draft (a `-rc` prerelease from staging, the stable release from
-    production), adding the Hyku SHA and Hyrax version to the body.
+    production), adding the Hyrax version to the body.
 
 ### Theme files
 
