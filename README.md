@@ -274,6 +274,8 @@ The generic procedure (promotion, baseline, verify, publish) lives in the
   Merging the `staging` -> `production` PR is the deploy, so merge it inside the window.
 - Release tags are HykuUp's own `v1.x` line, not Hyku's. Each release draft's footer records the
   pinned Hyku version and SHA.
+- Production deploys wait for approval from `@notch8/hyku-knapsack-owners` on the `production`
+  environment.
 - Needs a human:
   - capture the `/deploy-regression-check` baseline before merging a promotion PR, and diff after;
   - publish the release draft (a `-rc` prerelease from staging, the stable release from
