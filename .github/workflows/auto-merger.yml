@@ -1,0 +1,23 @@
+# When a non-main change reaches staging, open/update staging -> main.
+# When a non-staging change reaches production, open/update production -> staging.
+name: Auto-Merger
+
+on:
+  push:
+    branches:
+      - staging
+      - production
+  workflow_dispatch:
+
+concurrency:
+  group: auto-merger-${{ github.ref_name }}
+  cancel-in-progress: false
+
+jobs:
+  auto-merger:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: notch8/actions/auto-merger@v1.0.13
+        with:
+          app-id: ${{ secrets.AUTO_MERGER_APP_ID }}
+          private-key: ${{ secrets.AUTO_MERGER_APP_PRIVATE_KEY }}
