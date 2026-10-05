@@ -28,7 +28,7 @@ on:
 jobs:
   build:
     permissions: write-all
-    uses: notch8/actions/.github/workflows/build.yaml@v1.0.10
+    uses: notch8/actions/.github/workflows/build.yaml@v1.0.11
     secrets: inherit
     with:
       components: '["web","worker","solr","nginx"]'
