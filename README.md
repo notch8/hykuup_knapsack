@@ -12,7 +12,7 @@
       - [Fork on Github](#fork-on-github)
     - [Hyku and HykuKnapsack](#hyku-and-hykuknapsack)
     - [Overrides](#overrides)
-    - [Deployment scripts](#deployment-scripts)
+    - [Deploying](#deploying)
     - [Merge strategy](#merge-strategy)
     - [Theme files](#theme-files)
     - [Gems](#gems)
@@ -43,13 +43,13 @@ Hyku Knapsack versions are aligned with [Hyku](https://github.com/samvera/hyku) 
 
 ### Deploy regression checking
 
-Pre- and post-deploy tenant snapshots live in the shared playbook rather than here, so one reviewed copy serves every knapsack instead of each repo carrying a fork:
+Pre- and post-deploy tenant snapshots live in the shared playbook rather than here, so one reviewed copy serves every knapsack instead of each repo carrying a fork. Install the playbook skills from a playbook checkout:
 
 ```bash
-ln -s ~/Work/playbook/skills/deploy-regression-check ~/.claude/skills/deploy-regression-check
+~/Work/playbook/bin/install-skills
 ```
 
-That makes it available as `/deploy-regression-check`. See [notch8/playbook](https://github.com/notch8/playbook) `skills/deploy-regression-check/`, and the method write-up in `devops/deployments/regression-testing-a-deploy-with-claude.md`.
+That makes it available as `/deploy-regression-check`. Repo-specific deploy facts are in [Deploying](#deploying). See [notch8/playbook](https://github.com/notch8/playbook) `skills/deploy-regression-check/`, and the method write-up in `devops/deployments/regression-testing-a-deploy-with-claude.md`.
 
 ### Precedence
 
@@ -255,9 +255,31 @@ Adding decorators to override features is fairly simple. We do recommend some [b
 
 Any file with `_decorator.rb` in the app or lib directory will automatically be loaded along with any classes in the app directory.
 
-### Deployment scripts
+### Deploying
 
-Deployment code can be added as needed.
+The generic procedure (promotion, baseline, verify, publish) lives in the
+[notch8/playbook](https://github.com/notch8/playbook) skills; install them with the playbook's
+`bin/install-skills`. Repo-specific facts:
+
+| Branch | Environment | kubectl context | Namespace |
+| --- | --- | --- | --- |
+| `main` | dev | `r2-friends` | `hykuup-knapsack-dev` |
+| `staging` | staging | `r2-friends` | `hykuup-knapsack-staging` |
+| `production` | production | `r2-besties` | `hykuup-knapsack-production` |
+
+- A push to any of those branches deploys automatically once Build Test Lint passes. The Deploy
+  workflow's manual dispatch is for ad-hoc deploys and rollbacks.
+- Promotion is `main` -> `staging` -> `production` by merge-commit PR only, never squash.
+- Production window: Tuesdays 1-5pm Pacific, never Friday. Another weekday is fine if agreed.
+  Merging the `staging` -> `production` PR is the deploy, so merge it inside the window.
+- Release tags are HykuUp's own `v1.x` line, not Hyku's. Each release draft's footer records the
+  pinned Hyku version and SHA.
+- Production deploys wait for approval from `@notch8/hyku-knapsack-owners` on the `production`
+  environment.
+- Needs a human:
+  - capture the `/deploy-regression-check` baseline before merging a promotion PR, and diff after;
+  - publish the release draft, adding the Hyrax version to the body: the `-rc` prerelease
+    from staging by hand, the stable release by approving the Publish Release run.
 
 ### Theme files
 
@@ -332,6 +354,28 @@ rake hykuup:profiles:add_tenant_profile[demo]              # Specific tenant
 rake hykuup:profiles:reset_all                             # All tenants
 rake hykuup:profiles:reset_tenant[demo]                    # Specific tenant
 ```
+
+## Onboarding a Mobius Tenant
+
+Mobius tenants are served at `<subdomain>.digitalmobius.org`. That zone belongs to MOBIUS, while HykuUp sits behind Notch8's Cloudflare, so a new tenant needs work in Hyku, in our Cloudflare, and in MOBIUS's DNS. Do the steps in order; [notch8-ops#572](https://github.com/notch8/notch8-ops/issues/572) is a worked example.
+
+1. **Confirm the subdomain with MOBIUS.** Their existing ones are short (`sbuniv`, `mssu`, `nwmsu`).
+2. **Create the tenant** in the proprietor interface with the subdomain as its name, Part of Consortia set to Mobius, and "Is public" unchecked. It comes up at `<subdomain>.hykuup.com`. Avoid deleting and recreating an account: Cloudflare caches the 404 served in between, and the tenant looks broken until that URL is purged from the `hykuup.com` zone (Caching > Configuration > Purge Cache > Custom Purge).
+3. **Add a Cloudflare custom hostname** in notch8-ops: a row in the Digital Mobius block of `terraform/cloudflare/envs/notch8-main/custom_hostnames.tfvars` with `custom_origin_server = "mobius-origin.notch8.cloud"` and `min_tls_version = "1.2"`, matching `sbuniv`. Also add the host to `digitalmobius_domains` in `terraform/site24x7/integrations.tf` for SSL monitoring. [notch8-ops#573](https://github.com/notch8/notch8-ops/pull/573) shows both changes.
+4. **Add an ingress rule in Rancher.** The `mobius` ingress is hand-rolled rather than managed by the Helm chart, so edit it directly: [hykuup-knapsack-production/mobius](https://rancher-tools.notch8.cloud/dashboard/c/c-snnmh/explorer/networking.k8s.io.ingress/hykuup-knapsack-production/mobius?mode=edit#rules). Add a rule matching the existing ones, changing only the Request Host:
+   - Request Host: `<subdomain>.digitalmobius.org`
+   - Path: Prefix `/`
+   - Target Service: `hykuup-knapsack-production-hyrax`
+   - Port: `80`
+5. **Ask MOBIUS IT for the DNS record**: a CNAME from `<subdomain>.digitalmobius.org` to `mobius-origin.notch8.cloud`. This must come after step 3, or visitors get a Cloudflare 1014 error.
+6. **Verify** that `https://<subdomain>.digitalmobius.org` loads with a valid certificate and returns Hyku's basic-auth prompt rather than a Cloudflare error page.
+7. **Switch the primary domain** in a Rails console. The proprietor form shows the primary domain read-only and the create form builds it from the name, so this cannot be done in the UI. Wait for step 6, because Hyku uses the primary domain for generated links and emails.
+   ```ruby
+   Account.find_by(name: '<subdomain>').update!(cname: '<subdomain>.digitalmobius.org')
+   ```
+   `<subdomain>.hykuup.com` stays as an alias.
+8. **Check the metadata profile.** The tenant's Metadata Profiles page should show the Mobius profile, and `ScholarlyWork` should not be an available work type. If not, run `rake hykuup:profiles:add_tenant_profile[<subdomain>]`.
+9. **Check "Is public"** when the institution is ready to use the site.
 
 ## Adding New Consortia
 
