@@ -276,10 +276,27 @@ The generic procedure (promotion, baseline, verify, publish) lives in the
   pinned Hyku version and SHA.
 - Production deploys wait for approval from `@notch8/hyku-knapsack-owners` on the `production`
   environment.
+- Announcement channel: **#hykuup-everything** (internal; HykuUp has no client channel). Post
+  "deploying now" before merging the production promotion, and the release link with a short
+  summary once it is published.
 - Needs a human:
   - capture the `/deploy-regression-check` baseline before merging a promotion PR, and diff after;
   - publish the release draft, adding the Hyrax version to the body: the `-rc` prerelease
     from staging by hand, the stable release by approving the Publish Release run.
+
+#### Weekly cadence
+
+| When | What |
+| --- | --- |
+| Friday end of day | Cutoff for merges to `main`. Later work waits a week. |
+| Monday | Dependabot opens the `hyrax-webapp` bump (about 3 days behind Hyku `main`, by its cooldown) and any actions bumps. Read the Hyku commits it pulls in, merge, and check that dev deploys. |
+| Monday by end of day | Merge the `main` -> `staging` promotion PR. |
+| Monday to Tuesday noon | QA on staging: the smoke checks in the playbook's [knapsack release onboarding](https://github.com/notch8/playbook/blob/main/devops/deployments/knapsack-release-onboarding.md#7-your-week), plus whatever this week's changes touched. |
+| Tuesday 1-5pm PT | Announce in #hykuup-everything, promote `staging` -> `production` with `/knapsack-release`, verify, publish the release, post it. |
+| Any day | Merge the auto-merger's merge-down PRs. Hotfixes follow the skill's Hotfix section. |
+
+HykuUp has no client review step. Anything that fails QA on staging is reverted on `main` and
+promoted again, or holds the whole release to the next Tuesday.
 
 ### Theme files
 
