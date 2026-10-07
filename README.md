@@ -282,7 +282,7 @@ The generic procedure (promotion, baseline, verify, publish) lives in the
 - Needs a human:
   - capture the `/deploy-regression-check` baseline before merging a promotion PR, and diff after;
   - publish the release draft, adding the Hyrax version to the body: the `-rc` prerelease
-    from staging by hand, the stable release by approving the Publish Release run.
+    from staging by hand, the stable release by approving the `publish-release` job in the production Build Test Lint run.
 
 #### Weekly cadence
 
