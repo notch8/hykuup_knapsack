@@ -289,7 +289,7 @@ The generic procedure (promotion, baseline, verify, publish) lives in the
 | When | What |
 | --- | --- |
 | Friday end of day | Cutoff for merges to `main`. Later work waits a week. |
-| Monday | Dependabot opens the `hyrax-webapp` bump (about 3 days behind Hyku `main`, by its cooldown) and any actions bumps. Read the Hyku commits it pulls in, merge, and check that dev deploys. |
+| Monday | The Bump Hyku workflow opens the `hyrax-webapp` bump (the newest Hyku `main` commit at least 3 days old; Dependabot still opens any actions bumps). Read the Hyku commits it pulls in, merge, and check that dev deploys. |
 | Monday by end of day | Merge the `main` -> `staging` promotion PR. |
 | Monday to Tuesday noon | QA on staging: the smoke checks in the playbook's [knapsack release onboarding](https://github.com/notch8/playbook/blob/main/devops/deployments/knapsack-release-onboarding.md#7-your-week), plus whatever this week's changes touched. |
 | Tuesday 1-5pm PT | Announce in #hykuup-everything, promote `staging` -> `production` with `/knapsack-release`, verify, publish the release, post it. |
