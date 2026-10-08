@@ -284,6 +284,14 @@ The generic procedure (promotion, baseline, verify, publish) lives in the
   - publish the release draft, adding the Hyrax version to the body: the `-rc` prerelease
     from staging by hand, the stable release by approving the `publish-release` job in the production Build Test Lint run.
 
+#### Solr schema
+
+Solr still runs the configset from before samvera/hyku#3288, while the image ships the new one
+(Point field types). The `load-solr-config` init container never replaces an existing configset,
+so deploys are safe. **Don't upload or reload the new configset on its own:** documents indexed
+under the old one then return wrong numeric and date results, and 500s on multi-valued ones,
+until a full reindex. The planned move is notch8/hyku-community-issues#158.
+
 #### Weekly cadence
 
 | When | What |
