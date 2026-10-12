@@ -16,3 +16,7 @@ updates:
       timezone: "America/Los_Angeles"
     labels:
       - "dependencies"
+    groups:
+      github-actions:
+        patterns:
+          - "*"

@@ -220,7 +220,7 @@ extraEnvVars: &envVars
   - name: HYKU_VOCABULARY_SIDEBAR_ENABLED
     value: "true"
   - name: HYKU_SHOW_BACKTRACE
-    value: "true"
+    value: "false"
   - name: NEGATIVE_CAPTCHA_SECRET
     value: $NEGATIVE_CAPTCHA_SECRET
   - name: SMTP_ADDRESS
