@@ -2,6 +2,10 @@ version: 2
 updates:
   - package-ecosystem: "gitsubmodule"
     directory: "/"
+    # Bumps follow Hyku `production` (.gitmodules), so they open only when Hyku releases.
+    # Paused until Hyku's `production` reaches the Hyku this knapsack already runs (7.3.0);
+    # until then a bump would move Hyku backwards. Remove this line once 7.3.0 is released.
+    open-pull-requests-limit: 0
     schedule:
       # A fixed calendar time. A "weekly" interval runs at a random time and can skip a Monday
       # when the config changed mid-week (2026-10-12).
