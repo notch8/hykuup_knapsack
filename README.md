@@ -269,8 +269,9 @@ The generic procedure (promotion, baseline, verify, publish) lives in the
 | `staging` | staging | `r2-friends` | `hykuup-knapsack-staging` |
 | `production` | production | `r2-besties` | `hykuup-knapsack-production` |
 
-- A push to any of those branches deploys automatically once Build Test Lint passes. The Deploy
-  workflow's manual dispatch is for ad-hoc deploys and rollbacks.
+- A push to any of those branches deploys automatically: once Build Test Lint passes, the Deploy
+  workflow deploys that commit (the same shape as samvera/hyku). Its run name shows the branch,
+  e.g. `Deploy (production -> production)`; dispatch it by hand for ad-hoc and rollback deploys.
 - Promotion is `main` -> `staging` -> `production` by merge-commit PR only, never squash.
 - Production window: Tuesdays 1-5pm Pacific, never Friday. Another weekday is fine if agreed.
   Merging the `staging` -> `production` PR is the deploy, so merge it inside the window.
