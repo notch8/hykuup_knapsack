@@ -1,0 +1,34 @@
+# Comments on any pull request that moves the hyrax-webapp (Hyku) submodule: the Hyku pull
+# requests it brings in, the Hyrax pull requests behind any Hyrax version change, and the Hyku
+# files it changes that this knapsack overrides or decorates. A bump PR on its own only says
+# "Bump hyrax-webapp from <old> to <new>", which hides all of that from the reviewer.
+name: Hyku Bump Report
+
+on:
+  # pull_request_target so the comment can be posted on Dependabot's PRs too. It runs this
+  # workflow from the base branch and never checks out or runs the pull request's code.
+  pull_request_target:
+    types: [opened, reopened, synchronize]
+    paths:
+      - hyrax-webapp
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the base branch
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 1
+
+      - name: Build and post the report
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ github.event.pull_request.number }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: bash .github/hyku-bump-report.sh

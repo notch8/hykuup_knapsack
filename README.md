@@ -171,7 +171,7 @@ Cloning into '/path/to/$PROJECT_NAME_knapsack/hyrax-webapp'...
 Submodule path 'hyrax-webapp': checked out '<KNAPSACK-SPECIFIED-HYKU-REPOSITORY-SHA>'
 ```
 
-The configuration of the submodule can be found in the `./.gitmodules` file.  During development, we've specified the submodule's branch (via `git submodule set-branch --branch <NAME> -- ./hyrax-webapp`).
+The configuration of the submodule can be found in the `./.gitmodules` file. It follows Hyku's `production` branch, so Dependabot only bumps Hyku to released code; anything sooner goes into Hyku as a hotfix first.  During development, we've specified the submodule's branch (via `git submodule set-branch --branch <NAME> -- ./hyrax-webapp`).
 
 Below is an example of our Adventist Knapsack submodule.
 
@@ -289,7 +289,7 @@ The generic procedure (promotion, baseline, verify, publish) lives in the
 | When | What |
 | --- | --- |
 | Friday end of day | Cutoff for merges to `main`. Later work waits a week. |
-| Monday | Dependabot opens the `hyrax-webapp` bump (about 3 days behind Hyku `main`, by its cooldown) and any actions bumps. Read the Hyku commits it pulls in, merge, and check that dev deploys. |
+| Monday, when Hyku has released | Dependabot opens the `hyrax-webapp` bump to Hyku's `production` branch (it checks Mondays at 6am PT, and opens nothing if Hyku hasn't released). Read the Hyku Bump Report comment on it: the Hyku and Hyrax PRs it brings, and the files this knapsack overrides. Add any knapsack changes they need to the same PR, then merge and check that dev deploys. |
 | Monday by end of day | Merge the `main` -> `staging` promotion PR. |
 | Monday to Tuesday noon | QA on staging: the smoke checks in the playbook's [knapsack release onboarding](https://github.com/notch8/playbook/blob/main/devops/deployments/knapsack-release-onboarding.md#7-your-week), plus whatever this week's changes touched. |
 | Tuesday 1-5pm PT | Announce in #hykuup-everything, promote `staging` -> `production` with `/knapsack-release`, verify, publish the release, post it. |
