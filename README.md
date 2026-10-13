@@ -283,7 +283,7 @@ The generic procedure (promotion, baseline, verify, publish) lives in the
   summary once it is published.
 - Needs a human:
   - capture the `/deploy-regression-check` baseline before merging a promotion PR, and diff after;
-  - publish the stable release by approving the `publish-release` job in the production Build Test Lint run, after spelling out any Hyku, Hyrax and gem changes from the Hyku Bump Report in its body. The `-rc` from staging stays a draft.
+  - after verifying the deploy, edit the stable release (the `publish-release` job published it when the deploy succeeded) to spell out any Hyku, Hyrax and gem changes from the Hyku Bump Report. The `-rc` from staging stays a draft.
 
 #### Weekly cadence
 
