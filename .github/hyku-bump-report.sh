@@ -41,6 +41,23 @@ if [ -n "$old_hyrax" ] && [ -n "$new_hyrax" ] && [ "$old_hyrax" != "$new_hyrax" 
   hyrax_prs=$(prs_between samvera/hyrax "$old_hyrax" "$new_hyrax")
 fi
 
+# Gem versions that move with the bump, from Hyku's Gemfile.lock: released gems by version, and
+# gems Hyku takes from git (Hyrax, Bulkrax, ...) by revision.
+lock_versions() { # hyku sha -> "name version" for released gems, platform builds folded together
+  git -C "$work/hyku" show "$1:Gemfile.lock" | awk '/^GEM$/ {g=1; next} /^[A-Z]/ {g=0} g && /^    [^ ]+ \(/ {gsub(/[()]/, "", $2); sub(/-.*/, "", $2); print $1, $2}' | sort -u
+}
+lock_git() { # hyku sha -> "repo revision" for gems from git
+  git -C "$work/hyku" show "$1:Gemfile.lock" | awk '/^GIT$/ {g=1} /^[A-Z]/ && !/^GIT$/ {g=0} g && /remote:/ {r=$2} g && /revision:/ {sub(/^https:\/\/github.com\//, "", r); sub(/\.git$/, "", r); print r, $2}' | sort -u
+}
+gems=$(join -a1 -a2 -e '(none)' -o 0,1.2,2.2 <(lock_versions "$old") <(lock_versions "$new") |
+  awk '$2 != $3 {print "| " $1 " | " $2 " | " $3 " |"}')
+# Gems that most often need knapsack work when they move; shown outside the collapsed list.
+key_gems='^\| (rails|blacklight|blacklight_range_limit|bulkrax|valkyrie|iiif_print|active-fedora|qa|devise|sidekiq|good_job|solr_wrapper|rsolr|hydra-head|riiif) \|'
+key_gem_rows=$(grep -E "$key_gems" <<< "$gems" || true)
+other_gem_rows=$(grep -vE "$key_gems" <<< "$gems" || true)
+git_gems=$(join -a1 -a2 -e '(none)' -o 0,1.2,2.2 <(lock_git "$old") <(lock_git "$new") |
+  awk '$2 != $3 {printf "| %s | `%s` | `%s` | [compare](https://github.com/%s/compare/%s...%s) |\n", $1, substr($2,1,7), substr($3,1,7), $1, $2, $3}')
+
 # Hyku files the bump changes that this knapsack replaces (same path) or decorates (a
 # <name>_decorator.rb for the same file name).
 overrides=""
@@ -96,6 +113,34 @@ fi
     echo "$hyrax_prs"
   else
     echo "Hyrax is unchanged."
+  fi
+  echo
+  echo "#### Gem changes"
+  echo
+  if [ -n "$gems" ] || [ -n "$git_gems" ]; then
+    if [ -n "$git_gems" ]; then
+      echo "| From git | Before | After | |"
+      echo "| --- | --- | --- | --- |"
+      echo "$git_gems"
+      echo
+    fi
+    if [ -n "$key_gem_rows" ]; then
+      echo "| Gem | Before | After |"
+      echo "| --- | --- | --- |"
+      echo "$key_gem_rows"
+      echo
+    fi
+    if [ -n "$other_gem_rows" ]; then
+      echo "<details><summary>$(wc -l <<< "$other_gem_rows" | tr -d ' ') other gems change version</summary>"
+      echo
+      echo "| Gem | Before | After |"
+      echo "| --- | --- | --- |"
+      echo "$other_gem_rows"
+      echo
+      echo "</details>"
+    fi
+  else
+    echo "No gem versions change."
   fi
   echo
   echo "If a change here needs work in this knapsack, add it to this pull request before merging, so they ship together."
