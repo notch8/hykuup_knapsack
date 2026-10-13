@@ -83,6 +83,27 @@ if [ -n "$hyrax_prs" ]; then
   done < <(gh api "repos/samvera/hyrax/compare/$old_hyrax...$new_hyrax" --jq '.files[].filename')
 fi
 
+# Overrides waiting on an upstream fix this bump brings in. Knapsack code and open issues or PRs
+# that name one of the bump's Hyku or Hyrax pull requests (e.g. "remove once Hyku includes
+# samvera/hyku#3358") are cleanup candidates: the knapsack copy may no longer be needed.
+cleanup=""
+upstream=$(printf '%s\n%s\n' "$hyku_prs" "$hyrax_prs" | sed -nE 's/^- (samvera\/[a-z_-]+)#([0-9]+) .*/\1 \2/p')
+if [ -n "$upstream" ]; then
+  gh api --paginate "repos/$GITHUB_REPOSITORY/issues?state=open&per_page=100" \
+    --jq '.[] | select(.number != '"$PR"') | "\(.number)\t\(.title)\t\(((.title + " " + (.body // "")) | gsub("[\\n\\t]"; " ")))"' > "$work/open.tsv"
+  while read -r repo n; do
+    short=${repo#samvera/}
+    # samvera/hyku#3358, github.com/samvera/hyku/pull/3358, or "Hyku #3358" / "Hyku PR #3358"
+    pattern="($repo(#|/pull/|/issues/)$n|[Hh]${short:1} (PR )?#$n)([^0-9]|\$)"
+    while IFS=$'\t' read -r m mtitle _; do
+      cleanup+="- #$m $mtitle (mentions $repo#$n)"$'\n'
+    done < <(grep -E "$pattern" "$work/open.tsv" || true)
+    while IFS=: read -r file line _; do
+      cleanup+="- \`$file:$line\` (mentions $repo#$n)"$'\n'
+    done < <(grep -rnE "$pattern" app lib config spec 2>/dev/null || true)
+  done <<< "$upstream"
+fi
+
 {
   echo "$marker"
   echo "### Hyku bump: \`${old::7}\` → \`${new::7}\`"
@@ -93,6 +114,14 @@ fi
     echo "**Warning:** \`${new::7}\` is not ahead of \`${old::7}\` (compare status: \`$compare_status\`). This may move Hyku backwards."
   fi
   echo
+  if [ -n "$cleanup" ]; then
+    echo "#### Overrides this bump may make unnecessary"
+    echo
+    echo "These name an upstream fix this bump brings in. Check whether the knapsack's copy can go, and remove it in this pull request:"
+    echo
+    printf '%s' "$cleanup" | sort -u
+    echo
+  fi
   echo "#### Hyku files this knapsack overrides or decorates"
   echo
   if [ -n "$overrides" ]; then
