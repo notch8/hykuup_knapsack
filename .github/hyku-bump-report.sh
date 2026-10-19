@@ -2,12 +2,13 @@
 # Builds the Hyku bump report for a pull request and posts it as a comment, replacing the
 # previous one. Run by .github/workflows/hyku-bump-report.yaml from the knapsack's base branch.
 # Needs GH_TOKEN, GITHUB_REPOSITORY, PR, BASE_SHA and HEAD_SHA. With DRY_RUN=1 it prints the
-# report instead of posting it.
+# report instead of posting it; OLD_HYKU and NEW_HYKU then preview a bump with no pull request
+# yet (run from the knapsack's root): DRY_RUN=1 PR=0 OLD_HYKU=<sha> NEW_HYKU=<sha> ...
 set -euo pipefail
 
 marker='<!-- hyku-bump-report -->'
-old=$(gh api "repos/$GITHUB_REPOSITORY/contents/hyrax-webapp?ref=$BASE_SHA" --jq .sha)
-new=$(gh api "repos/$GITHUB_REPOSITORY/contents/hyrax-webapp?ref=$HEAD_SHA" --jq .sha)
+old=${OLD_HYKU:-$(gh api "repos/$GITHUB_REPOSITORY/contents/hyrax-webapp?ref=$BASE_SHA" --jq .sha)}
+new=${NEW_HYKU:-$(gh api "repos/$GITHUB_REPOSITORY/contents/hyrax-webapp?ref=$HEAD_SHA" --jq .sha)}
 if [ "$old" = "$new" ]; then
   echo "hyrax-webapp is unchanged; nothing to report."
   exit 0
@@ -18,12 +19,13 @@ git clone --quiet --filter=blob:none --no-checkout https://github.com/samvera/hy
 git -C "$work/hyku" fetch --quiet origin "$old" "$new"
 
 # Pull requests a range of commits belongs to. Hyku and Hyrax merge some PRs with a merge
-# commit and squash others, so look each commit up instead of parsing commit messages.
+# commit and squash others, so look each commit up instead of parsing commit messages. Each line
+# names the PR's author, without an @, so the report doesn't notify people outside Notch8.
 prs_between() { # repo base head
   gh api "repos/$1/compare/$2...$3?per_page=250" --jq '.commits[].sha' |
     while read -r sha; do
       gh api "repos/$1/commits/$sha/pulls" \
-        --jq '.[] | select(.merged_at) | "- \(.base.repo.full_name)#\(.number) \(.title) [\([.labels[].name] | join(", "))]"'
+        --jq '.[] | select(.merged_at) | "- \(.base.repo.full_name)#\(.number) \(.title) (by \(.user.login)) [\([.labels[].name] | join(", "))]"'
     done | sort -u | sed 's/ \[\]$//'
 }
 
@@ -58,27 +60,51 @@ other_gem_rows=$(grep -vE "$key_gems" <<< "$gems" || true)
 git_gems=$(join -a1 -a2 -e '(none)' -o 0,1.2,2.2 <(lock_git "$old") <(lock_git "$new") |
   awk '$2 != $3 {printf "| %s | `%s` | `%s` | [compare](https://github.com/%s/compare/%s...%s) |\n", $1, substr($2,1,7), substr($3,1,7), $1, $2, $3}')
 
+# The pull requests in this bump that changed one upstream file, with their authors, so each
+# override below names who to ask. Bots (merge-downs, version bumps) are left out.
+pr_lines() { # repo, then commit shas on stdin -> "repo#N (by author)", once each
+  while read -r sha; do
+    gh api "repos/$1/commits/$sha/pulls" \
+      --jq '.[] | select(.merged_at and (.user.login | endswith("[bot]") | not)) | "\(.base.repo.full_name)#\(.number) (by \(.user.login))"'
+  done | sort -u | paste -sd ',' - | sed 's/,/, /g'
+}
+changed_by() { # "hyku" path, or "hyrax" path
+  if [ "$1" = hyku ]; then
+    git -C "$work/hyku" log --format=%H "$old..$new" -- "$2" | pr_lines samvera/hyku
+  else
+    gh api "repos/samvera/hyrax/commits?sha=$new_hyrax&path=$2&per_page=100" --jq '.[].sha' |
+      grep -Fxf "$work/hyrax_shas" | pr_lines samvera/hyrax
+  fi
+}
+with_prs() { # text, prs
+  if [ -n "$2" ]; then echo "$1: changed in $2"; else echo "$1"; fi
+}
+
 # Hyku files the bump changes that this knapsack replaces (same path) or decorates (a
 # <name>_decorator.rb for the same file name).
 overrides=""
 while read -r path; do
   case "$path" in app/*|config/*|lib/*) ;; *) continue ;; esac
+  prs=""
   if [ -e "$path" ]; then
-    overrides+="- \`$path\` (overridden: \`$path\`)"$'\n'
+    prs=$(changed_by hyku "$path")
+    overrides+="$(with_prs "- \`$path\` (overridden: \`$path\`)" "$prs")"$'\n'
   fi
   name=$(basename "$path" .rb)
   while read -r decorator; do
-    overrides+="- \`$path\` (decorated: \`$decorator\`)"$'\n'
+    [ -n "$prs" ] || prs=$(changed_by hyku "$path")
+    overrides+="$(with_prs "- \`$path\` (decorated: \`$decorator\`)" "$prs")"$'\n'
   done < <(find app lib -name "${name}_decorator.rb" 2>/dev/null)
 done < <(git -C "$work/hyku" diff --name-only "$old" "$new")
 
 # Hyrax files the Hyrax change touches that this knapsack decorates.
 if [ -n "$hyrax_prs" ]; then
+  gh api "repos/samvera/hyrax/compare/$old_hyrax...$new_hyrax?per_page=250" --jq '.commits[].sha' > "$work/hyrax_shas"
   while read -r path; do
     case "$path" in app/*|lib/*) ;; *) continue ;; esac
     name=$(basename "$path" .rb)
     while read -r decorator; do
-      overrides+="- Hyrax \`$path\` (decorated: \`$decorator\`)"$'\n'
+      overrides+="$(with_prs "- Hyrax \`$path\` (decorated: \`$decorator\`)" "$(changed_by hyrax "$path")")"$'\n'
     done < <(find app lib -name "${name}_decorator.rb" 2>/dev/null)
   done < <(gh api "repos/samvera/hyrax/compare/$old_hyrax...$new_hyrax" --jq '.files[].filename')
 fi
@@ -92,14 +118,15 @@ if [ -n "$upstream" ]; then
   gh api --paginate "repos/$GITHUB_REPOSITORY/issues?state=open&per_page=100" \
     --jq '.[] | select(.number != '"$PR"') | "\(.number)\t\(.title)\t\(((.title + " " + (.body // "")) | gsub("[\\n\\t]"; " ")))"' > "$work/open.tsv"
   while read -r repo n; do
+    by=$(printf '%s\n%s\n' "$hyku_prs" "$hyrax_prs" | grep -F -- "- $repo#$n " | sed -nE 's/.* \(by ([^)]+)\).*/ by \1/p' | head -1 || true)
     short=${repo#samvera/}
     # samvera/hyku#3358, github.com/samvera/hyku/pull/3358, or "Hyku #3358" / "Hyku PR #3358"
     pattern="($repo(#|/pull/|/issues/)$n|[Hh]${short:1} (PR )?#$n)([^0-9]|\$)"
     while IFS=$'\t' read -r m mtitle _; do
-      cleanup+="- #$m $mtitle (mentions $repo#$n)"$'\n'
+      cleanup+="- #$m $mtitle (mentions $repo#$n$by)"$'\n'
     done < <(grep -E "$pattern" "$work/open.tsv" || true)
     while IFS=: read -r file line _; do
-      cleanup+="- \`$file:$line\` (mentions $repo#$n)"$'\n'
+      cleanup+="- \`$file:$line\` (mentions $repo#$n$by)"$'\n'
     done < <(grep -rnE "$pattern" app lib config spec 2>/dev/null || true)
   done <<< "$upstream"
 fi
@@ -125,7 +152,7 @@ fi
   echo "#### Hyku files this knapsack overrides or decorates"
   echo
   if [ -n "$overrides" ]; then
-    echo "Check each still works with the new Hyku before merging:"
+    echo "Check each still works with the new Hyku before merging. The PR that changed it, and its author, is who to ask; if it needs knapsack work, they add it to this pull request:"
     echo
     printf '%s' "$overrides" | sort -u
   else
