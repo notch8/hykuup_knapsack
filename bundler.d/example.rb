@@ -11,6 +11,7 @@ gem "sentry-rails"
 gem "sentry-sidekiq"
 
 override_gem 'hyrax-doi', github: 'samvera-labs/hyrax-doi', tag: 'v0.3.0'
+override_gem "iiif_print", "~> 3.2"
 
 ensure_gem "rubocop-rake"
 ensure_gem "rubocop-rspec"
