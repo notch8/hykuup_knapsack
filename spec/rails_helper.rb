@@ -52,6 +52,8 @@ Dir[HykuKnapsack::Engine.root.join('spec', 'support', '**', '*.rb')].each { |f| 
 
 ActiveRecord::Migration.maintain_test_schema!
 
+VOCABULARY_TABLES = %w[qa_local_authorities qa_local_authority_entries].freeze
+
 RSpec.configure do |config|
   config.fixture_paths = [Rails.root.join('spec', 'fixtures')]
   config.use_transactional_fixtures = false
@@ -65,8 +67,15 @@ RSpec.configure do |config|
   config.include Warden::Test::Helpers, type: :feature
   config.include ActiveJob::TestHelper
 
-  config.before do
-    DatabaseCleaner.strategy = :transaction
+  # :truncation opts in a spec that spawns real threads/connections (e.g. Thread.new),
+  # since a thread's own DB connection can't see data from the main thread's open
+  # transaction. Mirrors hyrax-webapp/spec/rails_helper.rb's same opt-in.
+  config.before do |example|
+    DatabaseCleaner.strategy = if example.metadata[:truncation]
+                                 [:truncation, { except: VOCABULARY_TABLES }]
+                               else
+                                 :transaction
+                               end
     DatabaseCleaner.start
   end
 
