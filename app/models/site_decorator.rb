@@ -18,6 +18,12 @@ module SiteDecorator
       end
     end
 
+    # Backports Hyku v7.2.1: also clear the per-request analytics config (AnalyticsDecorator)
+    def reset!
+      super
+      RequestStore.store.delete(:hyrax_analytics_config)
+    end
+
     private
 
     # Get available work types for the current tenant based on consortium membership
