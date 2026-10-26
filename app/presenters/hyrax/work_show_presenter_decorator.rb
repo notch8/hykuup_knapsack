@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# OVERRIDE Hyku 198f495 (Hyku::WorkShowPresenter's Hyrax::WorkShowPresenter#page_title):
+# OVERRIDE Hyku v7.1.0 (Hyku::WorkShowPresenter's Hyrax::WorkShowPresenter#page_title):
 # end work page titles with the tenant's application name. Hyku ends them with
 # hyrax.product_name so one consortium brand covers every tenant; each HykuUp tenant
 # is its own brand, so it falls back to the product name only when no name is set.
