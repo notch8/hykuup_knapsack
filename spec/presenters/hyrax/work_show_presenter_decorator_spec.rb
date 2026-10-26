@@ -28,8 +28,8 @@ RSpec.describe Hyrax::WorkShowPresenterDecorator do
   context 'when the tenant has no application name' do
     before { allow(Site).to receive(:application_name).and_return(nil) }
 
-    it 'falls back to the product name' do
-      expect(presenter.page_title).to end_with "| #{I18n.t('hyrax.product_name')}"
+    it 'falls back to the HykuUP product name' do
+      expect(presenter.page_title).to end_with '| HykuUP'
     end
   end
 end
