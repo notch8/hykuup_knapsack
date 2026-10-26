@@ -1,4 +1,5 @@
 es:
   hyrax:
     footer:
+      copyright_html: "Desarrollado con Hyku, código abierto Apache 2.0 y parte de la comunidad Samvera."
       service_html: Un servicio de <a href="https://www.notch8.com/" class="navbar-link" target="_blank" rel="noopener noreferrer">Notch8</a>.
