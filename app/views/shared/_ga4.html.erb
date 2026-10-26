@@ -1,4 +1,4 @@
-<%# OVERRIDE Hyku (198f4950), backporting v7.2.1: read current_account rather than the shared Hyrax::Analytics.config, still sending to the tenant's ID and the app wide GOOGLE_ANALYTICS_ID %>
+<%# OVERRIDE Hyku v7.1.0, backporting v7.2.1: read current_account rather than the shared Hyrax::Analytics.config, still sending to the tenant's ID and the app wide GOOGLE_ANALYTICS_ID %>
 <% measurement_ids = [current_account&.google_analytics_id.presence, ENV['GOOGLE_ANALYTICS_ID'].presence].compact.uniq %>
 <% if measurement_ids.any? %>
 <!-- Google tag (gtag.js) -->
