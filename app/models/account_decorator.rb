@@ -32,7 +32,7 @@ module AccountDecorator
     self.part_of_consortia = nil if part_of_consortia.blank?
   end
 
-  # OVERRIDE Hyku (198f4950), backporting v7.2.1: in multitenant mode tenant settings load in
+  # OVERRIDE Hyku v7.1.0, backporting v7.2.1: in multitenant mode tenant settings load in
   # #switch! instead, so loading another tenant's account (e.g. shared search) can't overwrite them
   def initialize_settings
     return super unless Hyku.multitenant?
@@ -41,7 +41,7 @@ module AccountDecorator
   end
 end
 
-# OVERRIDE Hyku (198f4950), backporting v7.2.1: load tenant settings on every tenant switch
+# OVERRIDE Hyku v7.1.0, backporting v7.2.1: load tenant settings on every tenant switch
 module AccountSwitchDecorator
   def switch!
     super
