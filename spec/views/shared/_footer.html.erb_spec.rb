@@ -19,6 +19,13 @@ RSpec.describe 'shared/_footer.html.erb', type: :view do
         expect(link[:rel]).to eq 'noopener noreferrer'
         expect(rendered).not_to include 'Samvera</a>'
       end
+
+      it 'credits Hyku and the Samvera community instead of a Samvera copyright' do
+        render
+
+        expect(rendered).to include('Hyku').and include('Samvera')
+        expect(rendered).not_to include '2019 - '
+      end
     end
   end
 end
