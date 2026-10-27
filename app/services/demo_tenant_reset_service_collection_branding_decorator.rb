@@ -10,17 +10,19 @@
 module DemoTenantResetServiceCollectionBrandingDecorator
   # Copies land in a fresh folder first, so a failed recapture keeps the last good one.
   def snapshot!(**)
-    @branding_capture_dir = branding_snapshot_root.join(SecureRandom.uuid)
-    branding = within_tenant { capture_collection_branding(@branding_capture_dir) }
-    snap = super
-    snap['collection_branding'] = branding
-    account.update!(demo_tenant_snapshot: snap)
-    prune_branding_snapshots!
+    capture_dir = branding_snapshot_root.join(SecureRandom.uuid)
+    begin
+      branding = within_tenant { capture_collection_branding(capture_dir) }
+      snap = super
+      snap['collection_branding'] = branding
+      account.update!(demo_tenant_snapshot: snap)
+    rescue StandardError
+      FileUtils.rm_rf(capture_dir)
+      raise
+    end
+    prune_branding_snapshots!(keep: capture_dir)
     log "captured branding for #{branding.map { |e| e['identifier'] }.uniq.size} collections"
     snap
-  rescue StandardError
-    FileUtils.rm_rf(@branding_capture_dir) if @branding_capture_dir
-    raise
   end
 
   private
@@ -34,10 +36,10 @@ module DemoTenantResetServiceCollectionBrandingDecorator
     Pathname(Hyrax.config.branding_path).join('demo-snapshots', account.tenant.to_s)
   end
 
-  def prune_branding_snapshots!
+  def prune_branding_snapshots!(keep:)
     return unless branding_snapshot_root.exist?
 
-    branding_snapshot_root.children.each { |dir| FileUtils.rm_rf(dir) unless dir == @branding_capture_dir }
+    branding_snapshot_root.children.each { |dir| FileUtils.rm_rf(dir) unless dir == keep }
   end
 
   # Folders are named by branding row id; import identifiers are not safe path segments.

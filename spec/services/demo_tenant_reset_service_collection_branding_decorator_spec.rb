@@ -68,6 +68,13 @@ RSpec.describe DemoTenantResetService, singletenant: true do
         expect(branding_root.join('demo-snapshots', 'ellison-uuid').children.size).to eq 1
       end
 
+      it 'keeps the new copies once saved, even if clearing the earlier ones fails' do
+        allow(service).to receive(:prune_branding_snapshots!).and_raise(Errno::EACCES)
+
+        expect { service.snapshot! }.to raise_error(Errno::EACCES)
+        expect(branding_root.join('demo-snapshots', 'ellison-uuid').children.size).to eq 2
+      end
+
       it 'keeps the earlier copies when a copy fails' do
         allow(FileUtils).to receive(:cp).and_raise(Errno::ENOSPC)
 
