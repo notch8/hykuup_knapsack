@@ -5,14 +5,22 @@
 #
 # A reset deletes the collections, so their branding rows point at dead ids and
 # the reimported collections have none. The snapshot copies each image into a
-# folder of its own, keyed by import identifier, and the reset reattaches them.
+# folder of its own and records the import identifier it belongs to, and the
+# reset reattaches them.
 module DemoTenantResetServiceCollectionBrandingDecorator
+  # Copies land in a fresh folder first, so a failed recapture keeps the last good one.
   def snapshot!(**)
+    @branding_capture_dir = branding_snapshot_root.join(SecureRandom.uuid)
+    branding = within_tenant { capture_collection_branding(@branding_capture_dir) }
     snap = super
-    within_tenant { snap['collection_branding'] = capture_collection_branding }
+    snap['collection_branding'] = branding
     account.update!(demo_tenant_snapshot: snap)
-    log "captured branding for #{snap['collection_branding'].map { |e| e['identifier'] }.uniq.size} collections"
+    prune_branding_snapshots!
+    log "captured branding for #{branding.map { |e| e['identifier'] }.uniq.size} collections"
     snap
+  rescue StandardError
+    FileUtils.rm_rf(@branding_capture_dir) if @branding_capture_dir
+    raise
   end
 
   private
@@ -22,18 +30,24 @@ module DemoTenantResetServiceCollectionBrandingDecorator
     restore_collection_branding!
   end
 
-  def branding_snapshot_dir
+  def branding_snapshot_root
     Pathname(Hyrax.config.branding_path).join('demo-snapshots', account.tenant.to_s)
   end
 
-  def capture_collection_branding
-    FileUtils.rm_rf(branding_snapshot_dir)
+  def prune_branding_snapshots!
+    return unless branding_snapshot_root.exist?
+
+    branding_snapshot_root.children.each { |dir| FileUtils.rm_rf(dir) unless dir == @branding_capture_dir }
+  end
+
+  # Folders are named by branding row id; import identifiers are not safe path segments.
+  def capture_collection_branding(dir)
     CollectionBrandingInfo.all.filter_map do |info|
       collection = find_resource(info.collection_id)
       identifier = collection && work_identifier(collection)
       next unless identifier && File.exist?(info.local_path)
 
-      copy = branding_snapshot_dir.join(identifier.to_s, info.role, File.basename(info.local_path))
+      copy = dir.join(info.id.to_s, File.basename(info.local_path))
       FileUtils.mkdir_p(copy.dirname)
       FileUtils.cp(info.local_path, copy)
       { 'identifier' => identifier.to_s, 'role' => info.role, 'alt_text' => info.alt_text,

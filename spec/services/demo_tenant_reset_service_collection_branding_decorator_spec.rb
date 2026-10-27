@@ -33,12 +33,48 @@ RSpec.describe DemoTenantResetService, singletenant: true do
     end
 
     it 'copies each image aside and records it by import identifier' do
-      entries = service.send(:capture_collection_branding)
+      entries = service.send(:capture_collection_branding, branding_root.join('capture'))
 
       expect(entries.map { |e| e.values_at('identifier', 'role', 'alt_text') })
         .to contain_exactly(['col-a', 'banner', 'banner alt'], ['col-a', 'logo', 'logo alt'])
       expect(entries.map { |e| File.read(e['file']) }).to contain_exactly('old-a banner', 'old-a logo')
-      expect(entries.map { |e| e['file'] }).to all(start_with(branding_root.join('demo-snapshots', 'ellison-uuid').to_s))
+      expect(entries.map { |e| e['file'] }).to all(start_with(branding_root.join('capture').to_s))
+    end
+
+    it 'keeps every copy inside the capture folder whatever the identifier says' do
+      allow(service).to receive(:find_resource).with('old-a').and_return(double(bulkrax_identifier: ['../../escape']))
+
+      files = service.send(:capture_collection_branding, branding_root.join('capture')).map { |e| e['file'] }
+
+      expect(files.map { |f| File.expand_path(f) }).to all(start_with(branding_root.join('capture').to_s))
+    end
+
+    context 'when recapturing over an earlier snapshot' do
+      let(:earlier) { branding_root.join('demo-snapshots', 'ellison-uuid', 'earlier') }
+
+      before do
+        FileUtils.mkdir_p(earlier)
+        allow(account).to receive(:public_demo_tenant?).and_return(false)
+        allow(account).to receive(:demo_tenant_snapshot).and_return(nil)
+        allow(account).to receive(:update!)
+        allow(service).to receive(:within_tenant).and_yield
+        allow(service).to receive(:featured_collection_entries).and_return([])
+      end
+
+      it 'replaces the earlier copies once the new ones are saved' do
+        service.snapshot!
+
+        expect(earlier).not_to exist
+        expect(branding_root.join('demo-snapshots', 'ellison-uuid').children.size).to eq 1
+      end
+
+      it 'keeps the earlier copies when a copy fails' do
+        allow(FileUtils).to receive(:cp).and_raise(Errno::ENOSPC)
+
+        expect { service.snapshot! }.to raise_error(Errno::ENOSPC)
+        expect(branding_root.join('demo-snapshots', 'ellison-uuid').children).to eq [earlier]
+        expect(account).not_to have_received(:update!)
+      end
     end
 
     it 'saves them on the account with the rest of the snapshot' do

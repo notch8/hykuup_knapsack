@@ -4,7 +4,7 @@ RSpec.describe DemoTenantResetService, singletenant: true do
   let(:service) { described_class.new(account:) }
 
   describe 'recording featured collections for the snapshot' do
-    let(:account) { instance_double(Account, name: 'ellison', cname: 'ellison.example.com') }
+    let(:account) { instance_double(Account, name: 'ellison', cname: 'ellison.example.com', tenant: 'ellison-uuid') }
 
     it 'records each featured collection by import identifier and order' do
       FeaturedCollection.create!(collection_id: 'old-a', order: 2)
