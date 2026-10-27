@@ -40,6 +40,8 @@ module DemoTenantResetServiceCollectionBrandingDecorator
     return unless branding_snapshot_root.exist?
 
     branding_snapshot_root.children.each { |dir| FileUtils.rm_rf(dir) unless dir == keep }
+  rescue SystemCallError => e
+    log("could not clear older branding copies: #{e.message}", level: :warn)
   end
 
   # Folders are named by branding row id; import identifiers are not safe path segments.
