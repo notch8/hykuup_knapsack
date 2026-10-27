@@ -18,9 +18,10 @@ module DemoTenantResetServiceShowcaseDecorator
     super
   end
 
+  # Granted first: Hyku's revocation keeps tenant superadmins' other roles.
   def revoke_visitor_access!
-    super
     grant_showcase_superadmins! if showcase_tenant?
+    super
   end
 
   def showcase_tenant?

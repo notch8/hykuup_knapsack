@@ -51,13 +51,12 @@ RSpec.describe DemoTenantResetService, singletenant: true do
     context 'on a showcase tenant' do
       let(:account) { account_named('ellison') }
 
-      it 'makes nick@notch8.com a superadmin after visitor roles are cleared' do
+      it 'makes nick@notch8.com a superadmin before visitor roles are cleared, so his other roles survive' do
         allow(User).to receive(:find_by).with(email: 'nick@notch8.com').and_return(nick)
-        allow(nick).to receive(:add_role)
+        expect(nick).to receive(:add_role).with(:superadmin, site).ordered
+        expect(User).to receive(:joins).ordered.and_return(User.none)
 
         revoke
-
-        expect(nick).to have_received(:add_role).with(:superadmin, site)
       end
 
       it 'carries on when the account does not exist on this environment' do
