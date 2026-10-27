@@ -22,6 +22,7 @@ RSpec.describe DemoTenantResetService, singletenant: true do
       allow(account).to receive(:update!)
       allow(service).to receive(:within_tenant).and_yield
       allow(service).to receive(:featured_collection_entries).and_return([{ 'identifier' => 'col-a', 'order' => 1 }])
+      allow(service).to receive(:capture_collection_branding).and_return([])
 
       service.snapshot!
 
