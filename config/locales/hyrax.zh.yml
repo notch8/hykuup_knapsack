@@ -1,0 +1,6 @@
+zh:
+  hyrax:
+    product_name: HykuUP
+    footer:
+      copyright_html: "基于 Hyku 构建，采用 Apache 2.0 开源许可，是 Samvera 社区的一员。"
+      service_html: <a href="https://www.notch8.com/" class="navbar-link" target="_blank" rel="noopener noreferrer">Notch8</a> 提供的服务。
