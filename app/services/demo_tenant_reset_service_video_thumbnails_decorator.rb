@@ -11,10 +11,7 @@ module DemoTenantResetServiceVideoThumbnailsDecorator
 
   # Copies land in a fresh folder first, so a failed recapture keeps the last good one.
   def snapshot!(**)
-    # Mid-restore, the live thumbnails are still the automatic ones.
-    raise RestoreInProgress, "#{account.cname}: video thumbnails are still being restored; snapshot once that finishes" \
-      if thumbnail_restore_pending?
-
+    refuse_mid_restore!
     capture_dir = thumbnail_snapshot_root.join(SecureRandom.uuid)
     begin
       thumbnails = within_tenant { capture_video_thumbnails(capture_dir) }
@@ -44,6 +41,13 @@ module DemoTenantResetServiceVideoThumbnailsDecorator
   # The derivatives volume is shared but, unlike branding, not served directly.
   def thumbnail_snapshot_root
     Pathname(Hyrax.config.derivatives_path).join('demo-snapshots', account.tenant.to_s)
+  end
+
+  # Mid-restore, the live thumbnails are still the automatic ones.
+  def refuse_mid_restore!
+    return unless thumbnail_restore_pending?
+
+    raise RestoreInProgress, "#{account.cname}: video thumbnails are still being restored; snapshot once that finishes"
   end
 
   def thumbnail_restore_pending?

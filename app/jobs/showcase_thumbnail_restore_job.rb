@@ -34,15 +34,19 @@ class ShowcaseThumbnailRestoreJob < ApplicationJob
     thumbnail = derivative(work, 'thumbnail')
     return false unless File.exist?(thumbnail)
 
+    put_back(work, entry, thumbnail)
+    settled?(work, entry)
+  end
+
+  def put_back(work, entry, thumbnail)
     unless FileUtils.compare_file(entry['file'], thumbnail)
       FileUtils.cp(entry['file'], thumbnail)
       entry['indexed'] = false
     end
-    unless entry['indexed']
-      Hyrax.index_adapter.save(resource: work)
-      entry['indexed'] = true
-    end
-    settled?(work, entry)
+    return if entry['indexed']
+
+    Hyrax.index_adapter.save(resource: work)
+    entry['indexed'] = true
   end
 
   # A derivatives job can still fail and rerun after writing the mp4, so wait one
