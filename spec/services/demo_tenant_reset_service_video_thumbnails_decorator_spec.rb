@@ -9,7 +9,7 @@ RSpec.describe DemoTenantResetService, singletenant: true do
   end
   let(:entries) { nil }
 
-  before { allow(Hyrax.config).to receive(:branding_path).and_return(root) }
+  before { allow(Hyrax.config).to receive(:derivatives_path).and_return(root.to_s) }
   after { FileUtils.rm_rf(root) }
 
   describe 'capturing video thumbnails for the snapshot' do
@@ -46,6 +46,19 @@ RSpec.describe DemoTenantResetService, singletenant: true do
       expect(account).to have_received(:update!)
         .with(demo_tenant_snapshot: hash_including('video_thumbnails' => [hash_including('identifier' => 'msa-vid-001')]))
         .at_least(:once)
+    end
+  end
+
+  describe 'taking a snapshot while thumbnails are still being restored' do
+    before do
+      allow(account).to receive(:public_demo_tenant?).and_return(false)
+      GoodJob::Job.create!(id: SecureRandom.uuid, active_job_id: SecureRandom.uuid, queue_name: 'default',
+                           job_class: 'ShowcaseThumbnailRestoreJob', serialized_params: { 'tenant' => 'meridian-uuid' })
+    end
+
+    it 'refuses, so the automatic thumbnails are not saved over the chosen ones' do
+      expect { service.snapshot!(force: true) }
+        .to raise_error(DemoTenantResetServiceVideoThumbnailsDecorator::RestoreInProgress)
     end
   end
 

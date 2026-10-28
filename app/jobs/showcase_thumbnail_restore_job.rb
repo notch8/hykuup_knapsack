@@ -2,7 +2,7 @@
 
 # Puts a showcase tenant's saved video thumbnails back after a demo reset.
 # A video's processing writes its thumbnail first and mp4 last, and a retried
-# job writes the thumbnail again, so each work is rechecked until its mp4 exists.
+# job writes the thumbnail again, so each work is rechecked until it settles.
 class ShowcaseThumbnailRestoreJob < ApplicationJob
   RECHECK_WAIT = 30.minutes
   MAX_CHECKS = 96
@@ -23,7 +23,7 @@ class ShowcaseThumbnailRestoreJob < ApplicationJob
 
   private
 
-  # true once the entry needs no more checks
+  # true once the entry needs no more checks; flags on the entry carry across checks
   def restore(work, entry)
     unless work && File.exist?(entry['file'])
       Rails.logger.warn("[DemoTenantReset] no work or saved thumbnail for #{entry['identifier']}; skipped")
@@ -36,9 +36,23 @@ class ShowcaseThumbnailRestoreJob < ApplicationJob
 
     unless FileUtils.compare_file(entry['file'], thumbnail)
       FileUtils.cp(entry['file'], thumbnail)
-      Hyrax.index_adapter.save(resource: work)
+      entry['indexed'] = false
     end
-    File.exist?(derivative(work, 'mp4'))
+    unless entry['indexed']
+      Hyrax.index_adapter.save(resource: work)
+      entry['indexed'] = true
+    end
+    settled?(work, entry)
+  end
+
+  # A derivatives job can still fail and rerun after writing the mp4, so wait one
+  # more check after it appears.
+  def settled?(work, entry)
+    return false unless File.exist?(derivative(work, 'mp4'))
+    return true if entry['mp4_seen']
+
+    entry['mp4_seen'] = true
+    false
   end
 
   def derivative(work, name)

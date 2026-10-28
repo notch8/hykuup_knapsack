@@ -7,8 +7,14 @@
 # video work's thumbnail aside, and a job puts it back once that processing
 # has written the new one.
 module DemoTenantResetServiceVideoThumbnailsDecorator
+  RestoreInProgress = Class.new(StandardError)
+
   # Copies land in a fresh folder first, so a failed recapture keeps the last good one.
   def snapshot!(**)
+    # Mid-restore, the live thumbnails are still the automatic ones.
+    raise RestoreInProgress, "#{account.cname}: video thumbnails are still being restored; snapshot once that finishes" \
+      if thumbnail_restore_pending?
+
     capture_dir = thumbnail_snapshot_root.join(SecureRandom.uuid)
     begin
       thumbnails = within_tenant { capture_video_thumbnails(capture_dir) }
@@ -35,8 +41,14 @@ module DemoTenantResetServiceVideoThumbnailsDecorator
     log "queued #{entries.size} video thumbnails to restore once their videos are processed"
   end
 
+  # The derivatives volume is shared but, unlike branding, not served directly.
   def thumbnail_snapshot_root
-    Pathname(Hyrax.config.branding_path).join('demo-thumbnails', account.tenant.to_s)
+    Pathname(Hyrax.config.derivatives_path).join('demo-snapshots', account.tenant.to_s)
+  end
+
+  def thumbnail_restore_pending?
+    GoodJob::Job.where(finished_at: nil, job_class: ShowcaseThumbnailRestoreJob.name)
+                .where("serialized_params->>'tenant' = ?", account.tenant.to_s).exists?
   end
 
   def prune_thumbnail_snapshots!(keep:)

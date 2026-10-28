@@ -27,12 +27,32 @@ RSpec.describe ShowcaseThumbnailRestoreJob do
       File.write(mp4, 'video')
     end
 
-    it 'replaces the thumbnail with the saved one, reindexes the work and stops' do
+    it 'replaces the thumbnail, reindexes and checks once more in case the job reruns' do
       described_class.perform_now(entries)
 
       expect(File.read(live)).to eq 'chosen frame'
       expect(Hyrax.index_adapter).to have_received(:save).with(resource: work)
+      expect(rescheduled).to have_received(:perform_later)
+        .with([hash_including('indexed' => true, 'mp4_seen' => true)], 2)
+    end
+
+    it 'stops on the check after that' do
+      described_class.perform_now([entries.first.merge('indexed' => false, 'mp4_seen' => true)])
+
       expect(described_class).not_to have_received(:set)
+    end
+  end
+
+  context 'when reindexing failed after the copy' do
+    before do
+      File.write(live, 'chosen frame')
+      File.write(mp4, 'video')
+    end
+
+    it 'reindexes on the retry even though the thumbnail already matches' do
+      described_class.perform_now(entries)
+
+      expect(Hyrax.index_adapter).to have_received(:save).with(resource: work)
     end
   end
 
@@ -47,16 +67,17 @@ RSpec.describe ShowcaseThumbnailRestoreJob do
     end
   end
 
-  context 'when the saved thumbnail is already in place' do
+  context 'when the saved thumbnail is already in place and indexed' do
     before do
       File.write(live, 'chosen frame')
       File.write(mp4, 'video')
     end
 
     it 'leaves the work alone' do
-      described_class.perform_now(entries)
+      described_class.perform_now([entries.first.merge('indexed' => true, 'mp4_seen' => true)])
 
       expect(Hyrax.index_adapter).not_to have_received(:save)
+      expect(described_class).not_to have_received(:set)
     end
   end
 
