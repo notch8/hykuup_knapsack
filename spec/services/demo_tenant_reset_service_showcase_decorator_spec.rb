@@ -37,6 +37,31 @@ RSpec.describe DemoTenantResetService, singletenant: true do
     end
   end
 
+  describe 'waiting for the import to finish' do
+    subject(:pending) { described_class.new(account:).send(:pending_good_jobs) }
+
+    before do
+      %w[Bulkrax::ImportWorkJob ValkyrieCreateDerivativesJob].each do |job_class|
+        GoodJob::Job.create!(id: SecureRandom.uuid, active_job_id: SecureRandom.uuid, queue_name: 'default',
+                             job_class:, serialized_params: { 'tenant' => 'tenant-uuid' }, scheduled_at: 1.minute.ago)
+      end
+    end
+
+    context 'on a showcase tenant' do
+      let(:account) { instance_double(Account, name: 'meridian', cname: 'meridian.example.com', tenant: 'tenant-uuid') }
+
+      it('waits for the Bulkrax jobs only, not the derivatives') { expect(pending).to eq 1 }
+    end
+
+    context 'on any other tenant' do
+      let(:account) do
+        instance_double(Account, name: 'sandbox', cname: 'sandbox.example.com', tenant: 'tenant-uuid', public_demo_tenant?: true)
+      end
+
+      it('waits for every job as before') { expect(pending).to eq 2 }
+    end
+  end
+
   describe 'revoking visitor access' do
     subject(:revoke) { described_class.new(account:).send(:revoke_visitor_access!) }
 
