@@ -51,12 +51,21 @@ RSpec.describe DemoTenantResetService, singletenant: true do
     context 'on a showcase tenant' do
       let(:account) { account_named('ellison') }
 
-      it 'makes nick@notch8.com a superadmin before visitor roles are cleared, so his other roles survive' do
+      it 'makes nick@notch8.com a superadmin' do
         allow(User).to receive(:find_by).with(email: 'nick@notch8.com').and_return(nick)
-        expect(nick).to receive(:add_role).with(:superadmin, site).ordered
-        expect(User).to receive(:joins).ordered.and_return(User.none)
+        allow(nick).to receive(:add_role)
 
         revoke
+
+        expect(nick).to have_received(:add_role).with(:superadmin, site)
+      end
+
+      it "leaves everyone else's roles alone, since showcase tenants take no visitor signups" do
+        allow(User).to receive(:find_by).and_return(nil)
+
+        revoke
+
+        expect(User).not_to have_received(:joins)
       end
 
       it 'carries on when the account does not exist on this environment' do
@@ -69,12 +78,13 @@ RSpec.describe DemoTenantResetService, singletenant: true do
     context 'on any other tenant' do
       let(:account) { account_named('sandbox', public_demo_tenant: true) }
 
-      it 'grants nobody superadmin' do
+      it 'grants nobody superadmin and clears visitor roles as before' do
         allow(User).to receive(:find_by)
 
         revoke
 
         expect(User).not_to have_received(:find_by)
+        expect(User).to have_received(:joins)
       end
     end
   end

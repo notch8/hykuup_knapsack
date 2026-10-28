@@ -18,10 +18,12 @@ module DemoTenantResetServiceShowcaseDecorator
     super
   end
 
-  # Granted first: Hyku's revocation keeps tenant superadmins' other roles.
+  # Showcase tenants take no visitor signups, so their roles all belong to real
+  # admins and stay; Hyku's revocation is for the sandbox.
   def revoke_visitor_access!
-    grant_showcase_superadmins! if showcase_tenant?
-    super
+    return super unless showcase_tenant?
+
+    grant_showcase_superadmins!
   end
 
   def showcase_tenant?
