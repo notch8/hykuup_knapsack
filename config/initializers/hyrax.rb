@@ -25,6 +25,10 @@ Rails.application.config.after_initialize do
     # connection_upgrade map from #702; without those the handshake falls through
     # to a plain request Rails 404s, and the retries eat Puma threads.
     config.realtime_notifications = true
+
+    # Hyku deprecates the webm (samvera/hyku#3143): it is the slowest encode and
+    # every browser plays the mp4, which the players list as the next source.
+    config.derivative_options[:video].reject! { |output| output[:url] == 'webm' }
   end
 
   # Override Hyrax v5.0.5: the create_default_schema method to load tenant-specific profiles
