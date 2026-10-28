@@ -24,12 +24,6 @@ module DemoTenantResetServiceShowcaseDecorator
     super
   end
 
-  # Video derivatives run for hours, past the drain timeout; the restore steps
-  # after the import only need the Bulkrax jobs to finish.
-  def unfinished_jobs_for_tenant
-    showcase_tenant? ? super.where('job_class LIKE ?', 'Bulkrax::%') : super
-  end
-
   def showcase_tenant?
     SHOWCASE_TENANTS.include?(account&.name)
   end
