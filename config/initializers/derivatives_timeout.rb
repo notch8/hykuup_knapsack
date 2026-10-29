@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# Remove once Hyku includes samvera/hyku#3487.
 # hydra-derivatives waits on ffmpeg forever by default; a hung one then holds its
 # worker slot. Our longest real encodes take about 2.5 hours.
 [
