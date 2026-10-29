@@ -22,9 +22,10 @@ en:
           help: "Reset deletes every work and collection, reimports the seed file, then restores the saved look. It takes about half an hour; video thumbnails can take a few hours more."
         restoring: Video thumbnails are still being put back after the last reset, so Save current look waits until they finish.
         reset_failed: The last reset did not finish. Ask a developer to check Sentry before trying again.
+        unchanged: Feature flippers and account settings (Accounts > Edit) are not part of the saved look; a reset leaves them as they are.
         snapshot:
           button: Save current look
-          help: "Save current look keeps the appearance, featured works, featured collections and collection images. It does not keep works: a work added by hand disappears at the next reset unless it is added to the seed file."
+          help: "Save current look keeps the appearance, page text, available work types, featured works, featured collections and collection images. It does not keep works: a work added by hand disappears at the next reset unless it is added to the seed file."
         working: Working...
       reset:
         mistyped: Not reset. Type %{name} exactly to confirm.
