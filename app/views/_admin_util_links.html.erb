@@ -1,4 +1,4 @@
-<%# OVERRIDE Hyku v7.1.0 - add the Showcases link for superadmins %>
+<%# OVERRIDE Hyku v7.1.0 - add the Showcases link for the showcase operators %>
 <% if user_signed_in? %>
   <% if can? :manage, Account %>
     <ul class="navbar-nav mr-auto">
@@ -7,11 +7,13 @@
           <span class="fa fa-gears"></span> <%= t("hyku.proprietor.accounts.nav") %>
         <% end %>
       </li>
-      <li class="nav-item">
-        <%= link_to main_app.proprietor_showcases_path, class: 'nav-link' do %>
-          <span class="fa fa-refresh"></span> <%= t("hyku.proprietor.showcases.nav") %>
-        <% end %>
-      </li>
+      <% if ShowcaseTenant.operator?(current_user) %>
+        <li class="nav-item">
+          <%= link_to main_app.proprietor_showcases_path, class: 'nav-link' do %>
+            <span class="fa fa-refresh"></span> <%= t("hyku.proprietor.showcases.nav") %>
+          <% end %>
+        </li>
+      <% end %>
       <li class="nav-item">
         <%= link_to main_app.proprietor_users_path, class: 'nav-link' do %>
           <span class="fa fa-users"></span> <%= t("hyku.proprietor.users.nav") %>

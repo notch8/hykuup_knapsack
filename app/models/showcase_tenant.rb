@@ -3,10 +3,15 @@
 # A HykuUP showcase tenant as the proprietor Showcases page shows it.
 class ShowcaseTenant
   RESTORE_JOB = 'ShowcaseThumbnailRestoreJob'
+  OPERATORS = %w[nick@notch8.com support@notch8.com].freeze
 
   attr_reader :account
 
   delegate :id, :to_param, :name, :cname, :tenant, :last_reset_at, to: :account
+
+  def self.operator?(user)
+    OPERATORS.include?(user&.email.to_s.downcase)
+  end
 
   def self.scope
     Account.where(name: DemoTenantResetServiceShowcaseDecorator::SHOWCASE_TENANTS)

@@ -23,8 +23,22 @@ RSpec.describe Proprietor::ShowcasesController, type: :controller, multitenant: 
     end
   end
 
-  context 'as a superadmin' do
+  context 'as a superadmin who is not a showcase operator' do
     let(:user) { FactoryBot.create(:superadmin) }
+
+    it 'refuses the page as not authorized' do
+      get :index
+      expect(response).to redirect_to(root_url)
+      expect(flash[:alert]).to include 'not authorized'
+    end
+
+    it 'refuses a reset' do
+      expect { post :reset, params: { id: showcase.id, confirm: 'harborview' } }.not_to have_enqueued_job
+    end
+  end
+
+  context 'as a showcase operator' do
+    let(:user) { FactoryBot.create(:superadmin, email: 'nick@notch8.com') }
 
     before { allow(Apartment::Tenant).to receive(:switch).and_yield }
 

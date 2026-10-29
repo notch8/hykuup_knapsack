@@ -53,4 +53,12 @@ RSpec.describe ShowcaseTenant do
     account.demo_tenant_snapshot = { 'captured_at' => '2026-10-28T23:10:05Z' }
     expect(showcase.look_saved_at).to eq Time.zone.parse('2026-10-28T23:10:05Z')
   end
+
+  describe '.operator?' do
+    it 'is true only for the listed emails, in any case' do
+      expect(described_class.operator?(User.new(email: 'Nick@Notch8.com'))).to be true
+      expect(described_class.operator?(User.new(email: 'someone@notch8.com'))).to be false
+      expect(described_class.operator?(nil)).to be false
+    end
+  end
 end

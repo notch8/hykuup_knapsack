@@ -1,9 +1,12 @@
 # frozen_string_literal: true
 
 module Proprietor
-  # Lets a superadmin save the look of, and reset, the HykuUP showcase tenants.
+  # Lets the showcase operators save the look of, and reset, the HykuUP showcase tenants.
   class ShowcasesController < ProprietorController
-    before_action { authorize! :manage, Account }
+    before_action do
+      authorize! :manage, Account
+      raise CanCan::AccessDenied unless ShowcaseTenant.operator?(current_user)
+    end
     before_action :load_showcase, except: :index
 
     def index
