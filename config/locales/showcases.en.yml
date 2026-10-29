@@ -2,6 +2,10 @@ en:
   time:
     formats:
       showcase: "%B %-d, %Y %-I:%M %p %Z"
+  hyku:
+    proprietor:
+      showcases:
+        nav: Showcases
   proprietor:
     showcases:
       busy: "%{name} is already saving or resetting. Try again when it finishes."
