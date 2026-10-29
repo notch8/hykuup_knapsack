@@ -1,0 +1,36 @@
+en:
+  time:
+    formats:
+      showcase: "%B %-d, %Y %-I:%M %p %Z"
+  hyku:
+    proprietor:
+      showcases:
+        nav: Showcases
+  proprietor:
+    showcases:
+      busy: "%{name} is already saving or resetting. Try again when it finishes."
+      index:
+        busy: Saving or resetting now. This page shows the result when it finishes; reload to check.
+        header: Showcase tenants
+        last_reset_at: Last reset
+        look_saved_at: Look saved
+        never: Never
+        reset:
+          button: Reset
+          confirm: Type %{name} to confirm
+          needs_snapshot: Save a look before the first reset.
+          help: "Reset deletes every work and collection, reimports the seed file, then restores the saved look. It takes about half an hour; video thumbnails can take a few hours more."
+        restoring: Video thumbnails are still being put back after the last reset, so Save current look waits until they finish.
+        reset_failed: The last reset did not finish. Ask a developer to check Sentry before trying again.
+        unchanged: Feature flippers and account settings (Accounts > Edit) are not part of the saved look; a reset leaves them as they are.
+        snapshot:
+          button: Save current look
+          help: "Save current look keeps the appearance, page text, available work types, featured works, featured collections and collection images. It does not keep works: a work added by hand disappears at the next reset unless it is added to the seed file."
+        working: Working...
+      reset:
+        mistyped: Not reset. Type %{name} exactly to confirm.
+        no_snapshot: Not reset. %{name} has no saved look yet; save one first.
+        queued: Resetting %{name}. This takes about half an hour.
+      snapshot:
+        queued: Saving the current look of %{name}.
+        restoring: Not saved. %{name}'s video thumbnails are still being put back; try again when they finish.
