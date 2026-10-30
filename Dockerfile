@@ -23,6 +23,8 @@ RUN bundle install --jobs "$(nproc)"
 ############## END KNAPSACK SPECIFIC CODE ################
 
 RUN RAILS_ENV=production SECRET_KEY_BASE=$(bin/rails secret) DB_ADAPTER=nulldb DB_URL='postgresql://fake' bundle exec rails assets:precompile && yarn install
+# Hyku's yarn install copies its own Clover page; Hyku has a knapsack hook for UV only.
+RUN cp /app/samvera/config/clover/clover.html public/clover/clover.html
 CMD ./bin/web
 
 FROM hyku-web AS hyku-worker
