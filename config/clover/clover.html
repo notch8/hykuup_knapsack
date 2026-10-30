@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- OVERRIDE Hyku v7.1.0 to make the panel readable. Remove once Hyku includes samvera/hyku#3396. -->
+<!-- OVERRIDE Hyku v7.1.0 for a readable panel and visible audio captions. Remove once Hyku includes samvera/hyku#3396 and samvera/hyku#3499; the captions-on default below is HykuUP's own. -->
 <html lang="en">
     <head>
         <meta charset="UTF-8" />
@@ -19,6 +19,9 @@
           .clover-viewer-information-panel, .clover-viewer-information-panel * { box-sizing: border-box; }
           .clover-viewer-header > span:first-child { padding-left: 1rem !important; }
           .clover-viewer-header > div:last-child { padding-right: 1rem !important; }
+          /* Clover caps its player at 500px, which left a black band under it in the taller show page frame. */
+          .clover-viewer-player-wrapper, .clover-viewer-player-wrapper video { height: 100% !important; max-height: none !important; }
+          video::cue { font-size: clamp(14px, 2.4vw, 24px); }
         </style>
     </head>
     <body>
@@ -44,6 +47,36 @@
             if (event.target.closest?.('#information-toggle')) keepPanelClosed.disconnect();
           }, true);
         });
+
+        // An audio item has no picture for the control bar to sit over, so its captions land behind
+        // the bar. Chrome sets a cue's top at its line, so leave room for the bar and two caption lines.
+        const CAPTION_CLEARANCE = 130;
+        const liftAudioCaptions = (media) => {
+          if (media.readyState < 1 || media.videoWidth > 0 || !media.clientHeight) return;
+          const line = Math.max(0, 100 - (CAPTION_CLEARANCE / media.clientHeight) * 100);
+          for (const track of media.textTracks) {
+            for (const cue of track.cues || []) Object.assign(cue, { snapToLines: false, line });
+          }
+        };
+        ['loadedmetadata', 'load'].forEach((type) => {
+          document.addEventListener(type, (event) => {
+            const media = event.target.closest?.('audio, video');
+            if (media) liftAudioCaptions(media);
+          }, true);
+        });
+        window.addEventListener('resize', () => document.querySelectorAll('audio, video').forEach(liftAudioCaptions));
+
+        // HykuUP shows captions without the visitor finding them in the player's menu. Each item
+        // gets a new player, so remember a visitor who turned them off.
+        let captionsTurnedOff = false;
+        document.addEventListener('loadedmetadata', (event) => {
+          const tracks = event.target.textTracks;
+          if (!tracks?.length) return;
+          if (!captionsTurnedOff && tracks[0].mode === 'disabled') tracks[0].mode = 'showing';
+          tracks.addEventListener('change', () => {
+            if ([...tracks].every((track) => track.mode !== 'showing')) captionsTurnedOff = true;
+          });
+        }, true);
     </script>
     </body>
 </html>
