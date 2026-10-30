@@ -3,7 +3,7 @@ name: "Deploy"
 # it tested once it passes. A push to main deploys dev, staging deploys staging, production deploys
 # production (after the environment's approval) and then publishes the release. Run it by hand to
 # deploy a branch or tag ad hoc, or to roll back.
-run-name: Deploy (${{ github.event.workflow_run.head_branch || github.ref_name }} -> ${{ inputs.environment || (github.event.workflow_run.head_branch == 'main' && 'dev') || github.event.workflow_run.head_branch }}) by @${{ github.actor }}
+run-name: Deploy (${{ github.event.workflow_run.head_branch || github.ref_name }} -> ${{ inputs.environment || (github.event.workflow_run.head_branch == 'main' && 'dev') || github.event.workflow_run.head_branch }}) ${{ github.event.workflow_run.head_sha || github.sha }} by @${{ github.actor }}
 on:
   workflow_run:
     workflows: ["Build Test Lint"]

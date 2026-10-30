@@ -5,6 +5,7 @@
 #
 # Hyku also waits on derivatives and gives up after an hour, which a long or hung
 # video transcode exceeds; the restore steps only need the works and collections.
+# Remove once Hyku includes samvera/hyku#3486.
 module DemoTenantResetServiceImportDrainDecorator
   private
 
