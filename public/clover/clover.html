@@ -21,7 +21,7 @@
           .clover-viewer-header > div:last-child { padding-right: 1rem !important; }
           /* Clover caps its player at 500px, which left a black band under it in the taller show page frame. */
           .clover-viewer-player-wrapper, .clover-viewer-player-wrapper video { height: 100% !important; max-height: none !important; }
-          video::cue { font-size: clamp(14px, 2.4vw, 24px); }
+          video::cue { font-size: clamp(14px, 2.4vw, 24px); white-space: pre-line; }
           /* The dark page scheme also darkens Chrome's own player menu, leaving its "Off" unreadable. */
           audio, video { color-scheme: light; }
           .captions-toggle {
