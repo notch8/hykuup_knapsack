@@ -37,4 +37,20 @@ RSpec.describe HykuKnapsack::Engine do
       expect(I18n.t(key)).to eq 'Knapsack wins'
     end
   end
+
+  describe 'public files' do
+    let(:static_roots) do
+      Rails.application.middleware.select { |middleware| middleware.klass == ActionDispatch::Static }.map { |middleware| middleware.args.first }
+    end
+
+    it "are served just ahead of Hyku's" do
+      expect(static_roots).to start_with described_class.root.join('public').to_s, Rails.public_path.to_s
+    end
+
+    it "answer with the knapsack's Clover page" do
+      response = Rack::MockRequest.new(Rails.application).get('/clover/clover.html')
+
+      expect(response.body).to include 'captions-toggle'
+    end
+  end
 end
