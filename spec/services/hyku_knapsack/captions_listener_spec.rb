@@ -89,6 +89,15 @@ RSpec.describe HykuKnapsack::CaptionsListener do
     expect(Hyrax.custom_queries).not_to have_received(:find_parent_work)
   end
 
+  it 'reindexes each linked file set in a job, which retries a failed Solr write' do
+    allow(ReindexItemJob).to receive(:perform_later)
+    work(audio, caption)
+
+    ingested(caption)
+
+    expect(ReindexItemJob).to have_received(:perform_later).with(audio.id.to_s).once
+  end
+
   it 'logs rather than failing the ingest that published the event' do
     work(audio, caption)
     allow(Hyrax.custom_queries).to receive(:find_child_file_sets).and_raise(StandardError, 'boom')

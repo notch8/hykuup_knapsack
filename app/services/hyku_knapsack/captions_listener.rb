@@ -43,7 +43,9 @@ module HykuKnapsack
       return if (caption_ids - linked).empty?
 
       file_set.transcript_ids = linked | caption_ids
-      Hyrax.index_adapter.save(resource: Hyrax.persister.save(resource: file_set))
+      Hyrax.persister.save(resource: file_set)
+      # A job, so a failed Solr write retries; a later event sees the link saved and skips it.
+      ReindexItemJob.perform_later(file_set.id.to_s)
     end
 
     def caption_or_media?(file_set)
