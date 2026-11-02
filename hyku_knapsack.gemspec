@@ -21,7 +21,7 @@ Gem::Specification.new do |spec|
   spec.metadata["changelog_uri"] = "#{spec.homepage}/releases"
 
   spec.files = Dir.chdir(File.expand_path(__dir__)) do
-    Dir["{app,config,db,lib}/**/*", "LICENSE", "Rakefile", "README.md"]
+    Dir["{app,config,db,lib,public}/**/*", "LICENSE", "Rakefile", "README.md"]
   end
 
   spec.add_dependency "rails", ">= 7.2.0"
