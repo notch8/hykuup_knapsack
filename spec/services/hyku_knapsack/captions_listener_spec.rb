@@ -78,15 +78,42 @@ RSpec.describe HykuKnapsack::CaptionsListener do
     expect(transcript_ids_of(audio)).to eq [caption.id.to_s]
   end
 
-  it 'does not look at works for other files or other events' do
+  it 'does not look up the work of a file that is neither caption nor media' do
     allow(Hyrax.custom_queries).to receive(:find_parent_work).and_call_original
     image = file_set('page.jpg')
     work(image, caption)
 
     ingested(image)
-    listener.on_object_membership_updated({ object: work(audio, caption) })
 
     expect(Hyrax.custom_queries).not_to have_received(:find_parent_work)
+  end
+
+  it 'links files ingested before Bulkrax attached them, when the work is updated' do
+    linked_later = work(audio, caption)
+
+    listener.on_object_membership_updated({ object: linked_later })
+
+    expect(transcript_ids_of(audio)).to eq [caption.id.to_s]
+  end
+
+  it 'leaves a work alone on its own updates once any of its captions is linked' do
+    other = file_set('other.vtt')
+    audio.transcript_ids = [caption.id.to_s]
+    Hyrax.persister.save(resource: audio)
+
+    listener.on_object_membership_updated({ object: work(audio, caption, other) })
+
+    expect(transcript_ids_of(audio)).to eq [caption.id.to_s]
+  end
+
+  it 'reindexes linked media on its derivative saves, in case Hyrax indexed a stale copy' do
+    work(audio, caption)
+    ingested(audio)
+    allow(ReindexItemJob).to receive(:perform_later)
+
+    ingested(Hyrax.query_service.find_by(id: audio.id))
+
+    expect(ReindexItemJob).to have_received(:perform_later).with(audio.id.to_s)
   end
 
   it 'reindexes each linked file set in a job, which retries a failed Solr write' do
