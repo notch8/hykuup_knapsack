@@ -14,6 +14,16 @@ module HykuKnapsack
       app.middleware.insert_before 0, HykuKnapsack::MonitoringMiddleware
     end
 
+    # Rails serves only the host app's public/, so a file the knapsack ships there (such as
+    # public/clover/clover.html) would 404 or lose to Hyku's copy. Serve it just ahead of Hyku's.
+    initializer 'hyku_knapsack.public_files' do |app|
+      if app.config.public_file_server.enabled
+        app.middleware.insert_before ::ActionDispatch::Static, ::ActionDispatch::Static,
+                                     HykuKnapsack::Engine.root.join('public').to_s,
+                                     headers: app.config.public_file_server.headers
+      end
+    end
+
     # Load knapsack initializers from config/initializers/ AFTER the host app's
     # initializers run (e.g. after hyku's 1flexible.rb), so knapsack overrides win.
     initializer 'hyku_knapsack.load_initializers', after: :load_config_initializers do
