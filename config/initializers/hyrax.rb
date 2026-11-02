@@ -80,3 +80,7 @@ Rails.application.config.after_initialize do
   end
 end
 # rubocop:enable Metrics/BlockLength
+
+Rails.application.config.to_prepare do
+  Hyku::ListenerSubscription.replace(HykuKnapsack::CaptionsListener.new)
+end
