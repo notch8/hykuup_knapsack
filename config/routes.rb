@@ -3,6 +3,19 @@ HykuKnapsack::Engine.routes.draw do
 end
 
 Rails.application.routes.draw do
+  if ActiveModel::Type::Boolean.new.cast(ENV.fetch('HYKU_MULTITENANT', false))
+    constraints host: Account.admin_host do
+      namespace :proprietor do
+        resources :showcases, only: :index do
+          member do
+            post :snapshot
+            post :reset
+          end
+        end
+      end
+    end
+  end
+
   # TODO: this route is a temporary fix for UV small image download not working
   get '/:file_path/full/:size/:rotation/:quality.:format',
     to: redirect { |params|
