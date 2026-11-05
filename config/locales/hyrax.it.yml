@@ -1,5 +1,10 @@
 it:
   hyrax:
+    content_blocks:
+      instructions:
+        head_html_instructions: "L'HTML dell'intestazione viene aggiunto così com'è nell'head di ogni pagina pubblica, per un gestore del consenso o uno script di analisi. Non viene aggiunto alle pagine della dashboard. Solo i superamministratori possono vederlo o modificarlo."
+      tabs:
+        head_html: "HTML dell'intestazione"
     product_name: HykuUP
     footer:
       copyright_html: "Basato su Hyku, open source Apache 2.0 e parte della comunità Samvera."

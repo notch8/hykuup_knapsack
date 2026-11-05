@@ -1,5 +1,10 @@
 pt-BR:
   hyrax:
+    content_blocks:
+      instructions:
+        head_html_instructions: "O HTML do cabeçalho é adicionado como está ao head de cada página pública, para um gerenciador de consentimento ou um script de análise. Não é adicionado às páginas do painel. Somente superadministradores podem vê-lo ou alterá-lo."
+      tabs:
+        head_html: "HTML do cabeçalho"
     product_name: HykuUP
     footer:
       copyright_html: "Construído com Hyku, código aberto Apache 2.0 e parte da comunidade Samvera."
