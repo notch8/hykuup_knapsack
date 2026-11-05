@@ -1,5 +1,10 @@
 fr:
   hyrax:
+    content_blocks:
+      instructions:
+        head_html_instructions: "Le HTML de l'en-tête est ajouté tel quel dans le head de chaque page publique, pour un gestionnaire de consentement ou un script d'analyse. Il n'est pas ajouté aux pages du tableau de bord. Seuls les super-administrateurs peuvent le voir ou le modifier."
+      tabs:
+        head_html: "HTML de l'en-tête"
     product_name: HykuUP
     footer:
       copyright_html: "Construit sur Hyku, logiciel libre sous Apache 2.0 et membre de la communauté Samvera."

@@ -1,5 +1,10 @@
 de:
   hyrax:
+    content_blocks:
+      instructions:
+        head_html_instructions: "Head-HTML wird unverändert in den Head jeder öffentlichen Seite eingefügt, etwa für einen Consent-Manager oder ein Analyse-Skript. Auf Dashboard-Seiten wird es nicht eingefügt. Nur Superadmins können es sehen oder ändern."
+      tabs:
+        head_html: "Head-HTML"
     product_name: HykuUP
     footer:
       copyright_html: "Basiert auf Hyku, Open Source unter Apache 2.0 und Teil der Samvera-Community."

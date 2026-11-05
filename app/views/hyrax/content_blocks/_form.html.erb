@@ -1,3 +1,4 @@
+<%# OVERRIDE Hyku a6eed62d: add a superadmin-only Head HTML tab, a plain textarea so scripts survive %>
 <%# OVERRIDE Hyrax v5.2.0 to add content blocks for:
     - Home Page Text for theme
     - Home "About" page content %>
@@ -33,6 +34,13 @@
       <a href="#homepage_about_section_content" role="tab" data-toggle="tab" class="nav-link nav-safety-confirm">
         <%= t(:'hyrax.content_blocks.tabs.homepage_about_section_content') %></a>
     </li>
+    <% if head_html_editor? %>
+      <li class="nav-item">
+        <a href="#head_html" role="tab" data-toggle="tab" class="nav-link nav-safety-confirm">
+          <%= t(:'hyrax.content_blocks.tabs.head_html') %>
+        </a>
+      </li>
+    <% end %>
   </ul>
 
   <div class="tab-content">
@@ -148,6 +156,25 @@
         <% end %>
       </div>
     </div>
+    <% if head_html_editor? %>
+      <div id="head_html" class="tab-pane">
+        <div class="card labels">
+          <%= simple_form_for ContentBlock.head_html, url: hyrax.content_block_path(ContentBlock.head_html), html: {class: 'nav-safety'} do |f| %>
+            <div class="card-body">
+              <div class="field form-group">
+                  <%= f.label :head_html, t(:'hyrax.content_blocks.tabs.head_html') %><br />
+                  <p class="content-block-instructions"><%= t(:'hyrax.content_blocks.instructions.head_html_instructions') %></p>
+                  <%= f.text_area :head_html, value: f.object.value, class: 'form-control text-monospace', rows: 10, cols: 120 %>
+              </div>
+            </div>
+            <div class="card-footer d-flex justify-content-end">
+              <%= f.button :submit, class: 'btn btn-primary text-white mr-2' %>
+              <%= link_to t(:'hyrax.content_blocks.cancel'), hyrax.admin_admin_sets_path, class: 'btn btn-light' %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
   </div>
 </div>
 <%= tinymce :content_block %>

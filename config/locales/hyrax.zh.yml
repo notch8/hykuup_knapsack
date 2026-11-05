@@ -1,5 +1,10 @@
 zh:
   hyrax:
+    content_blocks:
+      instructions:
+        head_html_instructions: "头部 HTML 会按原样添加到每个公共页面的 head 中，用于同意管理器或分析脚本。不会添加到仪表板页面。只有超级管理员可以查看或更改。"
+      tabs:
+        head_html: "头部 HTML"
     product_name: HykuUP
     footer:
       copyright_html: "基于 Hyku 构建，采用 Apache 2.0 开源许可，是 Samvera 社区的一员。"
