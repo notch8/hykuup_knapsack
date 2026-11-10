@@ -1,0 +1,94 @@
+<%# OVERRIDE Hyku v7.1.0: Users tab first, a year of monthly points, no empty Downloads tab, and charts drawn by this page. Remove at the Hyku 7.3.0 bump (samvera/hyku#3532) %>
+<% content_for :page_header do %>
+  <h1><span class="fa fa-edit"></span> <%= t('hyku.admin.stats.header', application_name: application_name) %></h1>
+<% end %>
+
+<div class="card tabs">
+  <!-- Nav tabs -->
+  <ul id="statistics-tabs" class="nav nav-tabs" role="tablist">
+    <li class="nav-item" role="presentation">
+      <a class="nav-link active" href="#users" role="tab" data-toggle="tab" aria-controls="users" aria-selected="true"><%= t('hyku.admin.stats.users') %></a>
+    </li>
+    <li class="nav-item" role="presentation">
+      <a class="nav-link" href="#works" role="tab" data-toggle="tab" aria-controls="works" aria-selected="false"><%= t('hyku.admin.stats.tab_works') %></a>
+    </li>
+    <li class="nav-item" role="presentation">
+      <a class="nav-link" href="#collections" role="tab" data-toggle="tab" aria-controls="collections" aria-selected="false"><%= t('hyku.admin.stats.tab_collections') %></a>
+    </li>
+  </ul>
+
+  <!-- Tab panes -->
+  <div class="tab-content">
+    <div role="tabpanel" class="tab-pane active" id="users">
+      <div class="card labels">
+        <div class="card-body">
+          <%= render "hyrax/admin/stats/stats_by_date" %>
+          <%= render "hyrax/admin/stats/top_data" %>
+        </div>
+      </div>
+    </div>
+    <div role="tabpanel" class="tab-pane" id="works">
+      <div class="card labels">
+        <div class="card-body">
+          <h2><%= t('hyku.admin.stats.works_over_time') %></h2>
+          <%=
+          graph_tag('works-graph', [Hyrax::Statistics::Works::OverTime.new(**over_time).points], {
+            xaxis: {
+              mode: 'time',
+              minTickSize: [1, 'month']
+            },
+            yaxis: {
+              minTickSize: 1,
+              tickDecimals: 0,
+              min: 0
+            }
+          })
+          %>
+          <h2><%= t('hyku.admin.stats.works_by_type') %></h2>
+          <%=
+          graph_tag('works-by-type', Hyrax::Statistics::Works::ByResourceType.new.query, series: {
+            pie: {
+              show: true,
+            }
+          })
+          %>
+        </div>
+      </div>
+    </div>
+    <div role="tabpanel" class="tab-pane" id="collections">
+      <div class="card labels">
+        <div class="card-body">
+          <h2><%= t('hyku.admin.stats.collections_over_time') %></h2>
+          <%=
+          graph_tag('collection-graph', [Hyrax::Statistics::Collections::OverTime.new(**collections_over_time).points], {
+            xaxis: {
+              mode: 'time',
+              minTickSize: [1, 'month']
+            },
+            yaxis: {
+              minTickSize: 1,
+              tickDecimals: 0,
+              min: 0
+            }
+          })
+          %>
+        </div>
+      </div>
+    </div>
+    <script>
+     // Hyku's statistics_tab_manager never draws these charts, and the knapsack can't override Hyku's JS
+     Blacklight.onLoad(function() {
+       $('#statistics-tabs a[data-toggle="tab"]').on('shown.bs.tab', function() {
+         $($(this).attr('href')).find('.graph-container').each(function() {
+           var $container = $(this);
+           var data = $container.data('graph-data');
+           // flot's pie plugin errors on a redraw or on no data
+           if ($container.data('plotted') || !data.length) return;
+           $container.data('plotted', true);
+           $.plot($container.find('.graph'), data, $container.data('graph-options'));
+         });
+       });
+     });
+    </script>
+  </div>
+</div>
