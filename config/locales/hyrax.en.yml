@@ -1,5 +1,10 @@
 en:
   hyrax:
+    content_blocks:
+      instructions:
+        head_html_instructions: "Head HTML is added as-is to the head of every public page, for a consent manager or analytics script. It is not added to dashboard pages. Only superadmins can see or change it."
+      tabs:
+        head_html: "Head HTML"
     product_name: HykuUP
     footer:
       copyright_html: "Built on Hyku, Apache 2.0 open source, and part of the Samvera community."
