@@ -1,0 +1,74 @@
+<%# OVERRIDE Hyrax v5.2.0 app/views/layouts/_head_tag_content.html.erb
+    Two changes, both aimed at the gap between the page loading and the IIIF
+    viewer (Universal Viewer) starting to load:
+
+    1. `javascript_include_tag 'application'` had no defer/async, so it's a
+       synchronous, parser-blocking script. Per the HTML spec, a synchronous
+       script positioned after a `<link rel="stylesheet">` must wait for that
+       stylesheet's CSSOM before it can even execute - and until it executes,
+       the parser can't continue past it into <body>, where the viewer iframe
+       lives further down. Measured cost: ~1.9s between the document arriving
+       and the iframe's src actually being requested. `defer: true` lets the
+       parser continue immediately; the script still runs before
+       DOMContentLoaded, in document order, so behavior shouldn't change.
+
+    2. Added an early <link rel="preload" as="document"> for the viewer's
+       base URL (only on pages that actually render one), so the browser
+       starts fetching it in parallel while the rest of <head> resolves,
+       instead of waiting until the iframe element is discovered later.
+
+    Remove when: upstream Hyrax ships defer/preload here, or this knapsack
+    switches to a bundler that defers JS by default (e.g. jsbundling-rails).
+%>
+<%= csrf_meta_tag %>
+<meta charset="utf-8" />
+<%# Only display meta tag, which enables creation of the ActionCable
+consumer, when realtime notifications are enabled and the user is
+signed in %>
+<% if Hyrax.config.realtime_notifications? && signed_in? %>
+    <%= tag :meta, name: 'current-user', data: { user_key: current_user.user_key } %>
+<% end %>
+<!-- added for use on small devices like phones -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="resourcesync" href="<%= hyrax.capability_list_url %>" />
+
+<!-- Generator meta tag - override app/views/layouts/_generator_meta_tag.html.erb to customize -->
+<%= render 'layouts/generator_meta_tag' %>
+
+<!-- Twitter card metadata -->
+<%= yield :twitter_meta %>
+<!-- Google Scholar metadata -->
+<%= yield :gscholar_meta %>
+<!-- Canonical URL -->
+<%= yield :canonical_url %>
+
+<title><%= content_for?(:page_title) ? yield(:page_title) : default_page_title %></title>
+
+<%# OVERRIDE begin: preload the IIIF viewer doc as early as possible, before
+    the render-blocking stylesheet/script below, on pages that will render it %>
+<% if @presenter.respond_to?(:iiif_viewer?) && @presenter.iiif_viewer? %>
+  <link rel="preload" href="<%= iiif_viewer_base_url(@presenter.iiif_viewer) %>" as="document" />
+<% end %>
+<%# OVERRIDE end %>
+
+<!-- application css -->
+<%= stylesheet_link_tag 'application' %>
+
+<!-- application js -->
+<%# OVERRIDE: added defer: true - see header comment %>
+<%= javascript_include_tag 'application', defer: true %>
+
+<%= render 'shared/appearance_styles' %>
+
+<% if Hyrax.config.analytics? %>
+  <% if Hyrax.config.analytics_provider == 'google' %>
+    <%= render partial: 'shared/ga', formats: [:html]  %>
+  <% elsif Hyrax.config.analytics_provider == 'ga4' %>
+    <%= render partial: 'shared/ga4', formats: [:html] %>
+  <% elsif Hyrax.config.analytics_provider == 'matomo' %>
+    <%= render partial: 'shared/matomo', formats: [:html] %>
+  <% end %>
+<% end %>
+
+<!-- for extras, e.g., a favicon -->
+<%= render partial: '/head_tag_extras', formats: [:html] %>
