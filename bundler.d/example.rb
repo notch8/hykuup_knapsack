@@ -13,5 +13,9 @@ gem "sentry-sidekiq"
 override_gem 'hyrax-doi', github: 'samvera-labs/hyrax-doi', tag: 'v0.3.0'
 override_gem "iiif_print", "~> 3.2"
 
+# GHSA-wh5f-2g46-6cj2: Bulkrax path traversal/SSRF via cloud-file import (CVSS 9.9).
+# Remove once hyrax-webapp submodule is bumped past the fix (Bulkrax 9.5.2 / Hyku v7.2.2).
+override_gem "bulkrax", "~> 9.5.2"
+
 ensure_gem "rubocop-rake"
 ensure_gem "rubocop-rspec"
