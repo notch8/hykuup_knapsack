@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# OVERRIDE Hyku a6eed62d: only tenant superadmins, which rolify extends to global superadmins, update the head_html content block
+# OVERRIDE Hyku v7.1.0: only tenant superadmins, which rolify extends to global superadmins, update the head_html content block
 module AbilityHeadHtmlDecorator
   def head_html_permissions
     return if tenant_superadmin?
