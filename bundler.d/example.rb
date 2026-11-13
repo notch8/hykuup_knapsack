@@ -13,5 +13,10 @@ gem "sentry-sidekiq"
 override_gem 'hyrax-doi', github: 'samvera-labs/hyrax-doi', tag: 'v0.3.0'
 override_gem "iiif_print", "~> 3.2"
 
+# OVERRIDE Bulkrax v9.5.1, backporting v9.5.2 (the version Hyku v7.2.2 ships):
+# picks up a dependency fix ahead of hyrax-webapp's own constraint. Remove
+# once the submodule vendors a Hyku release at or past v7.2.2.
+override_gem "bulkrax", "~> 9.5.2"
+
 ensure_gem "rubocop-rake"
 ensure_gem "rubocop-rspec"
