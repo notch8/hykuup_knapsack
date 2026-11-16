@@ -280,11 +280,11 @@ podSecurityContext: &podSecValues
   fsGroupChangePolicy: 'OnRootMismatch'
 
 worker:
-  replicaCount: 1
+  replicaCount: 2
   resources:
     limits:
       memory: "4Gi"
-      cpu: "1000m"
+      cpu: "2000m"
     requests:
       memory: "4Gi"
       cpu: "100m"
