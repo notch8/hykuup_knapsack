@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
-# OVERRIDE Hyku v6.2.0: Add tenant-specific validation for metadata profile uploads
+# OVERRIDE Hyrax 5.3.0 Hyrax::Admin::MetadataProfilesController#import: refuse profiles with work types
+# this tenant may not use. Client-specific, keep.
 module Hyrax
   module Admin
     module MetadataProfilesControllerDecorator
@@ -45,21 +46,12 @@ module Hyrax
         redirect_to admin_metadata_profiles_path, alert: 'Please select a file to upload'
       end
 
-      # Create the flexible schema and handle the response
+      # Hyrax's own helpers cap the warnings so the flash fits in the session cookie
       # @param profile_data [Hash] The parsed YAML profile data
       # @return [void]
       def create_flexible_schema(profile_data)
         @flexible_schema = Hyrax::FlexibleSchema.create(profile: profile_data)
-
-        if @flexible_schema.persisted?
-          warning_messages = @flexible_schema.warnings.full_messages.join(', ')
-          flash_options = { notice: 'Flexible Metadata Profile was successfully created.' }
-          flash_options[:alert] = warning_messages if @flexible_schema.warnings.any?
-          redirect_to admin_metadata_profiles_path, flash: flash_options
-        else
-          error_message = @flexible_schema.errors.messages.values.flatten.join(', ')
-          redirect_to admin_metadata_profiles_path, flash: { error: error_message }
-        end
+        @flexible_schema.persisted? ? redirect_after_import : render_failed_import
       end
 
       # Validates that the profile doesn't contain work types restricted for the current tenant
