@@ -171,7 +171,7 @@ Cloning into '/path/to/$PROJECT_NAME_knapsack/hyrax-webapp'...
 Submodule path 'hyrax-webapp': checked out '<KNAPSACK-SPECIFIED-HYKU-REPOSITORY-SHA>'
 ```
 
-The configuration of the submodule can be found in the `./.gitmodules` file.  During development, we've specified the submodule's branch (via `git submodule set-branch --branch <NAME> -- ./hyrax-webapp`).
+The configuration of the submodule can be found in the `./.gitmodules` file. It follows Hyku's `production` branch, so Dependabot only bumps Hyku to released code; anything sooner goes into Hyku as a hotfix first.  During development, we've specified the submodule's branch (via `git submodule set-branch --branch <NAME> -- ./hyrax-webapp`).
 
 Below is an example of our Adventist Knapsack submodule.
 
@@ -189,7 +189,7 @@ When you want to bring down an updated version of your Hyku submodule, use the f
 > git submodule update --remote
 ```
 
-This will checkout the submodule to the HEAD of the specified branch.
+This will checkout the submodule to the HEAD of the specified branch, which is Hyku's `production` (its latest release). Do it in a PR, like any other Hyku bump, so the Hyku Bump Report runs.
 
 #### Merge strategy
 
@@ -255,6 +255,8 @@ Adding decorators to override features is fairly simple. We do recommend some [b
 
 Any file with `_decorator.rb` in the app or lib directory will automatically be loaded along with any classes in the app directory.
 
+When an override stands in for a fix that belongs upstream, say which upstream PR or issue it waits on in its `OVERRIDE` comment, e.g. `# OVERRIDE ... remove once Hyku includes samvera/hyku#3358`. The Hyku Bump Report lists such overrides when a bump brings that fix in, so they get removed instead of outliving it.
+
 ### Deploying
 
 The generic procedure (promotion, baseline, verify, publish) lives in the
@@ -267,8 +269,9 @@ The generic procedure (promotion, baseline, verify, publish) lives in the
 | `staging` | staging | `r2-friends` | `hykuup-knapsack-staging` |
 | `production` | production | `r2-besties` | `hykuup-knapsack-production` |
 
-- A push to any of those branches deploys automatically once Build Test Lint passes. The Deploy
-  workflow's manual dispatch is for ad-hoc deploys and rollbacks.
+- A push to any of those branches deploys automatically: once Build Test Lint passes, the Deploy
+  workflow deploys that commit (the same shape as samvera/hyku). Its run name shows the branch,
+  e.g. `Deploy (production -> production)`; dispatch it by hand for ad-hoc and rollback deploys.
 - Promotion is `main` -> `staging` -> `production` by merge-commit PR only, never squash.
 - Production window: Tuesdays 1-5pm Pacific, never Friday. Another weekday is fine if agreed.
   Merging the `staging` -> `production` PR is the deploy, so merge it inside the window.
@@ -276,10 +279,26 @@ The generic procedure (promotion, baseline, verify, publish) lives in the
   pinned Hyku version and SHA.
 - Production deploys wait for approval from `@notch8/hyku-knapsack-owners` on the `production`
   environment.
+- Announcement channel: **#hykuup-everything** (internal; HykuUp has no client channel). Post
+  "deploying now" before merging the production promotion, and the release link with a short
+  summary once it is published.
 - Needs a human:
   - capture the `/deploy-regression-check` baseline before merging a promotion PR, and diff after;
-  - publish the release draft, adding the Hyrax version to the body: the `-rc` prerelease
-    from staging by hand, the stable release by approving the Publish Release run.
+  - after verifying the deploy, edit the stable release (the `publish-release` job published it when the deploy succeeded) to spell out any Hyku, Hyrax and gem changes from the Hyku Bump Report. The `-rc` from staging stays a draft.
+
+#### Weekly cadence
+
+| When | What |
+| --- | --- |
+| Friday end of day | Cutoff for merges to `main`. Later work waits a week. |
+| Monday, when Hyku has released | Dependabot opens the `hyrax-webapp` bump to Hyku's `production` branch (it checks Mondays at 6am PT, and opens nothing if Hyku hasn't released). Read the Hyku Bump Report comment on it: the Hyku, Hyrax and gem changes it brings, the files this knapsack overrides, and overrides it may make unnecessary. Add any knapsack changes they need to the same PR, then merge and check that dev deploys. |
+| Monday by end of day | Merge the `main` -> `staging` promotion PR. |
+| Monday to Tuesday noon | QA on staging: the smoke checks in the playbook's [knapsack release onboarding](https://github.com/notch8/playbook/blob/main/devops/deployments/knapsack-release-onboarding.md#7-your-week), plus whatever this week's changes touched. |
+| Tuesday 1-5pm PT | Announce in #hykuup-everything, promote `staging` -> `production` with `/knapsack-release`, verify, publish the release, post it. |
+| Any day | Merge the auto-merger's merge-down PRs. Hotfixes follow the skill's Hotfix section. |
+
+HykuUp has no client review step. Anything that fails QA on staging is reverted on `main` and
+promoted again, or holds the whole release to the next Tuesday.
 
 ### Theme files
 

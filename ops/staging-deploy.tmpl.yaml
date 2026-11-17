@@ -230,7 +230,7 @@ extraEnvVars: &envVars
   - name: HYKU_VOCABULARY_SIDEBAR_ENABLED
     value: "true"
   - name: HYKU_SHOW_BACKTRACE
-    value: "true"
+    value: "false"
   - name: NEGATIVE_CAPTCHA_SECRET
     value: $NEGATIVE_CAPTCHA_SECRET
   - name: SMTP_ADDRESS
@@ -505,6 +505,9 @@ nginx:
           proxy_set_header  X-Real-IP  ${DOLLAR}remote_addr;
           proxy_set_header  X-Forwarded-For ${DOLLAR}proxy_add_x_forwarded_for;
           proxy_set_header Host ${DOLLAR}http_host;
+          proxy_http_version 1.1;
+          proxy_set_header Upgrade ${DOLLAR}http_upgrade;
+          proxy_set_header Connection ${DOLLAR}connection_upgrade;
           proxy_redirect off;
           proxy_pass http://rails_app;
         }

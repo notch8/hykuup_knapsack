@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# OVERRIDE Hyku main (7a8d6155): Use tenant-specific work types based on consortium membership
+# OVERRIDE Hyku v7.1.0 Site.instance: seed tenant-specific work types from consortium membership. Client-specific, keep.
 module SiteDecorator
   extend ActiveSupport::Concern
 
@@ -16,12 +16,6 @@ module SiteDecorator
           site.available_works = tenant_available_works
         end
       end
-    end
-
-    # Backports Hyku v7.2.1: also clear the per-request analytics config (AnalyticsDecorator)
-    def reset!
-      super
-      RequestStore.store.delete(:hyrax_analytics_config)
     end
 
     private
