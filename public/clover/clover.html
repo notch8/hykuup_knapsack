@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- OVERRIDE Hyku v7.1.0 for a readable panel and visible audio captions. Remove once Hyku includes samvera/hyku#3396 and samvera/hyku#3499; the captions-on default and captions toggle below are HykuUP's own. -->
+<!-- OVERRIDE Hyku v7.2.1 to show captions by default and remember when a visitor turns them off. Client-specific, keep. -->
 <html lang="en">
     <head>
         <meta charset="UTF-8" />
@@ -21,6 +21,7 @@
           .clover-viewer-header > div:last-child { padding-right: 1rem !important; }
           /* Clover caps its player at 500px, which left a black band under it in the taller show page frame. */
           .clover-viewer-player-wrapper, .clover-viewer-player-wrapper video { height: 100% !important; max-height: none !important; }
+          /* Chrome clips a long cue that liftAudioCaptions has positioned unless it can wrap. */
           video::cue { font-size: clamp(14px, 2.4vw, 24px); white-space: pre-line; }
           /* The dark page scheme also darkens Chrome's own player menu, leaving its "Off" unreadable. */
           audio, video { color-scheme: light; }
@@ -101,13 +102,14 @@
           watchedMedia.add(media);
           media.textTracks.addEventListener('change', () => {
             if (media.isConnected && media.textTracks.length) captionsTurnedOff = !captionsShowing(media);
-            syncCaptionsToggle(media);
           });
-          media.textTracks.addEventListener('addtrack', () => {
-            showCaptionsByDefault(media);
-            syncCaptionsToggle(media);
+          media.textTracks.addEventListener('addtrack', () => showCaptionsByDefault(media));
+          ['change', 'addtrack', 'removetrack'].forEach((type) => {
+            media.textTracks.addEventListener(type, () => {
+              liftAudioCaptions(media);
+              syncCaptionsToggle(media);
+            });
           });
-          media.textTracks.addEventListener('removetrack', () => syncCaptionsToggle(media));
         }, true);
 
         // Firefox's controls offer no captions button for audio, so audio items get one of their own.
