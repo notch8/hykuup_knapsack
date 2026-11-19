@@ -359,11 +359,10 @@ nginx:
     # Built from the `hyku-nginx` Dockerfile stage, which bakes public/assets,
     # public/pdf.js, and public/uv in from the `hyku-web` stage of the exact
     # same commit - no shared volume/copy step needed for these anymore.
-    # Still based on registry.gitlab.com/notch8/scripts/bitnami-nginx (see
-    # Dockerfile) since the server block below references that image's
-    # bots.d/{ddos,blockbots}.conf includes.
-    registry: ghcr.io
-    repository: "$REPO_LOWER/nginx"
+    # Based on nginx/nginx-unprivileged (see Dockerfile), not a Bitnami
+    # image - the chart's own nginx templates (not a Bitnami subchart) don't
+    # read a separate `registry` key, so it's folded into `repository` here.
+    repository: "ghcr.io/$REPO_LOWER/nginx"
     tag: "$TAG"
   extraVolumes:
     - name: "uploads"
@@ -402,7 +401,7 @@ nginx:
                       'request="${DOLLAR}request" status=${DOLLAR}status bytes=${DOLLAR}body_bytes_sent '
                       'referer="${DOLLAR}http_referer" agent="${DOLLAR}http_user_agent" request_time=${DOLLAR}request_time upstream_response_time=${DOLLAR}upstream_response_time upstream_response_length=${DOLLAR}upstream_response_length';
 
-    error_log  /opt/bitnami/nginx/logs/error.log warn;
+    error_log  /var/log/nginx/error.log warn;
 
     # Lets ActionCable's websocket handshake upgrade instead of falling through to a plain HTTP request Rails 404s.
     map ${DOLLAR}http_upgrade ${DOLLAR}connection_upgrade {
@@ -438,7 +437,6 @@ nginx:
 
     real_ip_header X-Forwarded-For;
     real_ip_recursive on;
-    include /opt/bitnami/nginx/conf/conf.d/*.conf;
     server {
         listen 8080;
         server_name _;
@@ -448,13 +446,11 @@ nginx:
         client_body_in_file_only clean;
         client_body_buffer_size 32K;
         client_max_body_size 0;
-        access_log /opt/bitnami/nginx/logs/access.log loki;
+        access_log /var/log/nginx/access.log loki;
 
         sendfile on;
         send_timeout 300s;
 
-        include /opt/bitnami/nginx/conf/bots.d/ddos.conf;
-        include /opt/bitnami/nginx/conf/bots.d/blockbots.conf;
 
         location ~ (\.php|\.aspx|\.asp) {
         	return 404;
