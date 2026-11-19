@@ -36,8 +36,6 @@ USER root
 COPY --chown=solr:solr solr/security.json /var/solr/data/security.json
 USER $SOLR_USER
 
-# No Bitnami image dependency anymore (Bitnami stopped publishing legacy-tag
-# updates). See notch8/notch8-ops#812.
 FROM nginx/nginx-unprivileged:1.31.9-alpine AS hyku-nginx
 
 # Bake this exact commit's compiled assets/vendored viewer libs into the nginx
