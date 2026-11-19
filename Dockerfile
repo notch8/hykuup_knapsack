@@ -42,6 +42,6 @@ FROM nginx/nginx-unprivileged:1.31.9-alpine AS hyku-nginx
 # image itself, so nginx and Rails always agree on what a deploy's asset URLs
 # resolve to - no shared volume, no deploy-time copy step, no accumulation to
 # prune (old versions just age out of the image registry like any other tag).
-COPY --from=hyku-web /app/samvera/hyrax-webapp/public/assets /app/samvera/hyrax-webapp/public/assets
-COPY --from=hyku-web /app/samvera/hyrax-webapp/public/pdf.js /app/samvera/hyrax-webapp/public/pdf.js
-COPY --from=hyku-web /app/samvera/hyrax-webapp/public/uv /app/samvera/hyrax-webapp/public/uv
+COPY --chown=101:101 --from=hyku-web /app/samvera/hyrax-webapp/public/assets /app/samvera/hyrax-webapp/public/assets
+COPY --chown=101:101 --from=hyku-web /app/samvera/hyrax-webapp/public/pdf.js /app/samvera/hyrax-webapp/public/pdf.js
+COPY --chown=101:101 --from=hyku-web /app/samvera/hyrax-webapp/public/uv /app/samvera/hyrax-webapp/public/uv
