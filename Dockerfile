@@ -36,7 +36,7 @@ USER root
 COPY --chown=solr:solr solr/security.json /var/solr/data/security.json
 USER $SOLR_USER
 
-FROM registry.gitlab.com/notch8/scripts/bitnami-nginx:1.21.5-debian-10-r4 AS hyku-nginx
+FROM nginx/nginx-unprivileged:1.31.9-alpine AS hyku-nginx
 
 # Bake this exact commit's compiled assets/vendored viewer libs into the nginx
 # image itself, so nginx and Rails always agree on what a deploy's asset URLs
