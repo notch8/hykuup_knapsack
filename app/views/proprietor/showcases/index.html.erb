@@ -1,0 +1,50 @@
+<% provide :page_title, construct_page_title(t('.header')) %>
+<% content_for :page_header do %>
+  <h1><span class="fa fa-refresh" aria-hidden="true"></span> <%= t('.header') %></h1>
+<% end %>
+
+<p><%= t('.snapshot.help') %></p>
+<p><%= t('.reset.help') %></p>
+<p><%= t('.unchanged') %></p>
+
+<% @showcases.each do |showcase| %>
+  <section class="card mb-4" aria-labelledby="showcase-<%= showcase.id %>">
+    <div class="card-header">
+      <h2 id="showcase-<%= showcase.id %>" class="h4 mb-0"><%= link_to showcase.name.titleize, "//#{showcase.cname}" %></h2>
+    </div>
+    <div class="card-body">
+      <dl class="row">
+        <dt class="col-sm-3"><%= t('.look_saved_at') %></dt>
+        <dd class="col-sm-9"><%= showcase.look_saved_at ? l(showcase.look_saved_at, format: :showcase) : t('.never') %></dd>
+        <dt class="col-sm-3"><%= t('.last_reset_at') %></dt>
+        <dd class="col-sm-9"><%= showcase.last_reset_at ? l(showcase.last_reset_at, format: :showcase) : t('.never') %></dd>
+      </dl>
+
+      <% if showcase.saving_or_resetting? %>
+        <p class="alert alert-info"><%= t('.busy') %></p>
+      <% elsif showcase.reset_failed? %>
+        <p class="alert alert-danger"><%= t('.reset_failed') %></p>
+      <% end %>
+      <% if showcase.restoring_thumbnails? %>
+        <p class="alert alert-info"><%= t('.restoring') %></p>
+      <% end %>
+
+      <%= button_to t('.snapshot.button'), snapshot_proprietor_showcase_path(showcase),
+                    class: 'btn btn-primary mb-3',
+                    disabled: showcase.saving_or_resetting? || showcase.restoring_thumbnails?,
+                    data: { disable_with: t('.working') } %>
+
+      <% if showcase.look_saved_at %>
+        <%= form_tag reset_proprietor_showcase_path(showcase), class: 'form-inline' do %>
+          <label for="confirm-<%= showcase.id %>" class="mr-2"><%= t('.reset.confirm', name: showcase.name) %></label>
+          <%= text_field_tag :confirm, nil, id: "confirm-#{showcase.id}", class: 'form-control mr-2',
+                             autocomplete: 'off', disabled: showcase.saving_or_resetting? %>
+          <%= submit_tag t('.reset.button'), class: 'btn btn-danger', disabled: showcase.saving_or_resetting?,
+                         data: { disable_with: t('.working') } %>
+        <% end %>
+      <% else %>
+        <p class="text-muted mb-0"><%= t('.reset.needs_snapshot') %></p>
+      <% end %>
+    </div>
+  </section>
+<% end %>
