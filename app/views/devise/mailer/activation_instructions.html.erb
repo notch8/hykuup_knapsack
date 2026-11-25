@@ -1,0 +1,9 @@
+<%# OVERRIDE Hyku v7.1.0 devise/mailer/activation_instructions: new template emailing an activated user a link to set their password. %>
+<%#   Remove once Hyku is bumped past this fix; see notch8/notch8-ops#848. %>
+<p>Hello <%= @resource.email %>!</p>
+
+<p>An administrator has activated your account. Choose a password through the link below to sign in.</p>
+
+<p><%= link_to 'Set my password', edit_password_url(@resource, reset_password_token: @token) %></p>
+
+<p>This link expires in <%= Devise.reset_password_within.inspect %>. After that, use "Forgot your password?" on the sign-in page to get a new one.</p>
