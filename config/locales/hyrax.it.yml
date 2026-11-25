@@ -1,5 +1,9 @@
 it:
   hyrax:
+    admin:
+      users:
+        activate:
+          email_subject: Il tuo account è stato attivato
     content_blocks:
       instructions:
         head_html_instructions: "L'HTML dell'intestazione viene aggiunto così com'è nell'head di ogni pagina pubblica, per un gestore del consenso o uno script di analisi. Non viene aggiunto alle pagine della dashboard. Solo i superamministratori possono vederlo o modificarlo."

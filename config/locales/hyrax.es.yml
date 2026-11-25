@@ -1,5 +1,9 @@
 es:
   hyrax:
+    admin:
+      users:
+        activate:
+          email_subject: Su cuenta ha sido activada
     content_blocks:
       instructions:
         head_html_instructions: "El HTML del encabezado se añade tal cual al head de cada página pública, para un gestor de consentimiento o un script de analítica. No se añade a las páginas del panel. Solo los superadministradores pueden verlo o cambiarlo."

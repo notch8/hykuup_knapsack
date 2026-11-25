@@ -1,5 +1,9 @@
 pt-BR:
   hyrax:
+    admin:
+      users:
+        activate:
+          email_subject: Sua conta foi ativada
     content_blocks:
       instructions:
         head_html_instructions: "O HTML do cabeçalho é adicionado como está ao head de cada página pública, para um gerenciador de consentimento ou um script de análise. Não é adicionado às páginas do painel. Somente superadministradores podem vê-lo ou alterá-lo."

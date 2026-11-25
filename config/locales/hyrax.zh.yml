@@ -1,5 +1,9 @@
 zh:
   hyrax:
+    admin:
+      users:
+        activate:
+          email_subject: 您的账户已激活
     content_blocks:
       instructions:
         head_html_instructions: "头部 HTML 会按原样添加到每个公共页面的 head 中，用于同意管理器或分析脚本。不会添加到仪表板页面。只有超级管理员可以查看或更改。"

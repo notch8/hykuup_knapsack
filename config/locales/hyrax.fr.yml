@@ -1,5 +1,9 @@
 fr:
   hyrax:
+    admin:
+      users:
+        activate:
+          email_subject: Votre compte a été activé
     content_blocks:
       instructions:
         head_html_instructions: "Le HTML de l'en-tête est ajouté tel quel dans le head de chaque page publique, pour un gestionnaire de consentement ou un script d'analyse. Il n'est pas ajouté aux pages du tableau de bord. Seuls les super-administrateurs peuvent le voir ou le modifier."

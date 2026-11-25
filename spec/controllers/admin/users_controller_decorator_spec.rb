@@ -22,6 +22,16 @@ RSpec.describe Admin::UsersController, type: :controller do
       expect(mail.body.encoded).to include('/users/password/edit?reset_password_token=')
     end
 
+    it 'leaves the user pending when the activation email cannot be sent' do
+      invitee
+      allow_any_instance_of(User).to receive(:send_devise_notification).and_raise(Net::SMTPFatalError, 'boom') # rubocop:disable RSpec/AnyInstance
+
+      post :activate, params: { id: invitee.id }
+
+      expect(invitee.reload).not_to be_invitation_accepted
+      expect(flash[:error]).to be_present
+    end
+
     it 'does not set the configured default password' do
       allow(ENV).to receive(:fetch).and_call_original
       allow(ENV).to receive(:fetch).with('HYKU_USER_DEFAULT_PASSWORD', nil).and_return('configured-default')
